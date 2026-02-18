@@ -1,0 +1,122 @@
+:root { 
+  --deep-bark: #3d2b1f;    
+  --wood-brown: #604439;   
+  --soft-tan: #b08968;     
+  --cream-leaf: #ede0d4;   
+  --text-gray: #cccccc;
+}
+
+body { 
+  background: linear-gradient(-45deg, #2b1d12, #3d2b1f, #604439, #8b5e34, #2b1d12);
+  background-size: 400% 400%; 
+  animation: gradientBG 15s ease infinite;
+  color: #a7c957; 
+  padding: 20px; 
+  font-family: 'Segoe UI', sans-serif; 
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 950px; 
+  margin: 0 auto;
+}
+
+@keyframes gradientBG { 
+  0% { background-position: 0% 50%; } 
+  50% { background-position: 100% 50%; } 
+  100% { background-position: 0% 50%; } 
+}
+
+.main-header { 
+  background: rgba(61, 43, 31, 0.8);
+  border: 1px solid var(--soft-tan);
+  padding: 15px 0;
+  border-radius: 10px; 
+  margin-bottom: 30px; 
+  overflow: hidden;
+  position: relative;
+}
+
+.scrolling-text {
+  display: inline-block;
+  white-space: nowrap;
+  font-weight: 900; 
+  font-size: 24px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--cream-leaf);
+  text-shadow: 2px 2px 10px rgba(176, 137, 104, 0.5);
+  animation: scrollLeft 20s linear infinite;
+  padding-left: 100%;
+}
+
+@keyframes scrollLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+.card-section { 
+  background: rgba(96, 68, 57, 0.4); 
+  border: 1px solid rgba(237, 224, 212, 0.2); 
+  padding: 20px; 
+  border-radius: 15px; 
+  margin-bottom: 20px; 
+  backdrop-filter: blur(10px);
+}
+
+.label-title { 
+  color: var(--text-gray); 
+  font-size: 25px; 
+  font-weight: bold; 
+  text-transform: uppercase; 
+  margin-bottom: 15px; 
+  display: block;
+  text-align: center; 
+}
+
+.preview-box { 
+  background: rgba(43, 29, 18, 0.6); 
+  color: #ede0d4; 
+  font-size: 18px; 
+  padding: 15px; 
+  border-radius: 8px; 
+  white-space: pre-wrap; 
+  margin-top: 15px; 
+  border: 1px solid var(--wood-brown); 
+  min-height: 300px; 
+  max-height: 750px; 
+  overflow-y: auto; 
+  line-height: 1.5; 
+  font-family: 'Alata', monospace; 
+  font-weight: bold;
+  scrollbar-width: none; 
+}
+
+.preview-box::-webkit-scrollbar { display: none; }
+
+.form-select { 
+  background-color: var(--deep-bark); 
+  color: var(--cream-leaf); 
+  border: 1px solid var(--soft-tan); 
+  font-weight: bold; 
+  margin-bottom: 15px; 
+  height: 45px; 
+  font-size: 15px; 
+}
+
+.btn-copy-custom { 
+  background-color: var(--soft-tan); 
+  color: #422b15; 
+  border: none; 
+  width: 100%; 
+  padding: 12px; 
+  border-radius: 8px; 
+  font-weight: bold; 
+  font-size: 22px; 
+  transition: 0.3s;
+}
+
+@media (max-width: 768px) {
+  .container { max-width: 100%; }
+  .preview-box { font-size: 13px; }
+}
