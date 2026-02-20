@@ -8,14 +8,25 @@ const LIST_PASARAN = [
     "CHELSEA 19", "POIPET19", "PCSO", "TOTOMALI 2030", "HUAHIN 2100", "CHELSEA 21", 
     "TOTOMACAU 5D MALAM", "NEVADA", "BRUNEI 21", "TOTOMACAU MALAM II", "POIPET22", 
     "HONGKONG", "TOTOMACAU MALAM III", "TOTOMALI 2330", "JAKARTA 2330", "KING KONG4D"
-].sort();
+];
 
+/**
+ * Fungsi untuk menghasilkan data prediksi berdasarkan nama pasaran dan tanggal
+ */
 function generateData(nama, offset) {
-    const d = new Date(); d.setDate(d.getDate() + offset);
-    const tgl = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const d = new Date(); 
+    d.setDate(d.getDate() + offset);
     
+    const tgl = d.toLocaleDateString('id-ID', { 
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+    });
+    
+    // Logika Algoritma Seed (Tidak berubah)
     let seed = 0;
-    for(let i=0; i<nama.length; i++) {
+    for(let i = 0; i < nama.length; i++) {
         seed = ((seed << 5) - seed) + nama.charCodeAt(i);
         seed |= 0;
     }
@@ -27,9 +38,9 @@ function generateData(nama, offset) {
     };
 
     const getUnikDigit = (jml) => {
-        let pools = [0,1,2,3,4,5,6,7,8,9];
+        let pools = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
         let hasil = [];
-        for(let i=0; i<jml; i++) {
+        for(let i = 0; i < jml; i++) {
             let idx = Math.floor(rng() * pools.length);
             hasil.push(pools.splice(idx, 1)[0]);
         }
@@ -39,12 +50,13 @@ function generateData(nama, offset) {
     const getKombinasi = (jml, digit, separator = " ") => {
         let resArr = [];
         while(resArr.length < jml) {
-            let num = Array.from({length: digit}, () => Math.floor(rng()*10)).join('');
+            let num = Array.from({length: digit}, () => Math.floor(rng() * 10)).join('');
             if(!resArr.includes(num)) resArr.push(num);
         }
         return resArr.join(separator);
     };
 
+    // Menyiapkan Data Output
     const bbfsArr = getUnikDigit(7);
     const bbfs = bbfsArr.join('');
     const amArr = getUnikDigit(5);
@@ -66,6 +78,7 @@ function generateData(nama, offset) {
         `${amArr[2]}${amArr[4]}`
     ];
     res += `COLOK BEBAS 2D ${colok2D.join(" / ")}\n`;
+    
     let shioPick = []; 
     while(shioPick.length < 3) { 
         let s = shios[Math.floor(rng() * shios.length)]; 
@@ -76,36 +89,56 @@ function generateData(nama, offset) {
     const tw1 = bbfsArr[0], tw2 = bbfsArr[1], tw3 = bbfsArr[2];
     res += `TWIN ${tw1}${tw1} ${tw2}${tw2} ${tw3}${tw3}\n`;
     res += `Selalu Utamakan Prediksi Sendiri\n\n`;
+    
     return res;
 }
 
+/**
+ * Fungsi UI untuk memperbarui tampilan di halaman
+ */
 function updateTampilan(tipe) {
     const val = document.getElementById('sel' + tipe).value;
     const box = document.getElementById('box' + tipe);
     const offset = (tipe === 'HariIni') ? 0 : 1;
-    box.innerText = (val === "SEMUA") ? LIST_PASARAN.map(p => generateData(p, offset)).join('') : generateData(val, offset);
+    
+    if (val === "SEMUA") {
+        box.innerText = LIST_PASARAN.map(p => generateData(p, offset)).join('');
+    } else {
+        box.innerText = generateData(val, offset);
+    }
 }
 
+/**
+ * Fungsi untuk menyalin teks ke clipboard
+ */
 function salin(boxId, btnId) {
     const teks = document.getElementById(boxId).innerText;
     navigator.clipboard.writeText(teks).then(() => {
-      const btn = document.getElementById(btnId);
-      btn.innerText = "BERHASIL DISALIN";
-      btn.style.backgroundColor = "#28a745"; 
-      setTimeout(() => { 
-        btn.innerText = "SALIN PREDIKSI"; 
-        btn.style.backgroundColor = ""; 
-      }, 1500);
+        const btn = document.getElementById(btnId);
+        const originalText = btn.innerText;
+        
+        btn.innerText = "BERHASIL DISALIN";
+        btn.style.backgroundColor = "#28a745"; 
+        
+        setTimeout(() => { 
+            btn.innerText = originalText; 
+            btn.style.backgroundColor = ""; 
+        }, 1500);
     });
 }
 
+/**
+ * Inisialisasi saat halaman dimuat
+ */
 window.onload = () => {
     const s1 = document.getElementById('selHariIni');
     const s2 = document.getElementById('selBesok');
+    
     LIST_PASARAN.forEach(p => { 
         s1.add(new Option(p, p)); 
         s2.add(new Option(p, p)); 
     });
+    
     updateTampilan('HariIni'); 
     updateTampilan('Besok');
 };
