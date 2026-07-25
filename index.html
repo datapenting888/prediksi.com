@@ -846,13 +846,12 @@
     MARKETS[name] = { categories: TOTOMACAU_CATEGORIES };
   });
   MARKETS["TOTO CAMBODIA LIVE"] = { categories: TOTOCAMBODIA_CATEGORIES };
-  MARKETS["SINGAPORE"] = { categories: TOTOMACAU_CATEGORIES };
   ["CHELSEA21","CHELSEA19","CHELSEA15","CHELSEA11",
    "POIPET22","POIPET19","POIPET15","POIPET12",
    "BRUNEI21","BRUNEI14","BRUNEI02",
    "BANGKOK 0930","BANGKOK 0130",
    "HUAHIN2100","HUAHIN1630","HUAHIN0100",
-   "NEVADA","MAGNUM4D"].forEach(function(name){
+   "NEVADA","MAGNUM4D","SINGAPORE"].forEach(function(name){
     MARKETS[name] = { categories: TOTOCAMBODIA_CATEGORIES };
   });
   ["PCSO","BULLSEYE","CALIFORNIA",
@@ -1833,7 +1832,8 @@ body {
     activePillTextId: "activePillText",
     contentId: "content",
     markets: MARKETS,
-    defaultMarket: "HONGKONG LOTTO"
+    defaultMarket: "HONGKONG LOTTO",
+    titleColon: true
   });
   pngCalculator.init();
 
