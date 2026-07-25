@@ -1290,7 +1290,7 @@
         menang = nominal;
       }
     }
-    bayar = Math.round(bayar);
+    bayar = Math.ceil(bayar);
     menang = Math.round(menang);
     return { bayar: bayar, menang: menang, total: bayar + menang };
   }
