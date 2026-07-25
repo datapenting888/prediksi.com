@@ -236,7 +236,7 @@
   .group-block{ margin-bottom: 8px; }
   .cards-grid{
     display:grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
     gap:16px;
   }
   .card{
@@ -252,6 +252,7 @@
     margin:0 0 8px;
     letter-spacing:0.4px;
     color:#ffffff;
+    white-space:nowrap;
   }
   .card .meta{
     text-align:center;
@@ -328,6 +329,9 @@
   @media (max-width:600px){
     .panel{ padding:14px 12px 20px; margin:8px; }
     .tab-btn{ padding:8px 10px; font-size:14px; }
+  }
+  @media (max-width:400px){
+    .card h3{ font-size:15px; letter-spacing:0.2px; }
   }
   #prediksiFrame{
     width:100%;
@@ -1290,7 +1294,10 @@
         menang = nominal;
       }
     }
-    bayar = Math.ceil(bayar);
+    // Round to 3 decimal places first to eliminate floating-point noise
+    // (e.g. 236175.00000000003) before rounding up, so exact whole-number
+    // results aren't incorrectly bumped to the next integer.
+    bayar = Math.ceil(Math.round(bayar * 1000) / 1000);
     menang = Math.round(menang);
     return { bayar: bayar, menang: menang, total: bayar + menang };
   }
