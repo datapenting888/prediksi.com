@@ -177,24 +177,47 @@
     background: var(--bg-card);
     border:1px solid var(--border-soft);
     border-radius:6px;
-    min-width:220px;
-    max-height:320px;
-    overflow-y:auto;
+    min-width:260px;
+    max-height:340px;
+    overflow:hidden;
     z-index:20;
     box-shadow:0 8px 20px rgba(0,0,0,0.4);
     display:none;
   }
   .market-list.show{ display:block; }
+  .market-search{
+    width:100%;
+    box-sizing:border-box;
+    padding:10px 14px;
+    border:none;
+    border-bottom:1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.07);
+    color: var(--text-light);
+    font-size:15px;
+    outline:none;
+  }
+  .market-search::placeholder{ color: rgba(255,255,255,0.45); }
+  .market-items{
+    max-height:290px;
+    overflow-y:auto;
+  }
   .market-item{
     padding:10px 16px;
     font-size:16px;
     cursor:pointer;
     color: var(--text-light);
     border-bottom:1px solid rgba(255,255,255,0.06);
+    white-space:nowrap;
   }
   .market-item:last-child{ border-bottom:none; }
   .market-item:hover{ background: rgba(255,255,255,0.08); }
   .market-item.active{ color: var(--yellow); font-weight:700; }
+  .market-empty{
+    padding:14px 16px;
+    color: rgba(255,255,255,0.5);
+    font-size:14px;
+    text-align:center;
+  }
   hr.divider{
     border:none;
     border-top:1px solid rgba(255,255,255,0.35);
@@ -1319,24 +1342,69 @@
       var label = document.getElementById(opts.labelId);
       clear(list);
 
-      Object.keys(opts.markets).forEach(function(name){
-        var item = document.createElement("div");
-        item.className = "market-item" + (name === state.market ? " active" : "");
-        item.textContent = name;
-        item.addEventListener("click", function(){
-          state.market = name;
-          label.textContent = name;
-          list.classList.remove("show");
-          toggle.classList.remove("open");
-          renderContent();
-          buildMarketDropdown();
+      var search = document.createElement("input");
+      search.type = "text";
+      search.className = "market-search";
+      search.placeholder = "Cari pasaran...";
+      search.autocomplete = "off";
+      list.appendChild(search);
+
+      var itemsWrap = document.createElement("div");
+      itemsWrap.className = "market-items";
+      list.appendChild(itemsWrap);
+
+      var allNames = Object.keys(opts.markets);
+
+      function selectMarket(name){
+        state.market = name;
+        label.textContent = name;
+        list.classList.remove("show");
+        toggle.classList.remove("open");
+        renderContent();
+        buildMarketDropdown();
+      }
+
+      function renderItems(query){
+        clear(itemsWrap);
+        var q = (query || "").trim().toLowerCase();
+        var matches = allNames.filter(function(name){
+          return !q || name.toLowerCase().indexOf(q) !== -1;
         });
-        list.appendChild(item);
+
+        if(matches.length === 0){
+          var empty = document.createElement("div");
+          empty.className = "market-empty";
+          empty.textContent = "Pasaran tidak ditemukan";
+          itemsWrap.appendChild(empty);
+          return;
+        }
+
+        matches.forEach(function(name){
+          var item = document.createElement("div");
+          item.className = "market-item" + (name === state.market ? " active" : "");
+          item.textContent = name;
+          item.addEventListener("click", function(){ selectMarket(name); });
+          itemsWrap.appendChild(item);
+        });
+      }
+
+      renderItems("");
+
+      search.addEventListener("input", function(){
+        renderItems(search.value);
       });
+      // Prevent typing/clicking in the search box from closing the dropdown.
+      search.addEventListener("click", function(e){ e.stopPropagation(); });
 
       toggle.onclick = function(){
+        var willShow = !list.classList.contains("show");
         list.classList.toggle("show");
         toggle.classList.toggle("open");
+        if(willShow){
+          search.value = "";
+          renderItems("");
+          setTimeout(function(){ search.focus(); }, 0);
+        }
       };
 
       document.addEventListener("click", function(e){
