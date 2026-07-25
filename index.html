@@ -1735,7 +1735,15 @@ body {
       });
     }
 
-    navs.prediksi.addEventListener("click", function(){ showPage("prediksi"); });
+    navs.prediksi.addEventListener("click", function(){
+      showPage("prediksi");
+      // Re-render the iframe content every time this tab is opened.
+      // Some browsers discard the manually-written iframe document while
+      // its container is hidden (display:none) after switching to other
+      // menus, leaving it blank until a full page refresh. Rebuilding it
+      // here guarantees it's always populated.
+      initPrediksi();
+    });
     navs.png.addEventListener("click", function(){ showPage("png"); });
     navs.idn.addEventListener("click", function(){ showPage("idn"); });
 
