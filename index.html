@@ -33,10 +33,10 @@
 
   /* ---------------- Sidebar / Menu Dashboard ---------------- */
   .sidebar{
-    width:230px;
+    width:252px;
     flex-shrink:0;
     background:#13131c;
-    padding:22px 16px;
+    padding:22px 14px;
     min-height:100vh;
   }
   .sidebar .brand{
@@ -44,9 +44,20 @@
     font-weight:800;
     letter-spacing:0.5px;
     margin-bottom:18px;
+    display:flex;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:6px;
   }
   .sidebar .brand .smb{ color:#e0339f; }
   .sidebar .brand .group{ color:#f4f2f8; }
+  .sidebar .brand .brand-tag{
+    font-size:10px;
+    font-weight:600;
+    letter-spacing:0.5px;
+    color:#8b8b9a;
+    text-transform:none;
+  }
   .sidebar .brand-divider{
     border:none;
     border-top:1px solid rgba(255,255,255,0.1);
@@ -62,8 +73,8 @@
   .sidebar .nav-item{
     display:flex;
     align-items:center;
-    gap:12px;
-    padding:12px 14px;
+    gap:10px;
+    padding:12px 12px;
     border-radius:12px;
     cursor:pointer;
     margin-bottom:10px;
@@ -90,8 +101,13 @@
     font-weight:700;
     line-height:1.35;
     color:#dcdce3;
+    white-space:nowrap;
   }
   .sidebar .nav-item.active .label{ color:#a78bfa; }
+  .sidebar .nav-item .label.label-sm{
+    font-size:12.5px;
+    letter-spacing:-0.2px;
+  }
 
   .main-content{
     flex:1;
@@ -111,6 +127,8 @@
     .sidebar .brand{ display:none; }
     .sidebar .brand-divider{ display:none; }
     .sidebar .nav-item{ margin-bottom:0; }
+    .sidebar .nav-item .label{ white-space:normal; }
+    .sidebar .nav-item .label.label-sm{ font-size:11px; }
   }
   .topbar{
     background: var(--header-orange);
@@ -463,11 +481,322 @@
     .prediksi-box{ font-size:13px; }
   }
 </style>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+.bola-scope {
+  --bg-deep: #0a0d1a;
+  --bg-mid: #12162a;
+  --surface: #161b31;
+  --surface-alt: #1c2138;
+  --bola-border: rgba(255,255,255,0.08);
+  --bola-border-soft: rgba(255,255,255,0.05);
+  --bola-text-primary: #f5f3f8;
+  --bola-text-muted: #9297b3;
+  --rose: #f3a6cf;
+  --lime: #dbf500;
+  --lime-dim: rgba(219,245,0,0.15);
+  --violet: #a78bfa;
+  --violet-dim: rgba(167,139,250,0.15);
+  --win: #3ce6a0;
+  --lose: #fb7189;
+  --bola-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  --gold-light: #f6e7a8;
+  --gold: #d9b45a;
+  --gold-deep: #a7782c;
+  --gold-dim: rgba(217,180,90,0.15);
+  --gold-gradient: linear-gradient(120deg, var(--gold-light) 0%, var(--gold) 45%, var(--gold-deep) 100%);
+}
+
+.bola-scope, .bola-scope *{ box-sizing: border-box; }
+
+.bola-scope {
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(1200px 600px at 15% -10%, #1b1440 0%, transparent 60%),
+              radial-gradient(1000px 500px at 110% 10%, #101c3a 0%, transparent 55%),
+              linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 100%);
+  background-attachment: fixed;
+  margin: 0;
+  padding: 40px 20px;
+  color: var(--bola-text-primary);
+  min-height: 100vh;
+  border-radius: 8px;
+}
+
+.bola-scope .container {
+  max-width: 100%;
+  margin: auto;
+  background: linear-gradient(180deg, var(--surface) 0%, var(--bg-mid) 100%);
+  padding: 36px 40px 44px;
+  border-radius: 18px;
+  border: 1px solid var(--bola-border);
+  box-shadow: var(--bola-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.bola-scope .container::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gold-gradient);
+  box-shadow: 0 0 14px rgba(217,180,90,0.5);
+  border-radius: 18px 18px 0 0;
+}
+
+.bola-scope .container::after {
+  content: "";
+  position: absolute;
+  bottom: -60px; right: -60px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217,180,90,0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.bola-scope .container > * { position: relative; z-index: 1; }
+
+.bola-scope .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  background: rgba(217,180,90,0.08);
+  border: 1px solid rgba(217,180,90,0.35);
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+.bola-scope .eyebrow::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+}
+
+.bola-scope h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(24px, 2.4vw, 32px);
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  padding-bottom: 20px;
+  margin: 0 0 28px;
+  letter-spacing: -0.01em;
+  filter: drop-shadow(0 0 18px rgba(217,180,90,0.18));
+}
+.bola-scope h2::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 8px;
+  background:
+    linear-gradient(90deg, transparent 0%, var(--gold) 100%) bottom / 100% 1px no-repeat,
+    radial-gradient(circle at 0 0, var(--gold-light) 0 3px, transparent 4px) left bottom no-repeat;
+  opacity: 0.9;
+}
+
+.bola-scope h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bola-scope h3::before {
+  content: "";
+  width: 4px; height: 18px;
+  border-radius: 2px;
+  background: var(--gold-gradient);
+  box-shadow: 0 0 10px rgba(217,180,90,0.5);
+  display: inline-block;
+}
+
+.bola-scope .form-group { margin-bottom: 20px; }
+
+.bola-scope .form-row {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.bola-scope .form-col-details {
+  flex: 1 1 50%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bola-scope .form-col-details textarea {
+  flex: 1;
+  height: 100%;
+  min-height: 174px;
+}
+
+.bola-scope .form-col-side {
+  flex: 1 1 50%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+@media (max-width: 720px) {
+  .bola-scope .form-row { flex-direction: column; }
+  .bola-scope .form-col-details textarea { height: 120px; min-height: 120px; }
+}
+
+.bola-scope label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  color: var(--gold-light);
+}
+
+.bola-scope input[type="number"], .bola-scope textarea {
+  width: 100%;
+  padding: 12px 14px;
+  box-sizing: border-box;
+  border: 1px solid var(--bola-border);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  color: var(--bola-text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.bola-scope input[type="number"]::placeholder, .bola-scope textarea::placeholder { color: var(--bola-text-muted); }
+
+.bola-scope input[type="number"]:focus, .bola-scope textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  background: rgba(217,180,90,0.06);
+  box-shadow: 0 0 0 3px var(--gold-dim);
+}
+
+.bola-scope textarea { height: 120px; resize: vertical; }
+
+.bola-scope button {
+  background: var(--gold-gradient);
+  color: #1c1608;
+  border: none;
+  padding: 13px 26px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  box-shadow: 0 8px 24px rgba(217,180,90,0.25);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+.bola-scope button:hover { filter: brightness(1.08); box-shadow: 0 10px 30px rgba(217,180,90,0.35); transform: translateY(-1px); }
+.bola-scope button:active { transform: translateY(0); }
+
+.bola-scope .table-scroll {
+  margin-top: 20px;
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--bola-border);
+}
+
+.bola-scope table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.bola-scope th, .bola-scope td {
+  border-bottom: 1px solid var(--bola-border-soft);
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 15px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.bola-scope th {
+  background: var(--surface-alt);
+  color: var(--gold-light);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(217,180,90,0.25);
+}
+
+.bola-scope td { background: rgba(255,255,255,0.015); color: var(--bola-text-primary); }
+.bola-scope tbody tr:last-child td { border-bottom: none; }
+
+.bola-scope .win { color: var(--win); font-weight: 700; text-shadow: 0 0 12px rgba(60,230,160,0.25); }
+.bola-scope .lose { color: var(--lose); font-weight: 700; text-shadow: 0 0 12px rgba(251,113,137,0.2); }
+.bola-scope .neutral { color: var(--gold-light); font-weight: 700; text-shadow: 0 0 12px rgba(217,180,90,0.25); }
+
+.bola-scope #result-section { display: none; margin-top: 34px; }
+
+.bola-scope .explanation-box { margin-top: 20px; display: flex; flex-direction: column; gap: 20px; }
+.bola-scope .explanation-box .explanation-col { display: flex; flex-direction: column; gap: 8px; }
+.bola-scope .explanation-box textarea {
+  background: #0d1022;
+  color: var(--bola-text-primary);
+  min-height: 260px;
+  height: 260px;
+  overflow: hidden;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  line-height: 1.6;
+  border-color: rgba(217,180,90,0.2);
+}
+.bola-scope .explanation-display {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid rgba(217,180,90,0.2);
+  border-radius: 10px;
+  background: #0d1022;
+  color: var(--bola-text-primary);
+  min-height: 260px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.bola-scope .explanation-display:empty::before { content: attr(data-placeholder); color: var(--bola-text-muted); }
+.bola-scope .explanation-display .match-header {
+  color: var(--lime);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 10px rgba(219,245,0,0.25);
+}
+</style>
+
 </head>
 <body>
 
 <div class="sidebar">
-  <div class="brand"><span class="smb">SMB</span> <span class="group">GROUP</span></div>
+  <div class="brand"><span class="smb">SMB</span> <span class="group">GROUP</span> <span class="brand-tag">By GOLAN</span></div>
   <hr class="brand-divider">
   <div class="menu-caption">MENU DASBOARD</div>
   <div class="nav-item active" id="navPrediksi">
@@ -487,7 +816,7 @@
         <rect x="13" y="13" width="8" height="8" rx="2" fill="currentColor"/>
       </svg>
     </span>
-    <span class="label">PERHITUNGAN<br>TOGEL PNG</span>
+    <span class="label label-sm">PERHITUNGAN TOGEL PNG</span>
   </div>
   <div class="nav-item" id="navIdn">
     <span class="icon">
@@ -496,7 +825,17 @@
         <path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       </svg>
     </span>
-    <span class="label">PERHITUNGAN<br>TOGEL IDN</span>
+    <span class="label label-sm">PERHITUNGAN TOGEL IDN</span>
+  </div>
+  <div class="nav-item" id="navBola">
+    <span class="icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 7l2.9 2.1-1.1 3.4H10.2l-1.1-3.4L12 7z" fill="currentColor"/>
+        <path d="M12 3v4M12 17v4M4.2 9l3.9 1.5M15.9 10.5L19.8 9M6.5 17.5l2.6-3.2M14.9 14.3l2.6 3.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="label label-sm">PERHITUNGAN BOLA PNG</span>
   </div>
 </div>
 
@@ -549,6 +888,89 @@
     </div>
 
     <div id="contentIdn"></div>
+  </div>
+</div>
+
+<div id="pageBola" style="display:none;">
+  <div class="topbar">
+    <h1>PERHITUNGAN HADIAH BOLA PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH BOLA PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH BOLA PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH BOLA PNG</h1>
+  </div>
+
+  <div class="panel" style="padding:0; background:transparent;">
+    <div class="bola-scope">
+      <div class="container">
+        <span class="eyebrow">LAPAK GOLAN</span>
+        <h2>KALKULATOR BOLA PNG</h2>
+
+        <!-- Form Input -->
+        <form id="betForm" onsubmit="hitungBetting(event)">
+          <div class="form-row">
+            <div class="form-group form-col-details">
+              <label>Details Pertandingan:</label>
+              <textarea id="details" required placeholder="Masukkan detail taruhan di sini..."></textarea>
+            </div>
+
+            <div class="form-col-side">
+              <div class="form-group">
+                <label>Stake:</label>
+                <input type="number" step="any" id="stake" required placeholder="Contoh: 64000.00">
+              </div>
+
+              <div class="form-group">
+                <label>Odds:</label>
+                <input type="number" step="any" id="odds" required placeholder="Contoh: 1.85">
+              </div>
+            </div>
+          </div>
+
+          <button type="submit">Proses &amp; Hitung</button>
+        </form>
+
+        <div id="result-section">
+
+          <h3>Hasil Kalkulasi Dashboard:</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Details</th>
+                  <th>Total Kemenangan</th>
+                  <th>Actual Stake</th>
+                  <th>Stake</th>
+                  <th>Win &amp; Lose</th>
+                  <th>Odds</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><pre id="res-details" style="margin:0; font-family:inherit; white-space: pre-wrap;"></pre></td>
+                  <td id="res-total-kemenangan"></td>
+                  <td id="res-actual-stake"></td>
+                  <td id="res-stake"></td>
+                  <td id="res-win-lose"></td>
+                  <td id="res-odds"></td>
+                  <td id="res-status"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Kotak Penjelasan -->
+          <div class="form-group explanation-box">
+            <div class="explanation-col">
+              <label for="res-explanation">Penjelasan:</label>
+              <div id="res-explanation" class="explanation-display" data-placeholder="Penjelasan kalkulasi akan muncul otomatis di sini..."></div>
+            </div>
+            <div class="explanation-col">
+              <label for="res-conclusion">Kesimpulan:</label>
+              <textarea id="res-conclusion" placeholder="Kesimpulan status taruhan akan muncul otomatis di sini..."></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1893,12 +2315,14 @@
     var navs = {
       prediksi: document.getElementById("navPrediksi"),
       png: document.getElementById("navPng"),
-      idn: document.getElementById("navIdn")
+      idn: document.getElementById("navIdn"),
+      bola: document.getElementById("navBola")
     };
     var pages = {
       prediksi: document.getElementById("pagePrediksi"),
       png: document.getElementById("pagePng"),
-      idn: document.getElementById("pageIdn")
+      idn: document.getElementById("pageIdn"),
+      bola: document.getElementById("pageBola")
     };
 
     function showPage(page){
@@ -1911,6 +2335,7 @@
     navs.prediksi.addEventListener("click", function(){ showPage("prediksi"); });
     navs.png.addEventListener("click", function(){ showPage("png"); });
     navs.idn.addEventListener("click", function(){ showPage("idn"); });
+    navs.bola.addEventListener("click", function(){ showPage("bola"); });
 
     showPage("prediksi");
   }
@@ -1952,6 +2377,934 @@
   });
   idnCalculator.init();
 
+})();
+</script>
+
+<script>
+// ---------------------------------------------------------------------
+// Kalkulator Perhitungan Bola PNG (menu PERHITUNGAN BOLA PNG)
+// Dibungkus IIFE tersendiri agar variabel/fungsi di dalamnya tidak
+// bentrok dengan script menu Prediksi, Perhitungan Togel PNG, maupun
+// Perhitungan Togel IDN yang sudah ada di atas.
+// ---------------------------------------------------------------------
+(function(){
+function formatNumber(num) {
+    return Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// Meng-escape karakter HTML agar teks (termasuk nama tim hasil input bebas
+// pengguna) aman ditampilkan lewat innerHTML, tidak dieksekusi sebagai markup.
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+// Menyorot baris "Pertandingan: ..." / "Pertandingan 1: ..." (header tiap leg)
+// dengan warna & ukuran berbeda agar mudah dibedakan dari baris detail lainnya.
+function renderExplanationHtml(text) {
+    return text.split("\n").map(function(line) {
+        let escaped = escapeHtml(line);
+        if (/^Pertandingan(\s+\d+)?\s*:/.test(line)) {
+            return '<span class="match-header">' + escaped + '</span>';
+        }
+        return escaped;
+    }).join("\n");
+}
+
+// ============================================================
+// NORMALISASI TEKS INPUT
+// ============================================================
+// Slip taruhan sering di-copy-paste dari berbagai sumber yang memakai
+// karakter berbeda untuk hal yang sama secara visual: en-dash/em-dash/
+// minus-sign unicode alih-alih hyphen biasa, non-breaking space, koma
+// sebagai desimal, atau spasi di antara tanda minus dan angkanya.
+// Tanpa normalisasi ini, tanda "-" pada handicap (mis. -0.75) bisa
+// hilang saat parsing dan mengubah total hasil perhitungan.
+// ============================================================
+function normalizeBetText(text) {
+    if (!text) return text;
+    return text
+        .replace(/\u00A0/g, ' ')                          // non-breaking space -> spasi biasa
+        .replace(/[\u2010\u2011\u2012\u2013\u2014\u2212]/g, '-') // varian dash/minus unicode -> hyphen biasa
+        .replace(/([+-])\s+(?=\d)/g, '$1')                // "- 0.75" -> "-0.75"
+        .replace(/(\d),(\d)/g, '$1.$2');                  // "0,75" -> "0.75" (format desimal koma)
+}
+
+// ============================================================
+// AUTO-GROW TEXTAREA: tinggi otomatis menyesuaikan isi konten
+// ============================================================
+function autoGrowTextarea(el, minHeight) {
+    if (!el) return;
+    el.style.height = 'auto';
+    let newHeight = el.scrollHeight;
+    if (minHeight && newHeight < minHeight) newHeight = minHeight;
+    el.style.height = newHeight + 'px';
+}
+
+
+
+// ============================================================
+// BAGIAN 1: PARSER SLIP TARUHAN MULTI-LEG (PARLAY / MIX PARLAY)
+// ============================================================
+// Details Pertandingan bisa berisi satu atau beberapa pertandingan
+// yang dipisah baris kosong, masing-masing dengan format seperti:
+//
+//   Soccer
+//   Genoa vs AC Trento
+//   ...
+//   Bet: Both/One/Neither Team To Score both teams to score 0 @2.63
+//   Full time result: 2:1
+//
+// Fungsi di bawah ini mem-parsing tiap leg, membandingkan pilihan
+// taruhan (Bet:) dengan hasil akhir (Full time result), lalu
+// menentukan MENANG/KALAH per leg secara otomatis dan akurat —
+// bukan menebak dari kata kunci umum seperti versi sebelumnya.
+
+function parseBetDescription(desc) {
+    desc = desc.toLowerCase();
+    if (/\bhandicap\b/.test(desc) || /\bhdp\b/.test(desc) || /\basian\s*handicap\b/.test(desc)) {
+        let teamRef = desc.replace(/asian\s*handicap|handicap|hdp/g, '').trim();
+        return { market: 'handicap', selection: teamRef };
+    }
+    if (desc.includes('draw no bet') || /\bdnb\b/.test(desc)) {
+        let teamRef = desc.replace(/draw no bet|dnb/g, '').trim();
+        let selection = null;
+        if (/\bhome\b/.test(teamRef)) selection = 'home';
+        else if (/\baway\b/.test(teamRef)) selection = 'away';
+        else selection = teamRef;
+        return { market: 'dnb', selection: selection };
+    }
+    if (desc.includes('double chance')) {
+        let selection = null;
+        if (/\b1x\b/.test(desc) || desc.includes('home/draw') || desc.includes('home or draw') || desc.includes('draw/home')) selection = '1x';
+        else if (/\bx2\b/.test(desc) || desc.includes('away/draw') || desc.includes('draw or away') || desc.includes('draw/away')) selection = 'x2';
+        else if (/\b12\b/.test(desc) || desc.includes('home/away') || desc.includes('home or away') || desc.includes('away/home')) selection = '12';
+        return { market: 'doublechance', selection: selection };
+    }
+    if (desc.includes('correct score')) {
+        let m = desc.match(/(\d+)\s*[-:]\s*(\d+)/);
+        return { market: 'correctscore', selection: m ? { h: parseInt(m[1], 10), a: parseInt(m[2], 10) } : null };
+    }
+    if (desc.includes('1x2')) {
+        let selection = null;
+        if (/\bhome\b/.test(desc)) selection = 'home';
+        else if (/\baway\b/.test(desc)) selection = 'away';
+        else if (/\bdraw\b/.test(desc)) selection = 'draw';
+        return { market: '1x2', selection: selection };
+    }
+    if (/\bover\b/.test(desc) || /\bunder\b/.test(desc)) {
+        // Teks sering memuat nama pasaran "Over/Under" SEKALIGUS pilihan
+        // sebenarnya, mis. "Over/Under under 2.75". Ambil kata over/under
+        // TERAKHIR (paling dekat ke angka garis) karena itu pilihan asli,
+        // bukan sekadar kata pertama yang ditemukan.
+        let matches = desc.match(/\b(over|under)\b/g);
+        let selection = matches[matches.length - 1];
+        return { market: 'ou', selection: selection };
+    }
+    if (desc.includes('both teams to score') || desc.includes('btts')) {
+        return { market: 'btts', selection: 'both' };
+    }
+    if (desc.includes('neither')) {
+        return { market: 'btts', selection: 'neither' };
+    }
+    if (/\bone team\b/.test(desc)) {
+        return { market: 'btts', selection: 'one' };
+    }
+    if (/\bodd\b/.test(desc) && !/\bodds\b/.test(desc)) {
+        return { market: 'oddeven', selection: 'odd' };
+    }
+    if (/\beven\b/.test(desc)) {
+        return { market: 'oddeven', selection: 'even' };
+    }
+    return { market: 'unknown', selection: null };
+}
+
+// ============================================================
+// NOTASI "VOOR" (cara baca pasaran handicap ala bandar Indonesia)
+// ============================================================
+// Bandar Indonesia sering menulis garis quarter sebagai RENTANG dua
+// angka (mis. "0.5-1" = Voor 3/4) alih-alih desimal langsung (0.75).
+// Referensi lengkap:
+//   0-0.5    = Voor 1/4      |  1-1.5   = Voor 1 1/4
+//   0.5      = Voor 1/2      |  1.5     = Voor 1 1/2
+//   0.5-1    = Voor 3/4      |  1.5-2   = Voor 1 3/4
+//   2        = Voor 2        |  2-2.5   = Voor 2 1/4
+// Fungsi di bawah ini mengonversi pecahan/campuran ("3/4", "1 1/4")
+// menjadi desimal, dipakai baik oleh parser slip taruhan maupun oleh
+// kalkulator konversi cepat di halaman.
+// ============================================================
+function parseVoorFractionToDecimal(text) {
+    text = text.trim();
+    let mixedMatch = text.match(/^(\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+    if (mixedMatch) return parseInt(mixedMatch[1], 10) + parseInt(mixedMatch[2], 10) / parseInt(mixedMatch[3], 10);
+    let fracMatch = text.match(/^(\d+)\s*\/\s*(\d+)$/);
+    if (fracMatch) return parseInt(fracMatch[1], 10) / parseInt(fracMatch[2], 10);
+    let wholeMatch = text.match(/^(\d+(?:\.\d+)?)$/);
+    if (wholeMatch) return parseFloat(wholeMatch[1]);
+    return null;
+}
+
+// Format angka polos tanpa desimal berlebih: 0.5 -> "0.5", 1 -> "1", 1.5 -> "1.5"
+function fmtPlain(n) {
+    return (Math.round(n * 100) / 100).toString();
+}
+
+// Konversi besaran (magnitude, tanpa tanda +/-) desimal handicap menjadi
+// info notasi Voor + rentang + (jika quarter) pemecahan 2 sub-garis.
+function decimalToVoorInfo(magnitude) {
+    magnitude = Math.abs(magnitude);
+    let quarterUnits = Math.round(magnitude * 4);
+    let isQuarter = quarterUnits % 2 !== 0;
+    let wholeUnits = Math.floor(quarterUnits / 4);
+    let remUnits = quarterUnits % 4;
+    let fracLabel = remUnits === 1 ? '1/4' : remUnits === 2 ? '1/2' : remUnits === 3 ? '3/4' : '';
+    let voorLabel = 'Voor ' + (wholeUnits > 0 ? (wholeUnits + (fracLabel ? ' ' + fracLabel : '')) : (fracLabel || '0'));
+    let result = { decimal: magnitude, voorLabel: voorLabel, isQuarter: isQuarter, rangeLabel: null, subLines: null };
+    if (isQuarter) {
+        let lower = (quarterUnits - 1) / 4;
+        let upper = (quarterUnits + 1) / 4;
+        result.rangeLabel = fmtPlain(lower) + '-' + fmtPlain(upper);
+        result.subLines = [lower, upper];
+    }
+    return result;
+}
+
+function parseBetLine(betLineRaw) {
+    let oddsMatch = betLineRaw.match(/@\s*([\d.]+)\s*$/);
+    let odds = oddsMatch ? parseFloat(oddsMatch[1]) : NaN;
+    let withoutOdds = betLineRaw.replace(/@\s*[\d.]+\s*$/, '').trim();
+
+    // Deteksi & lepas penanda BABAK (1H/2H/FT) di AWAL teks bet, SEBELUM
+    // parsing pasaran & tim. Ini WAJIB dilakukan lebih dulu karena kalau
+    // dibiarkan menempel, teks "1H"/"2H" akan ikut tercampur ke pilihan
+    // tim (mis. pada Handicap/Draw No Bet: "1H home" tidak akan cocok
+    // dengan nama tim manapun) sehingga sistem gagal mengenali sisi tim
+    // dan salah menandai taruhan sebagai "perlu cek manual".
+    let period = 'FT';
+    let periodMatch = withoutOdds.match(/^\s*(1h|1st\s*half|first\s*half|babak\s*1|babak\s*pertama|2h|2nd\s*half|second\s*half|babak\s*2|babak\s*kedua|ft|full\s*time|fulltime)\b\.?\s*/i);
+    if (periodMatch) {
+        let p = periodMatch[1].toLowerCase().replace(/\s+/g, '');
+        if (p === '1h' || p === '1sthalf' || p === 'firsthalf' || p === 'babak1' || p === 'babakpertama') period = '1H';
+        else if (p === '2h' || p === '2ndhalf' || p === 'secondhalf' || p === 'babak2' || p === 'babakkedua') period = '2H';
+        else period = 'FT';
+        withoutOdds = withoutOdds.slice(periodMatch[0].length).trim();
+    }
+
+    // Deteksi dulu jenis pasarannya dari teks UTUH (sebelum angka garis dilepas).
+    // Ini penting karena beberapa pasaran memakai kode yang mengandung angka
+    // (mis. "1X"/"X2"/"12" pada Double Chance, atau "2-0" pada Correct Score) —
+    // kalau langsung dipotong pakai logika angka-garis Handicap/Over-Under,
+    // angka-angka itu akan salah kepotong dan pasarannya jadi tidak terbaca.
+    let preParsed = parseBetDescription(withoutOdds);
+    if (preParsed.market !== 'handicap' && preParsed.market !== 'ou') {
+        return {
+            odds: odds,
+            line: null,
+            market: preParsed.market,
+            selection: preParsed.selection,
+            description: withoutOdds,
+            period: period
+        };
+    }
+
+    // Lepas tanda kurung pembungkus angka garis, mis. "(-0.75)" -> "-0.75"
+    withoutOdds = withoutOdds.replace(/\(\s*([+-]?[\d.]+)\s*\)\s*$/, '$1').trim();
+
+    let line = null, withoutLine = withoutOdds;
+
+    // --- Notasi "Voor" eksplisit, mis. "Voor 3/4", "Voor 1 1/4", "Voor 2" ---
+    // Secara konvensi, "Voor" berarti tim yang disebut MEMBERI handicap
+    // (dialah favoritnya), sehingga garisnya selalu NEGATIF untuk tim itu.
+    let voorMatch = withoutOdds.match(/voor\s+([\d\s\/]+?)\s*$/i);
+    if (voorMatch) {
+        let magnitude = parseVoorFractionToDecimal(voorMatch[1].trim());
+        if (magnitude !== null) {
+            line = -magnitude;
+            withoutLine = withoutOdds.slice(0, voorMatch.index).trim();
+        }
+    }
+
+    // --- Notasi RENTANG ala bandar Indonesia, mis. "0.5-1" (= Voor 3/4),
+    // boleh diberi tanda +/- di depan, mis. "-0.5-1" atau "+0.5-1" ---
+    if (line === null) {
+        let rangeMatch = withoutOdds.match(/([+-]?)\s*(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)\s*$/);
+        if (rangeMatch) {
+            let a = parseFloat(rangeMatch[2]), b = parseFloat(rangeMatch[3]);
+            if (Math.abs(Math.abs(b - a) - 0.5) < 0.001) {
+                let sign = rangeMatch[1] === '-' ? -1 : 1;
+                line = sign * ((a + b) / 2);
+                withoutLine = withoutOdds.slice(0, rangeMatch.index).trim();
+            }
+        }
+    }
+
+    // --- Fallback: notasi desimal biasa, mis. "-0.75", "1.5" (seperti semula) ---
+    if (line === null) {
+        // Perhatikan tanda +/- di depan angka garis (penting untuk Handicap, mis. -0.75)
+        let lineMatch = withoutOdds.match(/([+-]?[\d.]+)\s*$/);
+        line = lineMatch ? parseFloat(lineMatch[1]) : null;
+        withoutLine = lineMatch ? withoutOdds.slice(0, lineMatch.index).trim() : withoutOdds;
+    }
+
+    let parsed = parseBetDescription(withoutLine);
+    return {
+        odds: odds,
+        line: line,
+        market: parsed.market,
+        selection: parsed.selection,
+        description: withoutLine,
+        period: period
+    };
+}
+
+// ------------------------------------------------------------
+// Asian Handicap: mendukung garis penuh (-1, 0), setengah (-0.5)
+// maupun quarter (-0.75, -0.25, dst) dengan pemecahan menjadi
+// dua sub-garis @ setengah stake masing-masing (standar industri).
+// Mengembalikan factor: 1 = menang penuh, 0.5 = menang setengah,
+// 0 = push (stake kembali), -0.5 = kalah setengah, -1 = kalah penuh.
+// ------------------------------------------------------------
+function asianHandicapFactor(line, teamGoals, oppGoals) {
+    function evalHalf(l) {
+        let diff = (teamGoals - oppGoals) + l;
+        if (diff > 0) return 1;
+        if (diff === 0) return 0;
+        return -1;
+    }
+    let quarterUnits = Math.round(line * 4);
+    let isQuarterLine = quarterUnits % 2 !== 0;
+    if (isQuarterLine) {
+        let lower = (quarterUnits - 1) / 4;
+        let upper = (quarterUnits + 1) / 4;
+        return (evalHalf(lower) + evalHalf(upper)) / 2;
+    }
+    return evalHalf(line);
+}
+
+// Sama seperti asianHandicapFactor, tapi juga mengembalikan uraian
+// langkah-demi-langkah dalam Bahasa Indonesia untuk ditampilkan di
+// kotak Penjelasan (tanpa perlu API AI eksternal).
+function asianHandicapReasoning(line, teamGoals, oppGoals, teamLabel, oppLabel) {
+    function evalHalf(l) {
+        let diff = (teamGoals - oppGoals) + l;
+        let hasil = diff > 0 ? 'dinyatakan MENANG' : (diff === 0 ? 'dinyatakan SERI / DRAW (stake dikembalikan)' : 'dinyatakan KALAH');
+        let tanda = l >= 0 ? '+' : '';
+        return {
+            factor: diff > 0 ? 1 : (diff === 0 ? 0 : -1),
+            text: "      Selisih skor akhir (" + teamLabel + " " + teamGoals + " - " + oppGoals + " " + oppLabel + ") terhadap garis Handicap " + tanda + formatNumber(l) + " menghasilkan margin " + formatNumber(diff) + ", sehingga bagian taruhan ini " + hasil + "."
+        };
+    }
+    let quarterUnits = Math.round(line * 4);
+    let isQuarterLine = quarterUnits % 2 !== 0;
+    let voorInfo = decimalToVoorInfo(line);
+    let lines = [];
+    let factor;
+    if (isQuarterLine) {
+        let lower = (quarterUnits - 1) / 4;
+        let upper = (quarterUnits + 1) / 4;
+        let a = evalHalf(lower), b = evalHalf(upper);
+        factor = (a.factor + b.factor) / 2;
+        lines.push("Pasaran Handicap " + formatNumber(line) + " (" + voorInfo.voorLabel + ") merupakan garis quarter. Sesuai ketentuan baku Asian Handicap, taruhan pada garis quarter dibagi menjadi dua bagian dengan nilai stake yang sama besar:");
+        lines.push("   Bagian pertama, dengan garis Handicap " + (lower >= 0 ? '+' : '') + formatNumber(lower) + ":");
+        lines.push(a.text);
+        lines.push("   Bagian kedua, dengan garis Handicap " + (upper >= 0 ? '+' : '') + formatNumber(upper) + ":");
+        lines.push(b.text);
+        lines.push("Hasil akhir taruhan merupakan rata-rata dari kedua bagian tersebut, sehingga dinyatakan " + statusLabelForFactorText(factor) + ".");
+    } else {
+        let a = evalHalf(line);
+        factor = a.factor;
+        lines.push("Pasaran Handicap " + (line >= 0 ? '+' : '') + formatNumber(line) + " (" + voorInfo.voorLabel + ") merupakan garis penuh atau setengah, sehingga penilaian dilakukan secara langsung tanpa pembagian bagian:");
+        lines.push(a.text);
+        lines.push("Dengan demikian, hasil taruhan ini dinyatakan " + statusLabelForFactorText(factor) + ".");
+    }
+    return { factor: factor, reasoning: lines.join("\n") };
+}
+
+// ------------------------------------------------------------
+// Over/Under: sama seperti Asian Handicap, garis total gol juga bisa
+// berupa garis QUARTER (mis. Over/Under 2.25, 2.75) yang di industri
+// dipecah jadi 2 sub-taruhan @ setengah stake masing-masing, sehingga
+// bisa menghasilkan MENANG SETENGAH atau KALAH SETENGAH — bukan cuma
+// menang/push/kalah penuh seperti garis biasa. Tanpa pemecahan ini,
+// garis quarter akan salah dihitung sebagai menang/kalah PENUH.
+// Mengembalikan factor: 1 = menang penuh, 0.5 = menang setengah,
+// 0 = push, -0.5 = kalah setengah, -1 = kalah penuh.
+// ------------------------------------------------------------
+function overUnderReasoning(line, total, selection) {
+    function evalHalf(l) {
+        let isOver = selection === 'over';
+        let f = isOver ? (total > l ? 1 : (total === l ? 0 : -1))
+                       : (total < l ? 1 : (total === l ? 0 : -1));
+        let hasil = f === 1 ? 'dinyatakan MENANG' : (f === 0 ? 'dinyatakan SERI / DRAW (stake dikembalikan)' : 'dinyatakan KALAH');
+        return {
+            factor: f,
+            text: "      Total gol pertandingan (" + total + ") dibandingkan dengan garis " + (isOver ? 'Over ' : 'Under ') + formatNumber(l) + ", sehingga bagian taruhan ini " + hasil + "."
+        };
+    }
+    let quarterUnits = Math.round(line * 4);
+    let isQuarterLine = quarterUnits % 2 !== 0;
+    let voorInfo = decimalToVoorInfo(line);
+    let lines = [];
+    let factor;
+    let selLabel = selection === 'over' ? 'Over' : 'Under';
+    if (isQuarterLine) {
+        let lower = (quarterUnits - 1) / 4;
+        let upper = (quarterUnits + 1) / 4;
+        let a = evalHalf(lower), b = evalHalf(upper);
+        factor = (a.factor + b.factor) / 2;
+        lines.push("Pasaran " + selLabel + " " + formatNumber(line) + " (" + voorInfo.voorLabel + ") merupakan garis quarter. Sesuai ketentuan baku Over/Under, taruhan pada garis quarter dibagi menjadi dua bagian dengan nilai stake yang sama besar:");
+        lines.push("   Bagian pertama, dengan garis " + selLabel + " " + formatNumber(lower) + ":");
+        lines.push(a.text);
+        lines.push("   Bagian kedua, dengan garis " + selLabel + " " + formatNumber(upper) + ":");
+        lines.push(b.text);
+        lines.push("Hasil akhir taruhan merupakan rata-rata dari kedua bagian tersebut, sehingga dinyatakan " + statusLabelForFactorText(factor) + ".");
+    } else {
+        let a = evalHalf(line);
+        factor = a.factor;
+        lines.push("Pasaran " + selLabel + " " + formatNumber(line) + " (" + voorInfo.voorLabel + ") merupakan garis penuh atau setengah, sehingga penilaian dilakukan secara langsung tanpa pembagian bagian:");
+        lines.push(a.text);
+        lines.push("Dengan demikian, hasil taruhan ini dinyatakan " + statusLabelForFactorText(factor) + ".");
+    }
+    return { factor: factor, reasoning: lines.join("\n") };
+}
+
+function statusLabelForFactorText(factor) {
+    if (factor === 1) return 'MENANG PENUH';
+    if (factor === 0.5) return 'MENANG SETENGAH (Half Win)';
+    if (factor === 0) return 'SERI / DRAW (stake dikembalikan)';
+    if (factor === -0.5) return 'KALAH SETENGAH (Half Lose)';
+    return 'KALAH PENUH';
+}
+
+function factorToResult(factor) {
+    if (factor === 1) return 'win';
+    if (factor === 0.5) return 'half-win';
+    if (factor === 0) return 'push';
+    if (factor === -0.5) return 'half-lose';
+    return 'lose';
+}
+
+function determineLegResult(betInfo, homeGoals, awayGoals) {
+    let market = betInfo.market, selection = betInfo.selection, line = betInfo.line;
+    if (market === 'handicap') {
+        if (!betInfo.side || line === null || isNaN(line)) return { result: 'unknown', factor: null, reasoning: null };
+        let teamGoals = betInfo.side === 'home' ? homeGoals : awayGoals;
+        let oppGoals = betInfo.side === 'home' ? awayGoals : homeGoals;
+        let teamLabel = betInfo.side === 'home' ? betInfo.teamHome : betInfo.teamAway;
+        let oppLabel = betInfo.side === 'home' ? betInfo.teamAway : betInfo.teamHome;
+        let r = asianHandicapReasoning(line, teamGoals, oppGoals, teamLabel, oppLabel);
+        return { result: factorToResult(r.factor), factor: r.factor, reasoning: r.reasoning };
+    }
+    if (market === '1x2') {
+        if (selection === 'home') return { result: homeGoals > awayGoals ? 'win' : 'lose', factor: homeGoals > awayGoals ? 1 : -1, reasoning: "Pilihan Home Menang. Skor akhir " + homeGoals + " - " + awayGoals + " -> " + (homeGoals > awayGoals ? "Home benar menang." : "Home tidak menang.") };
+        if (selection === 'away') return { result: awayGoals > homeGoals ? 'win' : 'lose', factor: awayGoals > homeGoals ? 1 : -1, reasoning: "Pilihan Away Menang. Skor akhir " + homeGoals + " - " + awayGoals + " -> " + (awayGoals > homeGoals ? "Away benar menang." : "Away tidak menang.") };
+        if (selection === 'draw') return { result: homeGoals === awayGoals ? 'win' : 'lose', factor: homeGoals === awayGoals ? 1 : -1, reasoning: "Pilihan Seri (Draw). Skor akhir " + homeGoals + " - " + awayGoals + " -> " + (homeGoals === awayGoals ? "Benar seri." : "Tidak seri.") };
+    }
+    if (market === 'ou') {
+        let total = homeGoals + awayGoals;
+        if (selection === 'over' || selection === 'under') {
+            let r = overUnderReasoning(line, total, selection);
+            return { result: factorToResult(r.factor), factor: r.factor, reasoning: r.reasoning };
+        }
+    }
+    if (market === 'btts') {
+        if (selection === 'both') { let f = (homeGoals > 0 && awayGoals > 0) ? 1 : -1; return { result: factorToResult(f), factor: f, reasoning: "Both Teams To Score - Ya. Skor " + homeGoals + "-" + awayGoals + " -> " + (f === 1 ? "kedua tim mencetak gol, MENANG." : "tidak keduanya mencetak gol, KALAH.") }; }
+        if (selection === 'neither') { let f = (homeGoals === 0 && awayGoals === 0) ? 1 : -1; return { result: factorToResult(f), factor: f, reasoning: "Both Teams To Score - Tidak. Skor " + homeGoals + "-" + awayGoals + " -> " + (f === 1 ? "tidak ada tim mencetak gol, MENANG." : "ada tim yang mencetak gol, KALAH.") }; }
+        if (selection === 'one') { let f = ((homeGoals > 0) !== (awayGoals > 0)) ? 1 : -1; return { result: factorToResult(f), factor: f, reasoning: "Both Teams To Score - Hanya Satu. Skor " + homeGoals + "-" + awayGoals + " -> " + (f === 1 ? "hanya satu tim mencetak gol, MENANG." : "KALAH.") }; }
+    }
+    if (market === 'dnb') {
+        if (homeGoals === awayGoals) {
+            return { result: 'push', factor: 0, reasoning: "Draw No Bet. Skor akhir seri (" + homeGoals + "-" + awayGoals + ") -> SERI / DRAW, seluruh Stake dikembalikan." };
+        }
+        if (!betInfo.side) return { result: 'unknown', factor: null, reasoning: null };
+        let teamLabel = betInfo.side === 'home' ? betInfo.teamHome : betInfo.teamAway;
+        let teamWon = betInfo.side === 'home' ? homeGoals > awayGoals : awayGoals > homeGoals;
+        let f = teamWon ? 1 : -1;
+        return { result: factorToResult(f), factor: f, reasoning: "Draw No Bet - " + teamLabel + ". Skor akhir " + homeGoals + "-" + awayGoals + " -> " + (f === 1 ? "MENANG." : "KALAH.") };
+    }
+    if (market === 'doublechance') {
+        let f;
+        if (selection === '1x') f = (homeGoals >= awayGoals) ? 1 : -1;
+        else if (selection === 'x2') f = (awayGoals >= homeGoals) ? 1 : -1;
+        else if (selection === '12') f = (homeGoals !== awayGoals) ? 1 : -1;
+        else return { result: 'unknown', factor: null, reasoning: null };
+        let label = selection === '1x' ? 'Home/Draw (1X)' : selection === 'x2' ? 'Away/Draw (X2)' : 'Home/Away (12)';
+        return { result: factorToResult(f), factor: f, reasoning: "Double Chance - " + label + ". Skor akhir " + homeGoals + "-" + awayGoals + " -> " + (f === 1 ? "MENANG." : "KALAH.") };
+    }
+    if (market === 'oddeven') {
+        let total = homeGoals + awayGoals;
+        let isOdd = total % 2 === 1;
+        let f = ((selection === 'odd' && isOdd) || (selection === 'even' && !isOdd)) ? 1 : -1;
+        return { result: factorToResult(f), factor: f, reasoning: "Total gol " + total + " adalah " + (isOdd ? "GANJIL" : "GENAP") + ", pilihan " + selection.toUpperCase() + " -> " + (f === 1 ? "MENANG." : "KALAH.") };
+    }
+    if (market === 'correctscore') {
+        if (!selection) return { result: 'unknown', factor: null, reasoning: null };
+        let f = (selection.h === homeGoals && selection.a === awayGoals) ? 1 : -1;
+        return { result: factorToResult(f), factor: f, reasoning: "Tebakan skor " + selection.h + "-" + selection.a + " dibanding skor akhir " + homeGoals + "-" + awayGoals + " -> " + (f === 1 ? "MENANG (skor tepat sama)." : "KALAH (skor tidak sama persis).") };
+    }
+    return { result: 'unknown', factor: null, reasoning: null };
+}
+
+function describeMarket(betInfo) {
+    let periodPrefix = (betInfo.period === '1H') ? '[1H] ' : (betInfo.period === '2H') ? '[2H] ' : '';
+    return periodPrefix + describeMarketBase(betInfo);
+}
+
+function describeMarketBase(betInfo) {
+    switch (betInfo.market) {
+        case 'handicap': {
+            let sideLabel = betInfo.side === 'home' ? betInfo.teamHome :
+                            betInfo.side === 'away' ? betInfo.teamAway :
+                            '(tim tidak cocok dengan Home/Away, mohon cek manual: "' + betInfo.selection + '")';
+            let lineLabel = (betInfo.line > 0 ? '+' : '') + formatNumber(betInfo.line);
+            let voorLabel = decimalToVoorInfo(betInfo.line).voorLabel;
+            return 'Asian Handicap - Tim: ' + sideLabel + ' (' + lineLabel + ' / ' + voorLabel + ')';
+        }
+        case '1x2':
+            return 'FT 1X2 - Pilihan: ' +
+                (betInfo.selection === 'home' ? 'Home Menang' :
+                 betInfo.selection === 'away' ? 'Away Menang' :
+                 betInfo.selection === 'draw' ? 'Seri (Draw)' : 'tidak dikenali');
+        case 'ou':
+            return 'Over/Under - Pilihan: ' + (betInfo.selection === 'over' ? 'Over ' : 'Under ') + formatNumber(betInfo.line) + ' gol (' + decimalToVoorInfo(betInfo.line).voorLabel + ')';
+        case 'btts':
+            return 'Both Teams To Score - Pilihan: ' +
+                (betInfo.selection === 'both' ? 'Ya, kedua tim mencetak gol' :
+                 betInfo.selection === 'neither' ? 'Tidak ada tim mencetak gol' :
+                 betInfo.selection === 'one' ? 'Hanya satu tim mencetak gol' : 'tidak dikenali');
+        case 'dnb': {
+            let sideLabel = betInfo.side === 'home' ? betInfo.teamHome :
+                            betInfo.side === 'away' ? betInfo.teamAway :
+                            '(tim tidak cocok dengan Home/Away, mohon cek manual: "' + betInfo.selection + '")';
+            return 'Draw No Bet - Tim: ' + sideLabel;
+        }
+        case 'doublechance':
+            return 'Double Chance - Pilihan: ' +
+                (betInfo.selection === '1x' ? 'Home/Draw (1X)' :
+                 betInfo.selection === 'x2' ? 'Away/Draw (X2)' :
+                 betInfo.selection === '12' ? 'Home/Away (12)' : 'tidak dikenali');
+        case 'oddeven':
+            return 'Odd/Even Total Gol - Pilihan: ' + (betInfo.selection === 'odd' ? 'Ganjil (Odd)' : 'Genap (Even)');
+        case 'correctscore':
+            return 'Correct Score - Tebakan: ' + (betInfo.selection ? (betInfo.selection.h + '-' + betInfo.selection.a) : 'tidak dikenali');
+        default:
+            return 'Pasaran tidak dikenali (' + betInfo.description + ')';
+    }
+}
+
+function parseLeg(block) {
+    let teamMatch = block.match(/^(.+?)\s+vs\.?\s+(.+)$/im);
+    let betMatch = block.match(/bet:\s*(.+)/i);
+    let ftMatch = block.match(/full\s*time\s*result:\s*(\d+)\s*:\s*(\d+)/i);
+    let htMatch = block.match(/half\s*time\s*result:\s*(\d+)\s*:\s*(\d+)/i);
+    let liveMatch = block.match(/live\s*score:\s*(\d+)\s*:\s*(\d+)/i);
+    let typeMatch = block.match(/type:\s*(.+)/i);
+    if (!betMatch || !ftMatch) return null;
+
+    let betInfo = parseBetLine(betMatch[1].trim());
+    let homeGoals = parseInt(ftMatch[1], 10);
+    let awayGoals = parseInt(ftMatch[2], 10);
+    let htHomeGoals = htMatch ? parseInt(htMatch[1], 10) : null;
+    let htAwayGoals = htMatch ? parseInt(htMatch[2], 10) : null;
+    let liveHomeGoals = liveMatch ? parseInt(liveMatch[1], 10) : 0;
+    let liveAwayGoals = liveMatch ? parseInt(liveMatch[2], 10) : 0;
+    let oddsType = typeMatch ? typeMatch[1].trim() : null;
+    let teamHome = teamMatch ? teamMatch[1].trim() : '(tim home)';
+    let teamAway = teamMatch ? teamMatch[2].trim() : '(tim away)';
+
+    if (betInfo.market === 'handicap' || betInfo.market === 'dnb') {
+        let sel = betInfo.selection;
+        let homeLower = teamHome.toLowerCase();
+        let awayLower = teamAway.toLowerCase();
+        if (sel === 'home') betInfo.side = 'home';
+        else if (sel === 'away') betInfo.side = 'away';
+        else if (sel && (homeLower.includes(sel) || sel.includes(homeLower))) betInfo.side = 'home';
+        else if (sel && (awayLower.includes(sel) || sel.includes(awayLower))) betInfo.side = 'away';
+        else betInfo.side = null;
+        betInfo.teamHome = teamHome;
+        betInfo.teamAway = teamAway;
+    }
+
+    // --------------------------------------------------------
+    // Pilih skor yang dipakai untuk menentukan MENANG/KALAH
+    // sesuai BABAK taruhan (1H/2H/FT). Bet "1H" (babak pertama)
+    // HARUS dicocokkan dengan Half Time Result, bukan Full Time
+    // Result — begitu juga "2H" (babak kedua) harus dicocokkan
+    // dengan selisih Full Time - Half Time. Kalau data babak yang
+    // dibutuhkan tidak tersedia di Details, jangan menebak: tandai
+    // "perlu cek manual" supaya tidak salah klaim menang/kalah.
+    // --------------------------------------------------------
+    let periodGoals = { home: homeGoals, away: awayGoals };
+    let periodNote = null;
+    let periodUnknown = false;
+
+    if (betInfo.period === '1H') {
+        if (htMatch) {
+            periodGoals = { home: htHomeGoals, away: htAwayGoals };
+            periodNote = "Bet ini pasaran BABAK PERTAMA (1H). Skor yang dipakai adalah Half Time Result " + htHomeGoals + "-" + htAwayGoals + " (BUKAN Full Time " + homeGoals + "-" + awayGoals + ").";
+        } else {
+            periodUnknown = true;
+            periodNote = "Bet ini pasaran BABAK PERTAMA (1H) tapi 'Half time result' tidak ditemukan pada Details, sehingga tidak bisa dihitung akurat.";
+        }
+    } else if (betInfo.period === '2H') {
+        if (htMatch) {
+            periodGoals = { home: homeGoals - htHomeGoals, away: awayGoals - htAwayGoals };
+            periodNote = "Bet ini pasaran BABAK KEDUA (2H). Skor babak kedua = Full Time - Half Time = " + periodGoals.home + "-" + periodGoals.away + " (Full Time " + homeGoals + "-" + awayGoals + ", Half Time " + htHomeGoals + "-" + htAwayGoals + ").";
+        } else {
+            periodUnknown = true;
+            periodNote = "Bet ini pasaran BABAK KEDUA (2H) tapi 'Half time result' tidak ditemukan pada Details, sehingga skor babak kedua tidak bisa dihitung akurat.";
+        }
+    }
+
+    // --------------------------------------------------------
+    // PENYESUAIAN LIVE SCORE (KHUSUS Handicap saja, BUKAN Over/Under):
+    // "Live Score" adalah skor pertandingan PADA SAAT taruhan
+    // ditempatkan (taruhan live/in-play). Untuk Handicap, garis
+    // (line) yang diberikan bandar sudah dikalibrasi terhadap skor
+    // live tersebut, sehingga yang dinilai untuk menentukan menang/
+    // kalah adalah SELISIH gol SEJAK saat itu (skor periode - Live
+    // Score), BUKAN skor mentah dari 0-0.
+    // Untuk Over/Under, total gol yang dinilai TETAP selalu memakai
+    // hasil akhir/Full Time (atau HT/2H sesuai babak) APA ADANYA —
+    // TIDAK dikurangi Live Score, walau taruhan ditempatkan saat live.
+    // Untuk taruhan pre-match biasa, Live Score selalu 0-0 sehingga
+    // penyesuaian ini TIDAK mengubah hasil apa pun (aman, tidak ada
+    // regresi).
+    // --------------------------------------------------------
+    let liveNote = null;
+    if (!periodUnknown && betInfo.market === 'handicap' && (liveHomeGoals !== 0 || liveAwayGoals !== 0)) {
+        let beforeHome = periodGoals.home, beforeAway = periodGoals.away;
+        periodGoals = { home: periodGoals.home - liveHomeGoals, away: periodGoals.away - liveAwayGoals };
+        liveNote = "Taruhan ini ditempatkan saat pertandingan LIVE pada skor " + liveHomeGoals + "-" + liveAwayGoals + ". Garis pasaran sudah dikalibrasi pada skor live tsb, sehingga yang dinilai adalah selisih gol SEJAK saat itu: (" + beforeHome + "-" + beforeAway + ") - Live Score (" + liveHomeGoals + "-" + liveAwayGoals + ") = " + periodGoals.home + "-" + periodGoals.away + ".";
+    } else if (!periodUnknown && betInfo.market === 'ou' && (liveHomeGoals !== 0 || liveAwayGoals !== 0)) {
+        liveNote = "Taruhan ini ditempatkan saat pertandingan LIVE pada skor " + liveHomeGoals + "-" + liveAwayGoals + ". Untuk Over/Under, total gol yang dinilai tetap memakai hasil akhir (" + periodGoals.home + "-" + periodGoals.away + ") apa adanya, TIDAK dikurangi Live Score.";
+    }
+
+    let resultInfo;
+    if (periodUnknown) {
+        resultInfo = { result: 'unknown', factor: null, reasoning: periodNote };
+    } else {
+        resultInfo = determineLegResult(betInfo, periodGoals.home, periodGoals.away);
+        let notes = [periodNote, liveNote].filter(Boolean);
+        if (notes.length) {
+            resultInfo = { result: resultInfo.result, factor: resultInfo.factor, reasoning: notes.join("\n") + (resultInfo.reasoning ? "\n" + resultInfo.reasoning : "") };
+        }
+    }
+
+    return { teamHome: teamHome, teamAway: teamAway, betInfo: betInfo, homeGoals: homeGoals, awayGoals: awayGoals, htHomeGoals: htHomeGoals, htAwayGoals: htAwayGoals, liveHomeGoals: liveMatch ? liveHomeGoals : null, liveAwayGoals: liveMatch ? liveAwayGoals : null, oddsType: oddsType, result: resultInfo.result, factor: resultInfo.factor, reasoning: resultInfo.reasoning };
+}
+
+function parseBetSlip(text) {
+    text = normalizeBetText(text);
+    let blocks = text.split(/\n\s*\n+/).map(function(b) { return b.trim(); }).filter(Boolean);
+    let legs = [];
+    blocks.forEach(function(b) {
+        let leg = parseLeg(b);
+        if (leg) legs.push(leg);
+    });
+    return legs;
+}
+
+// ============================================================
+// BAGIAN 2: DETEKSI SEDERHANA (fallback jika Details BUKAN slip
+// multi-leg terstruktur, misalnya cuma catatan bebas)
+// ============================================================
+function containsWord(text, words) {
+    return words.some(function(w) {
+        let re = new RegExp('\\b' + w + '\\b', 'i');
+        return re.test(text);
+    });
+}
+
+function detectStatusFromKeywords(details) {
+    let winWords = ["won", "win", "menang", "unggul"];
+    let loseWords = ["lose", "lost", "kalah"];
+    let isWin = containsWord(details, winWords);
+    let isLose = containsWord(details, loseWords);
+
+    if (isWin && !isLose) {
+        return { status: "won", note: "Status MENANG terdeteksi dari kata kunci kemenangan pada Details (mode teks bebas, bukan slip terstruktur)." };
+    } else if (isLose && !isWin) {
+        return { status: "lose", note: "Status KALAH terdeteksi dari kata kunci kekalahan pada Details (mode teks bebas, bukan slip terstruktur)." };
+    } else if (isWin && isLose) {
+        return { status: "lose", note: "Details mengandung kata kunci menang dan kalah sekaligus (ambigu). Status di-default-kan ke KALAH untuk keamanan. Mohon periksa detail." };
+    } else {
+        return { status: "lose", note: "Tidak ditemukan kata kunci menang/kalah yang jelas dan tidak terdeteksi format slip terstruktur (Bet: ... / Full time result: ...). Status di-default-kan ke KALAH." };
+    }
+}
+
+// ============================================================
+// BAGIAN 3: PERHITUNGAN PEMBAYARAN (Decimal / American, auto-detect)
+// ============================================================
+// factor: 1 = menang penuh, 0.5 = menang setengah, 0 = push (stake kembali),
+// -0.5 = kalah setengah, -1 = kalah penuh. Ini adalah standar settlement
+// Asian Handicap/garis quarter, dan juga berlaku untuk hasil biner (1x2, O/U, dst).
+function calcPayout(stake, odds, factor, oddsType) {
+    let winLose = 0, totalKemenangan = 0, explanationText = "";
+    let isAmerican = Math.abs(odds) >= 100;
+    let isIndo = !isAmerican && oddsType && /indo/i.test(oddsType);
+    let fullWinProfitPerUnit; // profit per 1 unit stake jika MENANG PENUH
+
+    if (isAmerican) {
+        fullWinProfitPerUnit = odds > 0 ? (odds / 100) : (100 / Math.abs(odds));
+        explanationText += "Odds " + (odds > 0 ? '+' : '') + formatNumber(odds) + " terdeteksi menggunakan format American.\n" +
+            "Keuntungan penuh per satu unit stake apabila menang penuh adalah sebesar " + formatNumber(fullWinProfitPerUnit) + ".\n";
+    } else if (isIndo) {
+        // Format Indonesia (ditandai field "Type: Indonesia" pada Details):
+        // Keuntungan PENUH per unit stake = Odds itu sendiri (BUKAN Odds - 1
+        // seperti Decimal/Eropa), karena odds Indonesia sudah merepresentasikan
+        // rasio keuntungan langsung.
+        fullWinProfitPerUnit = odds;
+        explanationText += "Odds " + formatNumber(odds) + " terdeteksi menggunakan format INDONESIA (berdasarkan keterangan \"Type: " + oddsType + "\").\n" +
+            "Pada format Indonesia, keuntungan penuh per satu unit stake sama dengan nilai odds itu sendiri (bukan odds dikurangi 1), yaitu sebesar " + formatNumber(fullWinProfitPerUnit) + ".\n";
+    } else {
+        fullWinProfitPerUnit = odds - 1;
+        explanationText += "Odds " + formatNumber(odds) + " terdeteksi menggunakan format Decimal/Eropa" + (oddsType ? " (berdasarkan keterangan \"Type: " + oddsType + "\")" : "") + ".\n" +
+            "Keuntungan penuh per satu unit stake dihitung dari odds dikurangi 1, yaitu sebesar " + formatNumber(fullWinProfitPerUnit) + ".\n";
+    }
+
+    winLose = factor >= 0 ? stake * factor * fullWinProfitPerUnit : stake * factor;
+    totalKemenangan = stake + winLose;
+
+    explanationText += "\nRincian Perhitungan:\n";
+    if (factor === 1) {
+        explanationText += "Status taruhan: MENANG PENUH.\n" +
+            "Keuntungan yang diperoleh = Stake x Keuntungan per unit = " + formatNumber(stake) + " x " + formatNumber(fullWinProfitPerUnit) + " = " + formatNumber(winLose) + ".\n" +
+            "Total Kemenangan yang diterima = Stake + Keuntungan = " + formatNumber(stake) + " + " + formatNumber(winLose) + " = " + formatNumber(totalKemenangan) + ".";
+    } else if (factor === 0.5) {
+        explanationText += "Status taruhan: MENANG SETENGAH (Half Win).\n" +
+            "Sesuai ketentuan garis quarter, setengah bagian stake dinyatakan menang dengan odds penuh, sedangkan setengah bagian lainnya dinyatakan push (dikembalikan tanpa untung maupun rugi).\n" +
+            "Keuntungan yang diperoleh = Stake x 0.5 x Keuntungan per unit = " + formatNumber(winLose) + ".\n" +
+            "Total Kemenangan yang diterima = Stake + Keuntungan = " + formatNumber(totalKemenangan) + ".";
+    } else if (factor === 0) {
+        explanationText += "Status taruhan: SERI / DRAW.\n" +
+            "Seluruh nilai stake dikembalikan secara penuh kepada member, tanpa ada keuntungan maupun kerugian.\n" +
+            "Total Kemenangan yang diterima = Stake yang dikembalikan = " + formatNumber(totalKemenangan) + ".";
+    } else if (factor === -0.5) {
+        explanationText += "Status taruhan: KALAH SETENGAH (Half Lose).\n" +
+            "Sesuai ketentuan garis quarter, setengah bagian stake dinyatakan kalah, sedangkan setengah bagian lainnya dikembalikan kepada member.\n" +
+            "Kerugian yang ditanggung = Stake x 0.5 = " + formatNumber(winLose) + ".\n" +
+            "Total Kemenangan yang diterima = " + formatNumber(totalKemenangan) + ".";
+    } else {
+        explanationText += "Status taruhan: KALAH PENUH.\n" +
+            "Seluruh nilai stake dinyatakan hilang.\n" +
+            "Kerugian yang ditanggung = -Stake = " + formatNumber(winLose) + ".\n" +
+            "Total Kemenangan yang diterima = 0.";
+    }
+
+    return { winLose: winLose, totalKemenangan: totalKemenangan, explanationText: explanationText };
+}
+
+// ============================================================
+// BAGIAN 4: HANDLER UTAMA
+// ============================================================
+function statusLabel(factor) {
+    if (factor === 1) return 'MENANG';
+    if (factor === 0.5) return 'MENANG SETENGAH';
+    if (factor === 0) return 'SERI / DRAW';
+    if (factor === -0.5) return 'KALAH SETENGAH';
+    if (factor === -1) return 'KALAH';
+    return 'PERLU CEK MANUAL';
+}
+
+function statusClass(factor) {
+    if (factor === null) return 'neutral';
+    if (factor > 0) return 'win';
+    if (factor < 0) return 'lose';
+    return 'neutral';
+}
+
+function hitungBetting(event) {
+    event.preventDefault();
+
+    let details = document.getElementById('details').value;
+    let stake = parseFloat(document.getElementById('stake').value);
+    let odds = parseFloat(document.getElementById('odds').value);
+
+    if (isNaN(stake) || stake <= 0) {
+        alert("Stake harus berupa angka lebih besar dari 0.");
+        return;
+    }
+    if (isNaN(odds) || odds === 0) {
+        alert("Odds harus diisi dengan angka dan tidak boleh 0.");
+        return;
+    }
+    if (odds > 0 && odds < 100 && odds <= 1) {
+        alert("Odds decimal harus lebih besar dari 1 (contoh: 1.85). Jika ini odds American, gunakan nilai >= 100 atau <= -100.");
+        return;
+    }
+
+    let factor = -1; // default aman jika tidak ada slip terstruktur maupun kata kunci jelas
+    let explanationText = "";
+
+    // --- Coba parsing sebagai slip multi-leg (parlay) terlebih dahulu ---
+    let legs = parseBetSlip(details);
+
+    // Default: pakai odds yang diinput di form. Untuk parlay/mix parlay akan
+    // ditimpa di bawah dengan odds gabungan EFEKTIF (memperhitungkan garis
+    // quarter half-win), supaya Total Kemenangan tidak overpay.
+    let effectiveOddsForPayout = odds;
+
+    if (legs.length > 0) {
+        let isSingle = legs.length === 1;
+
+        explanationText += isSingle
+            ? "PENJELASAN PERHITUNGAN TARUHAN\n\nJenis Taruhan: SINGLE (1 pertandingan)\n\n"
+            : "PENJELASAN PERHITUNGAN TARUHAN\n\nJenis Taruhan: Parlay/Mix Parlay, terdiri dari " + legs.length + " pertandingan (leg)\n\n";
+
+        legs.forEach(function(l, i) {
+            explanationText += (isSingle ? "Pertandingan: " : "Pertandingan " + (i + 1) + ": ") + l.teamHome + " vs " + l.teamAway + "\n";
+            explanationText += "   Pasaran      : " + describeMarket(l.betInfo) + " @" + formatNumber(l.betInfo.odds) + "\n";
+            if (l.oddsType) {
+                explanationText += "   Format Odds  : " + l.oddsType + "\n";
+            }
+            if (l.liveHomeGoals !== null && l.liveAwayGoals !== null && (l.liveHomeGoals !== 0 || l.liveAwayGoals !== 0)) {
+                explanationText += "   Skor Live    : " + l.liveHomeGoals + " - " + l.liveAwayGoals + " (skor pada saat taruhan ditempatkan)\n";
+            }
+            if (l.htHomeGoals !== null && l.htAwayGoals !== null) {
+                explanationText += "   Skor Babak 1 : " + l.htHomeGoals + " - " + l.htAwayGoals + "\n";
+            }
+            explanationText += "   Skor Akhir   : " + l.homeGoals + " - " + l.awayGoals + "\n";
+            explanationText += "   Hasil        : " + statusLabel(l.factor === undefined ? null : l.factor) + "\n";
+            if (l.reasoning) {
+                explanationText += "   Penjelasan   :\n" + l.reasoning.split("\n").map(function(s) { return "   " + s; }).join("\n") + "\n";
+            }
+            explanationText += "\n";
+        });
+
+        let anyUnknown = legs.some(function(l) { return l.result === 'unknown'; });
+        let anyFullLose = legs.some(function(l) { return l.factor === -1; });
+
+        if (anyUnknown) {
+            explanationText += "Catatan Penting: Terdapat " + (isSingle ? "pasaran" : "pertandingan dengan jenis pasaran") + " yang belum dapat dikenali secara otomatis oleh sistem (di luar Asian Handicap, FT 1X2, Over/Under, Both Teams To Score, Draw No Bet, Double Chance, Odd/Even, dan Correct Score). Mohon dilakukan verifikasi manual sebelum status akhir taruhan ini dipergunakan.\n\n";
+        }
+
+        if (anyUnknown) {
+            // Tidak menebak menang/kalah untuk pasaran yang tidak dikenali — lebih aman
+            // menandai "perlu cek manual" daripada salah men-declare KALAH.
+            factor = null;
+        } else if (isSingle) {
+            // Single bet: hasil akhir mengikuti factor pertandingan itu langsung,
+            // termasuk kasus half-win / push / half-lose (mis. garis quarter -0.75).
+            factor = legs[0].factor;
+        } else {
+            // Parlay/mix parlay: satu leg kalah penuh/setengah membuat seluruh
+            // taruhan gabungan bust. Half-win dihitung sebagai leg yang tetap lolos.
+            factor = anyFullLose || legs.some(function(l) { return l.factor === -0.5; }) ? -1 : 1;
+        }
+
+        // Odds efektif tiap leg untuk taruhan gabungan (parlay/mix parlay):
+        // - Leg PUSH (factor 0, mis. garis penuh yang seri) TIDAK mempengaruhi
+        //   odds gabungan sama sekali (diperlakukan seolah odds = 1).
+        // - Leg MENANG SETENGAH (factor 0.5, garis QUARTER seperti -0.25/-0.75
+        //   atau 2.25/2.75 dimana setengah stake push) HANYA berkontribusi
+        //   odds efektif = 1 + (odds-1)/2, PERSIS seperti perhitungan single
+        //   bet untuk garis quarter (lihat calcPayout factor 0.5). Situs
+        //   taruhan sering menampilkan odds gabungan mentah (hasil kali odds
+        //   penuh apa adanya), padahal seharusnya leg quarter half-win itu
+        //   memotong odds efektifnya, BUKAN dihitung sebagai menang penuh.
+        // - Leg MENANG PENUH (factor 1) berkontribusi odds penuh apa adanya.
+        let computedCombinedOdds = legs.reduce(function(acc, l) {
+            if (l.factor === 0) return acc;
+            if (l.factor === 0.5) return acc * (1 + (l.betInfo.odds - 1) / 2);
+            return acc * l.betInfo.odds;
+        }, 1);
+
+        if (isSingle) {
+            explanationText += "Kesimpulan:\n";
+            explanationText += "Karena taruhan ini merupakan taruhan SINGLE (hanya melibatkan satu pertandingan), status akhir taruhan mengikuti hasil pertandingan tersebut secara langsung.\n";
+            explanationText += "Odds pertandingan (hasil verifikasi sistem) = " + formatNumber(computedCombinedOdds) + "\n";
+            explanationText += "Odds yang tercantum pada form              = " + formatNumber(odds) + "\n";
+            if (Math.abs(computedCombinedOdds - odds) > Math.max(0.01, computedCombinedOdds * 0.02)) {
+                explanationText += "Catatan: terdapat selisih antara odds hasil verifikasi sistem dengan odds yang tercantum pada form. Mohon dilakukan pengecekan ulang.\n";
+            }
+            explanationText += "\nStatus Akhir Taruhan: " + statusLabel(factor) + "\n\n";
+        } else {
+            explanationText += "Kesimpulan:\n";
+            explanationText += "Karena taruhan ini merupakan taruhan gabungan (Parlay/Mix Parlay), seluruh pertandingan (leg) di dalamnya harus dinyatakan menang (penuh maupun setengah) agar keseluruhan taruhan dapat dinyatakan menang.\n";
+            let anyHalfWinLeg = legs.some(function(l) { return l.factor === 0.5; });
+            explanationText += "Odds gabungan efektif yang dipergunakan untuk menghitung Total Kemenangan = " + formatNumber(computedCombinedOdds) + "\n";
+            if (anyHalfWinLeg) {
+                explanationText += "Catatan: terdapat pertandingan dengan hasil MENANG SETENGAH pada garis quarter, sehingga odds efektif pertandingan tersebut disesuaikan menjadi 1 + (odds - 1) / 2, bukan odds penuh sebagaimana biasa ditampilkan pada situs taruhan.\n";
+            }
+            explanationText += "Odds gabungan mentah (hasil kali odds penuh apa adanya, sebagaimana umumnya ditampilkan pada situs taruhan) = " + formatNumber(legs.reduce(function(acc, l) { return l.factor === 0 ? acc : acc * l.betInfo.odds; }, 1)) + "\n";
+            explanationText += "Odds yang tercantum pada form                                                                            = " + formatNumber(odds) + "\n";
+            explanationText += "\nStatus Akhir Taruhan: " + statusLabel(factor) + "\n\n";
+            // Timpa odds yang dipakai untuk hitung Total Kemenangan dengan odds
+            // gabungan EFEKTIF (bukan odds mentah form), supaya leg quarter
+            // half-win benar-benar mengurangi payout, bukan malah dianggap
+            // menang penuh.
+            effectiveOddsForPayout = computedCombinedOdds;
+        }
+
+    } else {
+        let detected = detectStatusFromKeywords(details);
+        factor = detected.status === 'won' ? 1 : -1;
+        explanationText += detected.note + "\n\n";
+    }
+
+    // --- Hitung pembayaran berdasarkan factor & odds yang dimasukkan di form ---
+    // Jika benar-benar tidak dikenali (factor null), jangan menebak untung/rugi:
+    // perlakukan sebagai push (stake kembali) sambil tetap menandai perlu cek manual,
+    // supaya sistem tidak salah mengklaim KALAH pada taruhan yang sebenarnya menang.
+    let payoutFactor = factor === null ? 0 : factor;
+    // Format odds (mis. "Indonesia" vs "Europe") diambil dari field "Type:" pada
+    // leg pertama, karena biasanya ini adalah setelan akun/bandar yang sama untuk
+    // seluruh taruhan, bukan per-leg.
+    let overallOddsType = legs.length > 0 ? legs[0].oddsType : null;
+    // Untuk taruhan gabungan (parlay/mix parlay), Total Kemenangan HARUS dihitung
+    // memakai odds gabungan EFEKTIF (effectiveOddsForPayout) yang sudah memperhitungkan
+    // pengurangan odds pada leg MENANG SETENGAH (garis quarter) — BUKAN memakai odds
+    // mentah yang diinput di form / ditampilkan situs taruhan, karena odds mentah itu
+    // mengasumsikan semua leg menang PENUH sehingga hasilnya kelebihan bayar (overpay).
+    // Untuk taruhan SINGLE, odds form sudah = odds pertandingan itu sendiri jadi tetap dipakai.
+    let oddsForPayout = effectiveOddsForPayout;
+    let payout = calcPayout(stake, oddsForPayout, payoutFactor, overallOddsType);
+    explanationText += payout.explanationText;
+
+    // Menampilkan hasil ke dalam tabel & kotak penjelasan
+    document.getElementById('res-details').textContent = details;
+    document.getElementById('res-total-kemenangan').textContent = formatNumber(payout.totalKemenangan);
+    document.getElementById('res-actual-stake').textContent = formatNumber(stake);
+    document.getElementById('res-stake').textContent = formatNumber(stake);
+    let oddsIsAmerican = Math.abs(odds) >= 100;
+    document.getElementById('res-odds').textContent = (oddsIsAmerican && odds > 0 ? '+' : '') + formatNumber(odds);
+
+    let statusElem = document.getElementById('res-status');
+    statusElem.textContent = statusLabel(factor);
+    statusElem.className = statusClass(factor);
+
+    let winLoseElem = document.getElementById('res-win-lose');
+    // Tanda +/- dihilangkan dari tampilan; warna tetap jadi penanda:
+    // hijau = menang, merah = kalah, emas (neutral) = push/seri.
+    let formattedWinLose = formatNumber(Math.abs(payout.winLose));
+    winLoseElem.textContent = formattedWinLose;
+    winLoseElem.className = payout.winLose > 0 ? 'win' : (payout.winLose < 0 ? 'lose' : 'neutral');
+
+    const resExplanationEl = document.getElementById('res-explanation');
+    const resConclusionEl = document.getElementById('res-conclusion');
+    let splitMarker = "Kesimpulan:";
+    let splitIdx = explanationText.indexOf(splitMarker);
+    let leftText, rightText;
+    if (splitIdx !== -1) {
+        leftText = explanationText.slice(0, splitIdx).trim();
+        rightText = explanationText.slice(splitIdx).trim();
+    } else {
+        leftText = explanationText.trim();
+        rightText = "";
+    }
+    resExplanationEl.innerHTML = renderExplanationHtml(leftText);
+    resConclusionEl.value = rightText;
+
+    document.getElementById('result-section').style.display = 'block';
+    autoGrowTextarea(resConclusionEl, 260);
+}
+
+// hitungBetting dipanggil lewat atribut onsubmit pada form, sehingga
+// perlu diekspos ke scope global.
+window.hitungBetting = hitungBetting;
 })();
 </script>
 </body>
