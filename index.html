@@ -1838,9 +1838,8 @@
       }
     }
     // Round to 3 decimal places first to eliminate floating-point noise
-    // (e.g. 236175.00000000003) before rounding up, so exact whole-number
-    // results aren't incorrectly bumped to the next integer.
-    bayar = Math.ceil(Math.round(bayar * 1000) / 1000);
+    // (e.g. 236175.00000000003), then round to the nearest whole number.
+    bayar = Math.round(Math.round(bayar * 1000) / 1000);
     menang = Math.round(menang);
     return { bayar: bayar, menang: menang, total: bayar + menang };
   }
