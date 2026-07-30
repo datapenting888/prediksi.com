@@ -3189,16 +3189,9 @@ function hitungBetting(event) {
             // termasuk kasus half-win / push / half-lose (mis. garis quarter -0.75).
             factor = legs[0].factor;
         } else {
-            // Parlay/mix parlay: HANYA leg KALAH PENUH (factor -1) yang membuat
-            // seluruh taruhan gabungan bust menjadi KALAH.
-            // Leg KALAH SETENGAH (factor -0.5, garis QUARTER Over/Under atau
-            // Handicap, mis. Over/Under 2.25 dimana setengah stake push dan
-            // setengah lainnya kalah) TIDAK membuat taruhan gabungan kalah —
-            // taruhan gabungan tetap dinyatakan MENANG, namun odds leg tersebut
-            // diturunkan (lihat computedCombinedOdds di bawah), sehingga
-            // Total Kemenangan tetap berkurang secara proporsional, bukan
-            // dianggap menang penuh maupun bikin seluruh taruhan bust.
-            factor = anyFullLose ? -1 : 1;
+            // Parlay/mix parlay: satu leg kalah penuh/setengah membuat seluruh
+            // taruhan gabungan bust. Half-win dihitung sebagai leg yang tetap lolos.
+            factor = anyFullLose || legs.some(function(l) { return l.factor === -0.5; }) ? -1 : 1;
         }
 
         // Odds efektif tiap leg untuk taruhan gabungan (parlay/mix parlay):
@@ -3211,19 +3204,10 @@ function hitungBetting(event) {
         //   taruhan sering menampilkan odds gabungan mentah (hasil kali odds
         //   penuh apa adanya), padahal seharusnya leg quarter half-win itu
         //   memotong odds efektifnya, BUKAN dihitung sebagai menang penuh.
-        // - Leg KALAH SETENGAH (factor -0.5, garis QUARTER Over/Under seperti
-        //   2.25/2.75 dimana setengah stake push dan setengah kalah) HANYA
-        //   berkontribusi odds efektif TETAP 0.5x (BUKAN bergantung pada nilai
-        //   odds asli leg tersebut, dan BUKAN pula membuat taruhan gabungan
-        //   bust). Contoh: leg Over/Under @1.88 yang hasilnya KALAH SETENGAH
-        //   tetap dipakai sebagai pengali 0.5 pada odds gabungan, sehingga
-        //   0.5x ini yang mengurangi Total Kemenangan, sesuai dengan
-        //   perhitungan yang berlaku (odds leg tersebut "berubah menjadi 0.5").
         // - Leg MENANG PENUH (factor 1) berkontribusi odds penuh apa adanya.
         let computedCombinedOdds = legs.reduce(function(acc, l) {
             if (l.factor === 0) return acc;
             if (l.factor === 0.5) return acc * (1 + (l.betInfo.odds - 1) / 2);
-            if (l.factor === -0.5) return acc * 0.5;
             return acc * l.betInfo.odds;
         }, 1);
 
@@ -3238,15 +3222,11 @@ function hitungBetting(event) {
             explanationText += "\nStatus Akhir Taruhan: " + statusLabel(factor) + "\n\n";
         } else {
             explanationText += "Kesimpulan:\n";
-            explanationText += "Karena taruhan ini merupakan taruhan gabungan (Parlay/Mix Parlay), taruhan gabungan hanya dinyatakan KALAH secara keseluruhan apabila terdapat pertandingan (leg) yang hasilnya KALAH PENUH. Pertandingan dengan hasil KALAH SETENGAH pada garis quarter TIDAK membuat taruhan gabungan menjadi kalah — taruhan gabungan tetap dinyatakan MENANG, namun odds efektif pertandingan tersebut diturunkan sehingga Total Kemenangan berkurang secara proporsional.\n";
+            explanationText += "Karena taruhan ini merupakan taruhan gabungan (Parlay/Mix Parlay), seluruh pertandingan (leg) di dalamnya harus dinyatakan menang (penuh maupun setengah) agar keseluruhan taruhan dapat dinyatakan menang.\n";
             let anyHalfWinLeg = legs.some(function(l) { return l.factor === 0.5; });
-            let anyHalfLoseLeg = legs.some(function(l) { return l.factor === -0.5; });
             explanationText += "Odds gabungan efektif yang dipergunakan untuk menghitung Total Kemenangan = " + formatNumber(computedCombinedOdds) + "\n";
             if (anyHalfWinLeg) {
                 explanationText += "Catatan: terdapat pertandingan dengan hasil MENANG SETENGAH pada garis quarter, sehingga odds efektif pertandingan tersebut disesuaikan menjadi 1 + (odds - 1) / 2, bukan odds penuh sebagaimana biasa ditampilkan pada situs taruhan.\n";
-            }
-            if (anyHalfLoseLeg) {
-                explanationText += "Catatan: terdapat pertandingan dengan hasil KALAH SETENGAH pada garis quarter, sehingga odds efektif pertandingan tersebut diturunkan menjadi TETAP 0.5x (bukan odds asli pertandingan tersebut, dan pertandingan ini tidak membuat seluruh taruhan gabungan bust/kalah).\n";
             }
             explanationText += "Odds gabungan mentah (hasil kali odds penuh apa adanya, sebagaimana umumnya ditampilkan pada situs taruhan) = " + formatNumber(legs.reduce(function(acc, l) { return l.factor === 0 ? acc : acc * l.betInfo.odds; }, 1)) + "\n";
             explanationText += "Odds yang tercantum pada form                                                                            = " + formatNumber(odds) + "\n";
