@@ -2060,6 +2060,28 @@
 </div>
 </div>
 
+<!-- Firebase Realtime Database: sinkronisasi data "Result & Jadwal Pasaran" antar perangkat -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "API_KEY_ANDA",
+    authDomain: "datapenting888-94bc6.firebaseapp.com",
+    databaseURL: "https://datapenting888-94bc6-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "datapenting888",
+    storageBucket: "datapenting888-94bc6.firebasestorage.app",
+    messagingSenderId: "SENDER_ID",
+    appId: "APP_ID"
+  };
+  let hasilDB = null;
+  try {
+    firebase.initializeApp(firebaseConfig);
+    hasilDB = firebase.database();
+  } catch (e) {
+    console.error('Firebase gagal diinisialisasi:', e);
+  }
+</script>
+
 <script>
 function right(str, n){
   str = (str || "").toString();
@@ -2119,9 +2141,8 @@ function loadShioStorage(){
   }
 }
 
-function restoreShioTable(){
-  const saved = loadShioStorage();
-  if(!saved.length) return;
+function applyShioData(saved){
+  if(!Array.isArray(saved) || !saved.length) return;
   let i = 0;
   document.querySelectorAll('.shio-table tr').forEach(tr=>{
     const nameCell = tr.querySelector('.shio-name');
@@ -2134,6 +2155,10 @@ function restoreShioTable(){
     }
     i++;
   });
+}
+
+function restoreShioTable(){
+  applyShioData(loadShioStorage());
 }
 
 function simpanShioData(){
@@ -2448,6 +2473,33 @@ dataJadwal.forEach((row, idx) => {
   jadwalBody.appendChild(tr);
 });
 
+// Terapkan data (dari localStorage ATAU dari Firebase) ke baris tabel yang sudah ada,
+// tanpa membangun ulang elemennya (supaya tidak mengganggu baris yang sedang diedit)
+function applyJadwalData(saved) {
+  if (!Array.isArray(saved)) return;
+  const rows = jadwalBody.querySelectorAll('tr');
+  rows.forEach((tr, idx) => {
+    const data = saved[idx];
+    if (!data) return;
+    const editable = tr.querySelectorAll('.jadwal-editable');
+    const checkbox = tr.querySelector('input[type="checkbox"]');
+    const hasilCell = tr.querySelector('.jadwal-hasil');
+    if (editable[0] && data.tutup !== undefined) editable[0].textContent = data.tutup;
+    if (editable[1] && data.result !== undefined) editable[1].textContent = data.result;
+    if (editable[2] && data.jadwal !== undefined) editable[2].textContent = data.jadwal;
+    if (checkbox && data.checked !== undefined) checkbox.checked = data.checked;
+    if (hasilCell) {
+      if (data.checked) {
+        hasilCell.textContent = 'RESULT';
+        hasilCell.classList.add('jadwal-result');
+      } else {
+        hasilCell.textContent = 'BELUM RESULT';
+        hasilCell.classList.remove('jadwal-result');
+      }
+    }
+  });
+}
+
 // Kumpulkan seluruh isi tabel Jadwal Pasaran lalu simpan ke localStorage
 function simpanJadwalData() {
   const rows = jadwalBody.querySelectorAll('tr');
@@ -2492,12 +2544,62 @@ jadwalBody.addEventListener('input', (e) => {
   }
 });
 
+// Kirim data Jadwal Pasaran & Shio yang sedang tampil ke Firebase Realtime Database
+function kirimDataKeFirebase() {
+  if (!hasilDB) return;
+  const jadwalData = [];
+  jadwalBody.querySelectorAll('tr').forEach((tr) => {
+    const editable = tr.querySelectorAll('.jadwal-editable');
+    const checkbox = tr.querySelector('input[type="checkbox"]');
+    jadwalData.push({
+      tutup: editable[0] ? editable[0].textContent.trim() : '',
+      result: editable[1] ? editable[1].textContent.trim() : '',
+      jadwal: editable[2] ? editable[2].textContent.trim() : '',
+      checked: checkbox ? checkbox.checked : false
+    });
+  });
+  const shioData = [];
+  document.querySelectorAll('.shio-table tr').forEach((tr) => {
+    const nameCell = tr.querySelector('.shio-name');
+    const numsCell = tr.querySelector('.shio-nums');
+    if (!nameCell || !numsCell) return;
+    shioData.push({ name: nameCell.textContent.trim(), nums: numsCell.textContent.trim() });
+  });
+  hasilDB.ref('resultJadwalPasaran/jadwal').set(jadwalData)
+    .catch((err) => console.error('Gagal mengirim data Jadwal Pasaran ke Firebase:', err));
+  hasilDB.ref('resultJadwalPasaran/shio').set(shioData)
+    .catch((err) => console.error('Gagal mengirim data Shio ke Firebase:', err));
+}
+
+// Dengarkan perubahan data secara real-time dari Firebase (mis. disimpan dari perangkat lain)
+if (hasilDB) {
+  hasilDB.ref('resultJadwalPasaran/jadwal').on('value', (snapshot) => {
+    const data = snapshot.val();
+    const sedangDiedit = document.activeElement && jadwalBody.contains(document.activeElement);
+    if (data && !sedangDiedit) {
+      applyJadwalData(data);
+      localStorage.setItem(JADWAL_STORAGE_KEY, JSON.stringify(data));
+      localStorage.setItem(JADWAL_DATE_KEY, getTodayStr());
+    }
+  });
+  hasilDB.ref('resultJadwalPasaran/shio').on('value', (snapshot) => {
+    const data = snapshot.val();
+    const shioTableEl = document.querySelector('.shio-table');
+    const sedangDiedit = document.activeElement && shioTableEl && shioTableEl.contains(document.activeElement);
+    if (data && !sedangDiedit) {
+      applyShioData(data);
+      localStorage.setItem(SHIO_STORAGE_KEY, JSON.stringify(data));
+    }
+  });
+}
+
 // Tombol "Simpan Data" manual di bawah Rumus Saldo Awal (memberi konfirmasi visual)
 const simpanDataBtn = document.getElementById('simpanDataBtn');
 if (simpanDataBtn) {
   simpanDataBtn.addEventListener('click', () => {
     simpanJadwalData();
     if (typeof simpanShioData === 'function') simpanShioData();
+    kirimDataKeFirebase();
     const originalText = simpanDataBtn.textContent;
     simpanDataBtn.textContent = 'Data Tersimpan ✓';
     simpanDataBtn.classList.add('simpan-btn-success');
