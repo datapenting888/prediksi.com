@@ -36,30 +36,51 @@
 
   /* ---------------- Sidebar / Menu Dashboard ---------------- */
   .sidebar{
-    width:clamp(260px, 18vw, 300px);
+    width:clamp(300px, 20vw, 340px);
     flex-shrink:0;
     background:#13131c;
     padding:22px 14px;
     min-height:100vh;
   }
   .sidebar .brand{
-    font-size:28px;
+    font-size: clamp(20px, 1.5vw + 12px, 28px);
     font-weight:800;
     letter-spacing:0.5px;
     margin-bottom:18px;
     display:flex;
     align-items:baseline;
-    flex-wrap:wrap;
+    flex-wrap:nowrap;
+    white-space:nowrap;
     gap:6px;
+    position:relative;
+    overflow:hidden;
   }
-  .sidebar .brand .smb{ color:#6b680c; }
-  .sidebar .brand .group{ color:#6b680c; }
+  .sidebar .brand .smb,
+  .sidebar .brand .group,
   .sidebar .brand .brand-tag{
-    font-size:12px;
-    font-weight:600;
+    background:linear-gradient(90deg,
+      #ff5f6d, #ffc371, #47cf73, #35c8f0, #a55eea, #ff5f6d);
+    background-size:400% 100%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    -webkit-text-fill-color:transparent;
+    font-weight:800;
+    text-transform:uppercase;
     letter-spacing:0.5px;
-    color:#e7ebdd;
+    animation: brandColorShift 6s linear infinite, brandBrightPulse 2.4s ease-in-out infinite;
+  }
+  .sidebar .brand .brand-tag{
+    font-size:0.5em;
     text-transform:none;
+  }
+  @keyframes brandColorShift{
+    0%{ background-position:0% 50%; }
+    100%{ background-position:400% 50%; }
+  }
+  @keyframes brandBrightPulse{
+    0%,100%{ filter:brightness(1.7) saturate(1.5); }
+    50%{ filter:brightness(0.5) saturate(1); }
   }
   .sidebar .brand-divider{
     border:none;
@@ -139,7 +160,7 @@
     border: 1px solid var(--accent-emas);
     display:flex;
     align-items:center;
-    justify-content:center;
+    justify-content:flex-start;
     position:relative;
     padding:15px 0;
     margin:14px 16px 0;
@@ -147,26 +168,34 @@
     overflow:hidden;
   }
   .topbar h1{
+    display:flex;
+    width:max-content;
+    margin:0;
+    animation: topbarScroll 20s linear infinite;
+  }
+  .topbar h1 span{
     display:inline-block;
     white-space:nowrap;
     font-size:20px;
     font-weight:900;
     letter-spacing:3px;
     text-transform:uppercase;
-    margin:0;
     text-shadow:2px 2px 10px rgba(0,0,0,0.35);
-    animation: topbarScroll 20s linear infinite;
-    padding-left:100%;
+    padding-right:60px;
   }
   @keyframes topbarScroll{
     0%{ transform:translateX(0); }
-    100%{ transform:translateX(-100%); }
+    100%{ transform:translateX(-50%); }
+  }
+  @media (max-width:480px){
+    .topbar h1 span{ font-size:15px; letter-spacing:1.5px; padding-right:40px; }
   }
   .panel{
     margin: 14px 16px;
     background: var(--bg-panel);
     border-radius:8px;
     padding:18px 20px 26px;
+    box-shadow: 0 0 30px rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06);
   }
   .market-dropdown{
     position:relative;
@@ -252,7 +281,7 @@
     margin-bottom:14px;
   }
   .tab-btn{
-    background:#6b5142;
+    background:#3a1b5e;
     color:#fff;
     border:none;
     padding:9px 16px;
@@ -263,7 +292,7 @@
     cursor:pointer;
   }
   .tab-btn.active{
-    background: var(--accent-emas);
+    background:#6a2fc0;
   }
   .section-pill-wrap{
     text-align:center;
@@ -415,6 +444,7 @@
     display:flex;
     flex-direction:column;
     flex:1;
+    box-shadow: 0 0 30px rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06);
   }
   .prediksi-label{
     color:#b1c1e3;
@@ -467,6 +497,19 @@
     scrollbar-width:none;
   }
   .prediksi-box::-webkit-scrollbar{ display:none; }
+  /* Saat hanya 1 pasaran dipilih (bukan SEMUA), kontainer menyesuaikan
+     tinggi konten alih-alih ikut memanjang menyamai kolom sebelahnya. */
+  .prediksi-col.prediksi-col-compact{
+    align-self:flex-start;
+  }
+  .prediksi-card.prediksi-card-compact{
+    flex:0 0 auto;
+  }
+  .prediksi-box.prediksi-box-compact{
+    flex:0 0 auto;
+    min-height:0;
+    height:auto;
+  }
   #pagePrediksi{
     display:flex;
     flex-direction:column;
@@ -853,7 +896,7 @@
 
 <div id="pagePng" style="display:none;">
 <div class="topbar">
-  <h1>PERHITUNGAN HADIAH TOGEL PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL PNG</h1>
+  <h1><span>PERHITUNGAN HADIAH TOGEL PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL PNG</span><span>PERHITUNGAN HADIAH TOGEL PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL PNG</span></h1>
 </div>
 
 <div class="panel">
@@ -877,7 +920,7 @@
 
 <div id="pageIdn" style="display:none;">
   <div class="topbar">
-    <h1>PERHITUNGAN HADIAH TOGEL IDN &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL IDN &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL IDN &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL IDN</h1>
+    <h1><span>PERHITUNGAN HADIAH TOGEL IDN &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL IDN &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL IDN</span><span>PERHITUNGAN HADIAH TOGEL IDN &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL IDN &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH TOGEL IDN</span></h1>
   </div>
 
   <div class="panel">
@@ -901,7 +944,7 @@
 
 <div id="pageBola" style="display:none;">
   <div class="topbar">
-    <h1>PERHITUNGAN HADIAH BOLA PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH BOLA PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH BOLA PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH BOLA PNG</h1>
+    <h1><span>PERHITUNGAN HADIAH BOLA PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH BOLA PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH BOLA PNG</span><span>PERHITUNGAN HADIAH BOLA PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH BOLA PNG &nbsp;&nbsp; • &nbsp;&nbsp; PERHITUNGAN HADIAH BOLA PNG</span></h1>
   </div>
 
   <div class="panel" style="padding:0; background:transparent;">
@@ -984,10 +1027,10 @@
 
 <div id="pageHasilJadwal" style="display:none;">
   <div class="topbar">
-    <h1>RESULT &amp; JADWAL PASARAN &nbsp;&nbsp; • &nbsp;&nbsp; RESULT &amp; JADWAL PASARAN &nbsp;&nbsp; • &nbsp;&nbsp; RESULT &amp; JADWAL PASARAN &nbsp;&nbsp; • &nbsp;&nbsp; RESULT &amp; JADWAL PASARAN</h1>
+    <h1><span>RESULT &amp; JADWAL PASARAN &nbsp;&nbsp; • &nbsp;&nbsp; RESULT &amp; JADWAL PASARAN &nbsp;&nbsp; • &nbsp;&nbsp; RESULT &amp; JADWAL PASARAN</span><span>RESULT &amp; JADWAL PASARAN &nbsp;&nbsp; • &nbsp;&nbsp; RESULT &amp; JADWAL PASARAN &nbsp;&nbsp; • &nbsp;&nbsp; RESULT &amp; JADWAL PASARAN</span></h1>
   </div>
 
-  <div style="margin:14px 16px; border-radius:8px; overflow:hidden;">
+  <div style="margin:14px 16px; border-radius:8px; overflow:hidden; box-shadow: 0 0 30px rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06);">
 <div class="hasil-scope">
 <style>
   .hasil-scope {
@@ -1096,19 +1139,27 @@
   }
   .hasil-scope .hero-sub {
     font-family:var(--font-body);
-    font-size:14px;
+    font-size:clamp(13px, 3.2vw, 20px);
     color:var(--ink-dim);
     display:flex;
     align-items:center;
     justify-content:center;
     gap:10px;
-    flex-wrap:wrap;
+    flex-wrap:nowrap;
+    white-space:nowrap;
+    text-align:center;
+    line-height:1.4;
   }
   .hasil-scope #hero-date { color:var(--gold-bright); font-weight:600; }
   .hasil-scope .jadwal-link {
     font-family:var(--font-body);
-    font-size:14px;
+    font-size:clamp(13px, 3.2vw, 20px);
     color:var(--gold-bright);
+    white-space:nowrap;
+  }
+  @media (max-width:380px){
+    .hasil-scope .hero-sub,
+    .hasil-scope .jadwal-link{ font-size:11px; gap:6px; }
   }
 
   .hasil-scope .section-tag {
@@ -1747,7 +1798,6 @@
 <div class="bg-photo"></div>
 
 <header class="hero">
-  <h1 class="hero-title">Riki Golan</h1>
   <div class="hero-rule"></div>
   <div class="hero-sub">
     <span>Hasil Result &middot; <span id="hero-date">-</span></span>
@@ -3977,7 +4027,7 @@ setInterval(() => {
   var PREDIKSI_BODY =
     '<div class="prediksi-wrap">' +
       '<div class="topbar">' +
-        '<h1>DASHBOARD PREDIKSI TOGEL &nbsp;&nbsp; \u2022 &nbsp;&nbsp; DASHBOARD PREDIKSI TOGEL &nbsp;&nbsp; \u2022 &nbsp;&nbsp; DASHBOARD PREDIKSI TOGEL &nbsp;&nbsp; \u2022 &nbsp;&nbsp; DASHBOARD PREDIKSI TOGEL</h1>' +
+        '<h1><span>DASHBOARD PREDIKSI TOGEL &nbsp;&nbsp; \u2022 &nbsp;&nbsp; DASHBOARD PREDIKSI TOGEL &nbsp;&nbsp; \u2022 &nbsp;&nbsp; DASHBOARD PREDIKSI TOGEL</span><span>DASHBOARD PREDIKSI TOGEL &nbsp;&nbsp; \u2022 &nbsp;&nbsp; DASHBOARD PREDIKSI TOGEL &nbsp;&nbsp; \u2022 &nbsp;&nbsp; DASHBOARD PREDIKSI TOGEL</span></h1>' +
       '</div>' +
       '<div class="prediksi-row">' +
         '<div class="prediksi-col">' +
@@ -4091,11 +4141,19 @@ setInterval(() => {
     if(!sel || !box) return;
     var val = sel.value;
     var offset = (tipe === 'HariIni') ? 0 : 1;
+    var card = box.closest('.prediksi-card');
+    var col = box.closest('.prediksi-col');
 
     if(val === "SEMUA"){
       box.innerText = LIST_PASARAN.map(function(p){ return generateData(p, offset); }).join('');
+      box.classList.remove('prediksi-box-compact');
+      if(card) card.classList.remove('prediksi-card-compact');
+      if(col) col.classList.remove('prediksi-col-compact');
     } else {
       box.innerText = generateData(val, offset);
+      box.classList.add('prediksi-box-compact');
+      if(card) card.classList.add('prediksi-card-compact');
+      if(col) col.classList.add('prediksi-col-compact');
     }
   }
 
