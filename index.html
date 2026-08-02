@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,500;1,600;1,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Perhitungan Hadiah Togel</title>
@@ -837,6 +840,16 @@
     </span>
     <span class="label label-sm">PERHITUNGAN BOLA PNG</span>
   </div>
+  <div class="nav-item" id="navHasilJadwal">
+    <span class="icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="4" width="18" height="17" rx="2" stroke="currentColor" stroke-width="2"/>
+        <path d="M3 9h18" stroke="currentColor" stroke-width="2"/>
+        <path d="M8 2v4M16 2v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="label label-sm">RESULT &amp; JADWAL PASARAN</span>
+  </div>
 </div>
 
 <div class="main-content">
@@ -974,6 +987,1682 @@
   </div>
 </div>
 
+<div id="pageHasilJadwal" style="display:none;">
+  <div class="topbar">
+    <h1>RESULT &amp; JADWAL PASARAN &nbsp;&nbsp; • &nbsp;&nbsp; RESULT &amp; JADWAL PASARAN &nbsp;&nbsp; • &nbsp;&nbsp; RESULT &amp; JADWAL PASARAN &nbsp;&nbsp; • &nbsp;&nbsp; RESULT &amp; JADWAL PASARAN</h1>
+  </div>
+
+  <div style="margin:14px 16px; border-radius:8px; overflow:hidden;">
+<div class="hasil-scope">
+<style>
+  .hasil-scope {
+    --void:#14100a;
+    --panel:#241c10;
+    --panel-2:#302514;
+    --ink:#fdf1d8;
+    --ink-dim:#dcb876;
+    --ink-faint:#a98c52;
+    --line:rgba(230,190,80,.22);
+    --line-strong:rgba(230,190,80,.55);
+    --gold:#e6c04a;
+    --gold-bright:#ffe49a;
+    --gold-deep:#9c7a2c;
+    --text-uniform:#fff7e2;
+    --font-display:"Fraunces",serif;
+    --font-body:"Work Sans",sans-serif;
+    --font-mono:"IBM Plex Mono",monospace;
+  }
+  .hasil-scope * {box-sizing:border-box;}
+  .hasil-scope {
+    margin:0;
+    position:relative;
+    background:var(--void);
+    font-family:var(--font-body);
+    padding:22px 16px 34px;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    min-height:100%;
+    overflow-x:hidden;
+  }
+  .hasil-scope .bg-photo {
+    position:absolute;
+    inset:0;
+    z-index:0;
+    background-image:url("https://i.pinimg.com/736x/81/67/87/816787d7cf30bbeea01ee4d097abf7c6.jpg");
+    background-size:cover;
+    background-position:center top;
+    background-repeat:no-repeat;
+    filter:grayscale(1) sepia(1) saturate(2.4) hue-rotate(-8deg) contrast(1.08) brightness(.58);
+    pointer-events:none;
+  }
+  .hasil-scope .bg-photo::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:1;
+    background:
+      radial-gradient(ellipse 640px 420px at 50% 4%, rgba(255,228,154,.45), transparent 62%),
+      conic-gradient(from 200deg at 50% -6%, transparent 0deg, rgba(230,190,80,.16) 90deg, transparent 180deg, rgba(230,190,80,.12) 260deg, transparent 360deg);
+    mix-blend-mode:screen;
+  }
+  .hasil-scope .bg-photo::after {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(ellipse 900px 480px at 50% -10%, rgba(255,228,154,.20), transparent 60%),
+      radial-gradient(ellipse 700px 900px at 50% 110%, rgba(156,122,44,.32), transparent 65%),
+      linear-gradient(180deg, rgba(20,16,10,.42), rgba(20,16,10,.68) 45%, var(--void) 92%);
+  }
+  .hasil-scope::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    background-image:repeating-linear-gradient(0deg, rgba(230,190,80,.05) 0px, rgba(230,190,80,.05) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode:overlay;
+  }
+  .hasil-scope::after {
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    opacity:.3;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/></svg>");
+  }
+  .hasil-scope > * { position:relative; z-index:1; }
+
+  .hasil-scope .hero {
+    width:100%;
+    max-width:520px;
+    text-align:center;
+    padding:2px 0 0;
+  }
+  .hasil-scope .hero-title {
+    font-family:var(--font-display);
+    font-style:italic;
+    font-weight:600;
+    font-size:clamp(30px,7.5vw,44px);
+    letter-spacing:.3px;
+    margin:6px 0 5px;
+    color:var(--gold-bright);
+    text-shadow:0 0 44px rgba(255,228,154,.28), 0 0 90px rgba(230,190,80,.14);
+  }
+  .hasil-scope .hero-rule {
+    width:110px;
+    height:1px;
+    margin:0 auto 10px;
+    background:linear-gradient(90deg,transparent,var(--line-strong),transparent);
+  }
+  .hasil-scope .hero-sub {
+    font-family:var(--font-body);
+    font-size:14px;
+    color:var(--ink-dim);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .hasil-scope #hero-date { color:var(--gold-bright); font-weight:600; }
+  .hasil-scope .jadwal-link {
+    font-family:var(--font-body);
+    font-size:14px;
+    color:var(--gold-bright);
+  }
+
+  .hasil-scope .section-tag {
+    width:100%;
+    max-width:520px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:3px;
+    color:var(--ink-faint);
+    text-transform:uppercase;
+    margin-top:2px;
+  }
+  .hasil-scope .section-tag::before, .hasil-scope .section-tag::after {
+    content:"";
+    height:1px;
+    flex:1;
+    background:var(--line);
+  }
+  .hasil-scope #jadwal-pasaran {
+    font-family:var(--font-body);
+    font-size:14px;
+    letter-spacing:normal;
+    text-transform:none;
+    color:var(--ink-dim);
+  }
+
+  .hasil-scope .block {
+    width:100%;
+    max-width:520px;
+    border-radius:3px;
+    overflow:hidden;
+    position:relative;
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    box-shadow:
+      0 24px 50px rgba(0,0,0,.6),
+      0 0 0 1px var(--line);
+  }
+  .hasil-scope .block::before {
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:12px;
+    background-image:radial-gradient(circle at 10px 6px, var(--void) 6px, transparent 6.4px);
+    background-size:20px 12px;
+    background-repeat:repeat-x;
+    z-index:2;
+  }
+  .hasil-scope table {
+    width:100%;
+    border-collapse:collapse;
+    position:relative;
+    z-index:1;
+  }
+  .hasil-scope .lot-table { margin-top:0; }
+  .hasil-scope .lot-table td {
+    border:1px solid var(--line);
+    padding:7px 14px;
+    font-weight:500;
+    font-size:14.5px;
+    letter-spacing:.2px;
+  }
+
+  .hasil-scope .lbl-cell {
+    background:transparent;
+    color:var(--text-uniform);
+    text-align:center;
+    width:36%;
+    font-family:var(--font-display);
+    font-style:italic;
+    font-weight:600;
+    font-size:19px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    white-space:nowrap;
+    overflow:visible;
+    text-shadow:0 0 18px rgba(230,190,80,.25);
+    border-right:1px dashed var(--line-strong) !important;
+  }
+  .hasil-scope .block-sg .lbl-cell { color:var(--text-uniform); }
+  .hasil-scope .block-ca .lbl-cell { color:var(--text-uniform); }
+
+  .hasil-scope .val-cell {
+    background:rgba(230,190,80,.05);
+    text-align:center;
+  }
+  .hasil-scope .info-cell {
+    background:transparent;
+    color:var(--text-uniform);
+    font-family:var(--font-mono);
+    font-weight:500;
+    font-size:13px;
+    letter-spacing:.2px;
+  }
+  .hasil-scope .info-cell--full {
+    text-align:left;
+    padding-left:calc(36% + 14px) !important;
+    letter-spacing:.2px;
+  }
+  .hasil-scope #sg-title, .hasil-scope #ca-title {
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+
+  .hasil-scope .editable {
+    background:#050506;
+    border:2px dashed var(--line-strong);
+    outline:none;
+    width:92%;
+    text-align:center;
+    font-family:var(--font-mono);
+    font-weight:700;
+    font-size:18px;
+    letter-spacing:3px;
+    color:var(--text-uniform);
+    border-radius:4px;
+    padding:5px 4px;
+    transition:box-shadow .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .hasil-scope .editable:focus {
+    background:#0f0b04;
+    border-color:var(--gold-bright);
+    box-shadow:0 0 0 3px rgba(230,190,80,.18);
+  }
+  .hasil-scope .editable::placeholder {
+    color:var(--ink-faint);
+    opacity:.75;
+    letter-spacing:2px;
+  }
+
+  .hasil-scope .editable-text {
+    background:rgba(230,190,80,.08);
+    border:2px dashed var(--line-strong);
+    outline:none;
+    border-radius:4px;
+    padding:2px 8px;
+    display:inline-block;
+    font-weight:600;
+    color:var(--text-uniform);
+    white-space:nowrap;
+    transition:box-shadow .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .hasil-scope .editable-text:focus {
+    background:rgba(230,190,80,.14);
+    border-color:var(--gold-bright);
+    box-shadow:0 0 0 3px rgba(230,190,80,.16);
+  }
+
+  .hasil-scope .lbl-cell.editable-text {
+    display:table-cell;
+    background:transparent;
+    border-color:transparent !important;
+    width:36%;
+  }
+  .hasil-scope .lbl-cell.editable-text:empty::before {
+    content:"PASARAN";
+    opacity:.35;
+    font-size:14px;
+    letter-spacing:2px;
+    font-style:normal;
+  }
+
+  .hasil-scope .auto-text {
+    font-weight:600;
+    font-family:var(--font-mono);
+    color:var(--text-uniform);
+  }
+  .hasil-scope span.auto-text {
+    display:inline-block;
+    padding:2px 4px;
+  }
+  .hasil-scope td.auto-text {
+    display:table-cell;
+  }
+
+  .hasil-scope td.shio-name.editable-text { display:table-cell; background:transparent; border-color:var(--line); }
+  .hasil-scope td.shio-nums.editable-text { display:table-cell; background:transparent; border-color:var(--line); }
+
+  .hasil-scope .shio-wrap {
+    width:100%;
+    max-width:520px;
+    border-radius:3px;
+    overflow:hidden;
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    box-shadow:0 24px 50px rgba(0,0,0,.6), 0 0 0 1px var(--line);
+  }
+  .hasil-scope .shio-header-row td {
+    border:1px solid var(--line);
+    padding:7px;
+    font-weight:700;
+    text-align:center;
+    font-size:14px;
+    font-family:var(--font-mono);
+    letter-spacing:2px;
+    text-transform:uppercase;
+  }
+  .hasil-scope .day-cell { background:rgba(230,190,80,.12); color:var(--ink); }
+  .hasil-scope .date-cell { background:rgba(230,190,80,.06); color:var(--ink-dim); }
+  .hasil-scope .shio-title-row td {
+    background:#050506;
+    color:var(--ink-faint);
+    text-align:center;
+    font-family:var(--font-mono);
+    font-weight:600;
+    letter-spacing:2px;
+    border:1px solid var(--line);
+    padding:5px;
+    font-size:10px;
+    opacity:.7;
+  }
+  .hasil-scope .shio-table td {
+    border:1px solid var(--line);
+    padding:6px 14px;
+    font-weight:500;
+  }
+  .hasil-scope .shio-table tr:nth-child(odd) .shio-name { background:rgba(230,190,80,.05); }
+  .hasil-scope .shio-table tr:nth-child(even) .shio-name { background:rgba(230,190,80,.08); }
+  .hasil-scope .shio-table tr:nth-child(odd) .shio-nums { background:rgba(230,190,80,.05); }
+  .hasil-scope .shio-table tr:nth-child(even) .shio-nums { background:rgba(230,190,80,.09); }
+
+  .hasil-scope .shio-name {
+    color:var(--text-uniform);
+    width:38%;
+    font-family:Arial, Helvetica, sans-serif;
+    font-style:normal;
+    font-weight:600;
+    font-size:14.5px;
+  }
+  .hasil-scope .shio-nums {
+    color:var(--text-uniform);
+    font-family:var(--font-mono);
+    font-size:13.5px;
+    letter-spacing:.3px;
+    overflow-x:auto;
+  }
+
+  .hasil-scope .copy-row {
+    background:rgba(230,190,80,.05);
+    text-align:center;
+    padding:7px 14px !important;
+  }
+  .hasil-scope .copy-btn {
+    font-family:var(--font-mono);
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#bdeccb;
+    background:#0c2e1c;
+    border:2px dashed rgba(64,176,110,.55);
+    border-radius:4px;
+    width:92%;
+    padding:7px 6px;
+    cursor:pointer;
+    transition:box-shadow .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .hasil-scope .copy-btn:hover {
+    background:#123f27;
+    border-color:#5fce8f;
+  }
+  .hasil-scope .copy-btn:active {
+    box-shadow:0 0 0 3px rgba(64,176,110,.22);
+  }
+  .hasil-scope .copy-btn.copied {
+    border-color:#5fce8f;
+    color:#08150d;
+    background:#5fce8f;
+  }
+
+  .hasil-scope .clear-row {
+    background:#050506;
+    text-align:center;
+    padding:6px 14px !important;
+  }
+  .hasil-scope .clear-btn {
+    font-family:var(--font-mono);
+    font-weight:700;
+    font-size:10.5px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#f0c2c2;
+    background:#3a0d10;
+    border:1px solid rgba(200,60,60,.55);
+    border-radius:20px;
+    padding:5px 18px;
+    cursor:pointer;
+    transition:transform .12s ease, background .12s ease, color .12s ease;
+  }
+  .hasil-scope .clear-btn:hover {
+    transform:translateY(-1px);
+    background:#521215;
+    color:#ffd9d9;
+  }
+  .hasil-scope .clear-btn:active {
+    transform:translateY(0);
+  }
+
+  .hasil-scope .simpan-btn-wrap {
+    width:100%;
+    max-width:520px;
+    display:flex;
+    justify-content:center;
+    margin-top:-6px;
+  }
+  .hasil-scope .simpan-btn {
+    font-family:var(--font-mono);
+    font-weight:700;
+    font-size:11.5px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#241c10;
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+    border:1px solid var(--gold-deep);
+    border-radius:20px;
+    padding:9px 26px;
+    cursor:pointer;
+    width:100%;
+    box-shadow:0 6px 18px rgba(0,0,0,.4);
+    transition:transform .12s ease, background .12s ease, box-shadow .12s ease;
+  }
+  .hasil-scope .simpan-btn:hover {
+    transform:translateY(-1px);
+    box-shadow:0 8px 22px rgba(0,0,0,.5);
+  }
+  .hasil-scope .simpan-btn:active {
+    transform:translateY(0);
+  }
+  .hasil-scope .simpan-btn.simpan-btn-success {
+    background:linear-gradient(180deg,#8fe6b1,#5fce8f);
+    border-color:#3f9c68;
+    color:#08150d;
+  }
+
+  /* ===== LAYOUT SANDINGAN (2 KOLOM) ===== */
+  .hasil-scope .layout {
+    width:100%;
+    max-width:1380px;
+    display:flex;
+    flex-direction:row;
+    align-items:flex-start;
+    justify-content:center;
+    gap:26px;
+    flex-wrap:wrap;
+  }
+  .hasil-scope .col-left {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    width:100%;
+    max-width:520px;
+    flex:0 0 auto;
+  }
+  .hasil-scope .col-right {
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+    flex:1 1 680px;
+    min-width:320px;
+    max-width:980px;
+  }
+  .hasil-scope .col-right .section-tag { max-width:none; }
+  .hasil-scope .col-right .block { max-width:none; }
+  @media  (max-width:980px) {
+    .hasil-scope .layout { flex-direction:column; align-items:center; }
+    .hasil-scope .col-right { max-width:520px; }
+  }
+
+  /* ===== JADWAL PASARAN ===== */
+  .hasil-scope .jadwal-wrap { padding:2px; }
+  .hasil-scope .jadwal-scroll {
+    overflow-x:auto;
+    border-radius:2px;
+  }
+  .hasil-scope .jadwal-table {
+    width:100%;
+    min-width:700px;
+    border-collapse:collapse;
+  }
+  .hasil-scope .jadwal-table thead th {
+    background:var(--panel-2);
+    color:var(--gold-bright);
+    padding:9px 8px;
+    font-size:11.5px;
+    font-family:var(--font-mono);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    border:1px dashed var(--line);
+    white-space:nowrap;
+    position:sticky;
+    top:0;
+  }
+  .hasil-scope .jadwal-table tbody td {
+    padding:6px 6px;
+    font-size:12.5px;
+    font-family:var(--font-mono);
+    text-align:center;
+    border:1px dashed var(--line);
+    color:var(--text-uniform);
+    background:transparent;
+    white-space:nowrap;
+  }
+  .hasil-scope .jadwal-table tbody tr:nth-child(even) td {
+    background:rgba(230,190,80,.05);
+  }
+  .hasil-scope .jadwal-nama {
+    text-align:left;
+    color:var(--gold-bright);
+    font-weight:600;
+    font-family:var(--font-display);
+    font-style:italic;
+  }
+  .hasil-scope .jadwal-editable { cursor:text; }
+  .hasil-scope .jadwal-editable:focus {
+    outline:2px solid var(--gold-bright);
+    background:rgba(230,190,80,.14);
+  }
+  .hasil-scope .jadwal-hasil {
+    font-weight:700;
+    color:var(--ink-faint);
+    transition:color .2s ease;
+  }
+  .hasil-scope .jadwal-hasil.jadwal-result {
+    color:#5fce8f;
+  }
+  .hasil-scope .jadwal-table input[type="checkbox"] {
+    width:16px;
+    height:16px;
+    accent-color:var(--gold);
+    cursor:pointer;
+  }
+
+  /* ===== HITUNGAN TOTO SINGAPORE (tidak diubah) ===== */
+  .hasil-scope .toto-wrap {
+    background-color: var(--panel);
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: var(--text-uniform);
+    padding: 20px;
+  }
+  .hasil-scope .toto-wrap table {
+    border-collapse: collapse;
+    background-color: var(--panel);
+    width: auto;
+  }
+  .hasil-scope .toto-wrap td {
+    border: 1px dashed var(--line);
+    text-align: center;
+    padding: 3px 10px;
+    height: 20px;
+  }
+  .hasil-scope .toto-wrap .header-main {
+    background-color: var(--panel-2);
+    color: var(--gold-bright);
+    font-weight: normal;
+    font-size: 16px;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+  .hasil-scope .toto-wrap .header-bola {
+    background-color: var(--panel-2);
+    color: var(--gold-bright);
+    font-weight: normal;
+    width: 70px;
+    white-space: nowrap;
+  }
+  .hasil-scope .toto-wrap .bola-num {
+    background-color: transparent;
+    color: var(--text-uniform);
+    font-weight: normal;
+    width: 50px;
+  }
+  .hasil-scope .toto-wrap .tempel {
+    background-color: transparent;
+    color: var(--text-uniform);
+    font-weight: normal;
+  }
+  .hasil-scope .toto-wrap .tempel input {
+    width: 45px;
+    background-color: transparent;
+    border: none;
+    text-align: center;
+    font-weight: normal;
+    font-size: 14px;
+    color: var(--text-uniform);
+    outline: none;
+    -moz-appearance: textfield;
+    padding: 0;
+    line-height: 1;
+  }
+  .hasil-scope .toto-wrap .tempel input::-webkit-outer-spin-button, .hasil-scope .toto-wrap .tempel input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .hasil-scope .toto-wrap .add-label {
+    background-color: var(--panel-2);
+    color: var(--gold-bright);
+    font-weight: normal;
+  }
+  .hasil-scope .toto-wrap .add-val {
+    background-color: transparent;
+    color: var(--text-uniform);
+    font-weight: normal;
+  }
+  .hasil-scope .toto-wrap .add-val input {
+    width: 45px;
+    background-color: transparent;
+    border: none;
+    text-align: center;
+    font-weight: normal;
+    font-size: 14px;
+    color: var(--text-uniform);
+    outline: none;
+    -moz-appearance: textfield;
+    padding: 0;
+    line-height: 1;
+  }
+  .hasil-scope .toto-wrap .add-val input::-webkit-outer-spin-button, .hasil-scope .toto-wrap .add-val input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .hasil-scope .toto-wrap .col-right-1 {
+    background-color: transparent;
+    color: var(--text-uniform);
+    font-weight: normal;
+    width: 75px;
+  }
+  .hasil-scope .toto-wrap .col-right-2 {
+    background-color: transparent;
+    color: var(--text-uniform);
+    font-weight: normal;
+    width: 75px;
+  }
+  .hasil-scope .toto-wrap .col-right-3 {
+    background-color: transparent;
+    color: var(--text-uniform);
+    font-weight: normal;
+    width: 75px;
+  }
+  .hasil-scope .toto-wrap .col-right-4 {
+    background-color: transparent;
+    color: var(--text-uniform);
+    font-weight: normal;
+    width: 75px;
+  }
+  .hasil-scope .toto-wrap .result-label {
+    background-color: var(--panel-2);
+    color: var(--gold-bright);
+    font-weight: normal;
+    text-align: center;
+    width: 70px;
+  }
+  .hasil-scope .toto-wrap .result-val {
+    background-color: transparent;
+    color: var(--gold-bright);
+    font-weight: normal;
+    width: 50px;
+    font-size: 15px;
+  }
+  .hasil-scope .toto-wrap .dark-row {
+    background-color: var(--void);
+    border: none;
+  }
+
+  /* ===== KALKULATOR RUMUS SALDO AWAL KAS (tidak diubah) ===== */
+  .hasil-scope .saldo-wrap {
+    padding: 0;
+    display: flex;
+    justify-content: center;
+  }
+  .hasil-scope .saldo-wrap table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 450px;
+    background-color: var(--panel);
+  }
+  .hasil-scope .saldo-wrap th, .hasil-scope .saldo-wrap td {
+    border: 1px dashed var(--line);
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .hasil-scope .saldo-wrap .header-row {
+    background-color: var(--panel-2);
+    text-align: center;
+    font-weight: bold;
+    color: var(--gold-bright);
+  }
+  .hasil-scope .saldo-wrap .data-row {
+    background-color: transparent;
+    color: var(--text-uniform);
+  }
+  .hasil-scope .saldo-wrap .total-row {
+    background-color: rgba(230,190,80,.08);
+    color: var(--gold-bright);
+    font-weight: bold;
+  }
+  .hasil-scope .saldo-wrap .diff-row {
+    background-color: rgba(200,60,60,.10);
+    color: #f0a8a8;
+    font-weight: bold;
+  }
+  .hasil-scope .saldo-wrap input.editable-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    color: var(--text-uniform);
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+  }
+  .hasil-scope .saldo-wrap .result-text {
+    display: inline-block;
+    width: 100%;
+    text-align: left;
+    font-weight: bold;
+  }
+  .hasil-scope .saldo-wrap .negative-val {
+    color: #ff9a9a;
+  }
+
+</style>
+
+<div class="bg-photo"></div>
+
+<header class="hero">
+  <h1 class="hero-title">Riki Golan</h1>
+  <div class="hero-rule"></div>
+  <div class="hero-sub">
+    <span>Hasil Result &middot; <span id="hero-date">-</span></span>
+    <span class="jadwal-link">Jadwal Pasaran</span>
+  </div>
+</header>
+
+<div class="layout">
+<div class="col-left">
+
+<!-- SINGAPORE BLOCK -->
+<div class="block block-sg">
+  <table class="lot-table">
+    <tr>
+      <td colspan="2" class="clear-row">
+        <button type="button" class="clear-btn" onclick="hapusData('sg', this)"> Hapus Data</button>
+      </td>
+    </tr>
+    <tr>
+      <td class="lbl-cell editable-text" id="sg-name" contenteditable="true"></td>
+      <td class="info-cell" id="sg-title">Hasil Pengeluaran SINGAPORE</td>
+    </tr>
+    <tr>
+      <td class="val-cell">
+        <input class="editable" id="sg1" type="text" maxlength="4" inputmode="numeric" value="" placeholder="ANGKA">
+      </td>
+      <td class="info-cell" id="sg-hari-cell">Hari <span class="auto-text" id="sg-hari">Tuesday, 28 July 2026</span></td>
+    </tr>
+    <tr>
+      <td class="val-cell">
+        <input class="editable" id="sg2" type="text" maxlength="4" inputmode="numeric" value="" placeholder="ANGKA">
+      </td>
+      <td class="info-cell" id="sg-p1">Prize 1 : 8590</td>
+    </tr>
+    <tr>
+      <td class="val-cell">
+        <input class="editable" id="sg3" type="text" maxlength="4" inputmode="numeric" value="" placeholder="ANGKA">
+      </td>
+      <td class="info-cell" id="sg-shio">SHIO : Kerbau</td>
+    </tr>
+    <tr>
+      <td class="copy-row">
+        <button type="button" class="copy-btn" onclick="salinTeks('sg', this)">Salin Data</button>
+      </td>
+      <td class="info-cell" id="sg-p2">Prize 2 : 5917</td>
+    </tr>
+    <tr>
+      <td colspan="2" class="info-cell info-cell--full" id="sg-p3">Prize 3 : 3898</td>
+    </tr>
+    <tr>
+      <td colspan="2" class="info-cell info-cell--full">Selamat Kepada Pemenang, Salam Jp</td>
+    </tr>
+  </table>
+</div>
+
+<!-- CALIFORNIA BLOCK -->
+<div class="block block-ca">
+  <table class="lot-table">
+    <tr>
+      <td colspan="2" class="clear-row">
+        <button type="button" class="clear-btn" onclick="hapusData('ca', this)"> Hapus Data</button>
+      </td>
+    </tr>
+    <tr>
+      <td class="lbl-cell editable-text" id="ca-name" contenteditable="true"></td>
+      <td class="info-cell" id="ca-title">Hasil Pengeluaran CALIFORNIA</td>
+    </tr>
+    <tr>
+      <td class="val-cell">
+        <input class="editable" id="ca1" type="text" maxlength="5" inputmode="numeric" value="" placeholder="ANGKA">
+      </td>
+      <td class="info-cell" id="ca-hari-cell">Hari <span class="auto-text" id="ca-hari">Tuesday, 28 July 2026</span></td>
+    </tr>
+    <tr>
+      <td class="copy-row">
+        <button type="button" class="copy-btn" onclick="salinTeks('ca', this)">Salin Data</button>
+      </td>
+      <td class="info-cell" id="ca-result">Result : 3319</td>
+    </tr>
+    <tr>
+      <td colspan="2" class="info-cell info-cell--full" id="ca-shio">SHIO : Tikus</td>
+    </tr>
+    <tr>
+      <td colspan="2" class="info-cell info-cell--full">Selamat Kepada Pemenang, Salam Jp</td>
+    </tr>
+  </table>
+</div>
+
+<!-- SHIO REFERENCE TABLE -->
+<div class="section-tag">Referensi Shio</div>
+<div class="shio-wrap">
+  <table class="shio-table">
+    <tr class="shio-header-row">
+      <td class="day-cell auto-text" id="shio-day">Tuesday</td>
+      <td class="date-cell auto-text" id="shio-date">28 Jul 2026</td>
+    </tr>
+    <tr class="shio-title-row">
+      <td colspan="2">SHIO=====SHIO=====SHIO=====SHIO=====SHIO</td>
+    </tr>
+    <tr>
+      <td class="shio-name editable-text" contenteditable="true">Kuda</td><td class="shio-nums editable-text" contenteditable="true">01,13,25,37,49,61,73,85,97</td>
+    </tr>
+    <tr>
+      <td class="shio-name editable-text" contenteditable="true">Ular</td><td class="shio-nums editable-text" contenteditable="true">02,14,26,38,50,62,74,86,98</td>
+    </tr>
+    <tr>
+      <td class="shio-name editable-text" contenteditable="true">Naga</td><td class="shio-nums editable-text" contenteditable="true">03,15,27,39,51,63,75,87,99</td>
+    </tr>
+    <tr>
+      <td class="shio-name editable-text" contenteditable="true">Kelinci</td><td class="shio-nums editable-text" contenteditable="true">04,16,28,40,52,64,76,88,00</td>
+    </tr>
+    <tr>
+      <td class="shio-name editable-text" contenteditable="true">Harimau</td><td class="shio-nums editable-text" contenteditable="true">05,17,29,41,53,65,77,89</td>
+    </tr>
+    <tr>
+      <td class="shio-name editable-text" contenteditable="true">Kerbau</td><td class="shio-nums editable-text" contenteditable="true">06,18,30,42,54,66,78,90</td>
+    </tr>
+    <tr>
+      <td class="shio-name editable-text" contenteditable="true">Tikus</td><td class="shio-nums editable-text" contenteditable="true">07,19,31,43,55,67,79,91</td>
+    </tr>
+    <tr>
+      <td class="shio-name editable-text" contenteditable="true">Babi</td><td class="shio-nums editable-text" contenteditable="true">08,20,32,44,56,68,80,92</td>
+    </tr>
+    <tr>
+      <td class="shio-name editable-text" contenteditable="true">Anjing</td><td class="shio-nums editable-text" contenteditable="true">09,21,33,45,57,69,81,93</td>
+    </tr>
+    <tr>
+      <td class="shio-name editable-text" contenteditable="true">Ayam</td><td class="shio-nums editable-text" contenteditable="true">10,22,34,46,58,70,82,94</td>
+    </tr>
+    <tr>
+      <td class="shio-name editable-text" contenteditable="true">Monyet</td><td class="shio-nums editable-text" contenteditable="true">11,23,35,47,59,71,83,95</td>
+    </tr>
+    <tr>
+      <td class="shio-name editable-text" contenteditable="true">Kambing</td><td class="shio-nums editable-text" contenteditable="true">12,24,36,48,60,72,84,96</td>
+    </tr>
+  </table>
+</div>
+
+<!-- HITUNGAN TOTO SINGAPORE -->
+<div class="section-tag">Modul Hitung Cepat</div>
+<div class="toto-wrap">
+    <table>
+        <!-- Baris 1: Judul Utama -->
+        <tr>
+            <td colspan="8" class="header-main">HITUNGAN TOTO SINGAPORE</td>
+        </tr>
+
+        <!-- Baris 2: Header Bola -->
+        <tr>
+            <td class="header-bola">BOLA</td>
+            <td class="bola-num">1</td>
+            <td class="bola-num">2</td>
+            <td class="bola-num">3</td>
+            <td class="bola-num">4</td>
+            <td class="bola-num">5</td>
+            <td class="bola-num">6</td>
+            <td class="col-right-1" id="out1">-</td>
+        </tr>
+
+        <!-- Baris 3: TEMPEL -->
+        <tr>
+            <td class="header-bola">TEMPEL &gt;&gt;</td>
+            <td class="tempel"><input type="number" id="t1" value="" oninput="hitung()"></td>
+            <td class="tempel"><input type="number" id="t2" value="" oninput="hitung()"></td>
+            <td class="tempel"><input type="number" id="t3" value="" oninput="hitung()"></td>
+            <td class="tempel"><input type="number" id="t4" value="" oninput="hitung()"></td>
+            <td class="tempel"><input type="number" id="t5" value="" oninput="hitung()"></td>
+            <td class="tempel"><input type="number" id="t6" value="" oninput="hitung()"></td>
+            <td class="col-right-1" id="out2">-</td>
+        </tr>
+
+        <!-- Baris 4: Kosong hitam -->
+        <tr>
+            <td colspan="7" class="dark-row"></td>
+            <td class="col-right-1" id="out3">-</td>
+        </tr>
+
+        <!-- Baris 5: ADD -->
+        <tr>
+            <td class="add-label">ADD</td>
+            <td class="add-val"><input type="number" id="add1" value="" oninput="hitung()"></td>
+            <td colspan="5" class="dark-row"></td>
+            <td class="col-right-2" id="out4">-</td>
+        </tr>
+
+        <!-- Baris 6: Kosong hitam -->
+        <tr>
+            <td colspan="7" class="dark-row"></td>
+            <td class="col-right-3" id="out5">-</td>
+        </tr>
+
+        <!-- Baris 7: Kosong hitam -->
+        <tr>
+            <td colspan="7" class="dark-row"></td>
+            <td class="col-right-4" id="out6">-</td>
+        </tr>
+
+        <!-- Baris 8: Result -->
+        <tr>
+            <td colspan="2" class="dark-row"></td>
+            <td class="result-label">result</td>
+            <td class="result-val" id="res1">-</td>
+            <td class="result-val" id="res2">-</td>
+            <td class="result-val" id="res3">-</td>
+            <td class="result-val" id="res4">-</td>
+            <td class="dark-row"></td>
+        </tr>
+    </table>
+</div>
+
+<!-- KALKULATOR RUMUS SALDO AWAL KAS (tidak diubah) -->
+<div class="section-tag">Rumus Saldo Awal</div>
+<div class="block saldo-wrap">
+<table>
+    <!-- Baris Judul -->
+    <tr class="header-row">
+        <td colspan="2">RUMUS SALDO AWAL</td>
+    </tr>
+
+    <!-- Baris Input 1 -->
+    <tr class="data-row">
+        <td>SALDO AKHIR</td>
+        <td><input type="text" id="saldo_akhir" class="editable-input" value="" placeholder="" oninput="hitungSaldo()"></td>
+    </tr>
+    <!-- Baris Input 2 -->
+    <tr class="data-row">
+        <td>DANA CANCEL</td>
+        <td><input type="text" id="dana_cancel" class="editable-input" value="" placeholder="" oninput="hitungSaldo()"></td>
+    </tr>
+    <!-- Baris Input 3 (Total Biaya - Nilai Minus di dalam kurung) -->
+    <tr class="data-row">
+        <td>TOTAL BIAYA</td>
+        <td><input type="text" id="total_biaya" class="editable-input negative-val" value="" placeholder="" oninput="hitungSaldo()"></td>
+    </tr>
+
+    <!-- Hasil Total 1 -->
+    <tr class="total-row">
+        <td>SALDO AWAL</td>
+        <td><span id="res_saldo_awal_1" class="result-text">0</span></td>
+    </tr>
+
+    <!-- Baris Kosong Interaktif sesuai Gambar -->
+    <tr class="data-row">
+        <td></td>
+        <td><input type="text" id="extra_input_1" class="editable-input" value="" oninput="hitungSaldo()"></td>
+    </tr>
+
+    <!-- Hasil Selisih -->
+    <tr class="diff-row">
+        <td>SELISIH</td>
+        <td><span id="res_selisih" class="result-text">0</span></td>
+    </tr>
+
+    <!-- Baris Kosong Interaktif kedua sesuai Gambar -->
+    <tr class="data-row">
+        <td></td>
+        <td><input type="text" id="extra_input_2" class="editable-input" value="" oninput="hitungSaldo()"></td>
+    </tr>
+
+    <!-- Baris Input 4 -->
+    <tr class="data-row">
+        <td>SALDO BANK</td>
+        <td><input type="text" id="saldo_bank" class="editable-input" value="" placeholder="" oninput="hitungSaldo()"></td>
+    </tr>
+    <!-- Baris Input 5 -->
+    <tr class="data-row">
+        <td>DANA PENDINGAN</td>
+        <td><input type="text" id="dana_pendingan" class="editable-input" value="" placeholder="" oninput="hitungSaldo()"></td>
+    </tr>
+
+    <!-- Hasil Total 2 -->
+    <tr class="total-row">
+        <td>SALDO AWAL</td>
+        <td><span id="res_saldo_awal_2" class="result-text">0</span></td>
+    </tr>
+</table>
+</div>
+
+<div class="simpan-btn-wrap">
+  <button type="button" id="simpanDataBtn" class="simpan-btn">Simpan Data</button>
+</div>
+
+</div>
+<div class="col-right">
+
+<!-- JADWAL PASARAN -->
+<div class="block jadwal-wrap">
+  <div class="jadwal-scroll">
+  <table class="jadwal-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Nama Pasaran</th>
+        <th>Jam Tutup</th>
+        <th>Result</th>
+        <th>Jadwal</th>
+        <th>Hasil</th>
+      </tr>
+    </thead>
+    <tbody id="jadwalBody"></tbody>
+  </table>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+function right(str, n){
+  str = (str || "").toString();
+  return str.length <= n ? str : str.slice(-n);
+}
+
+// Nama hari & bulan dalam Bahasa Indonesia
+const HARI_ID = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const BULAN_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const BULAN_ID_SINGKAT = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+
+function isiTanggalHariIni(){
+  const now = new Date();
+  const hari = HARI_ID[now.getDay()];
+  const tanggal = now.getDate();
+  const bulan = BULAN_ID[now.getMonth()];
+  const bulanSingkat = BULAN_ID_SINGKAT[now.getMonth()];
+  const tahun = now.getFullYear();
+
+  const lengkap = `${hari}, ${tanggal} ${bulan} ${tahun}`;
+  const singkat = `${tanggal} ${bulanSingkat} ${tahun}`;
+
+  document.getElementById('sg-hari').textContent = lengkap;
+  document.getElementById('ca-hari').textContent = lengkap;
+  document.getElementById('shio-day').textContent = hari;
+  document.getElementById('shio-date').textContent = singkat;
+
+  const heroDate = document.getElementById('hero-date');
+  if(heroDate) heroDate.textContent = lengkap;
+}
+
+// Auto-shrink font size so text always fits fully inside its cell (no cropping)
+function autoFitText(el){
+  if(!el) return;
+  el.style.fontSize = '';
+  const maxSize = parseFloat(getComputedStyle(el).fontSize);
+  let fontSize = maxSize;
+  const minSize = 8;
+  while(el.scrollWidth > el.clientWidth && fontSize > minSize){
+    fontSize -= 0.5;
+    el.style.fontSize = fontSize + 'px';
+  }
+}
+
+function autoFitAll(){
+  document.querySelectorAll('.editable-text:not(.shio-nums)').forEach(autoFitText);
+}
+
+// ===== Referensi Shio: perubahan disimpan permanen hanya saat tombol "Simpan Data" diklik =====
+const SHIO_STORAGE_KEY = 'shioTableData';
+
+function loadShioStorage(){
+  try {
+    return JSON.parse(localStorage.getItem(SHIO_STORAGE_KEY)) || [];
+  } catch(e){
+    return [];
+  }
+}
+
+function restoreShioTable(){
+  const saved = loadShioStorage();
+  if(!saved.length) return;
+  let i = 0;
+  document.querySelectorAll('.shio-table tr').forEach(tr=>{
+    const nameCell = tr.querySelector('.shio-name');
+    const numsCell = tr.querySelector('.shio-nums');
+    if(!nameCell || !numsCell) return;
+    const data = saved[i];
+    if(data){
+      if(data.name !== undefined) nameCell.textContent = data.name;
+      if(data.nums !== undefined) numsCell.textContent = data.nums;
+    }
+    i++;
+  });
+}
+
+function simpanShioData(){
+  const data = [];
+  document.querySelectorAll('.shio-table tr').forEach(tr=>{
+    const nameCell = tr.querySelector('.shio-name');
+    const numsCell = tr.querySelector('.shio-nums');
+    if(!nameCell || !numsCell) return;
+    data.push({
+      name: nameCell.textContent.trim(),
+      nums: numsCell.textContent.trim()
+    });
+  });
+  localStorage.setItem(SHIO_STORAGE_KEY, JSON.stringify(data));
+}
+
+restoreShioTable();
+
+// Build a lookup { "01": "Kuda", ... } straight from the (editable) SHIO table
+function getShioLookup(){
+  const map = {};
+  document.querySelectorAll('.shio-table tr').forEach(tr=>{
+    const nameCell = tr.querySelector('.shio-name');
+    const numsCell = tr.querySelector('.shio-nums');
+    if(!nameCell || !numsCell) return;
+    const name = nameCell.textContent.trim();
+    const nums = numsCell.textContent.split(',').map(s=>s.trim()).filter(Boolean);
+    nums.forEach(n=>{
+      const key = n.length === 1 ? '0'+n : n;
+      map[key] = name;
+    });
+  });
+  return map;
+}
+
+function shioFromNumber(numStr, lookup){
+  if(!numStr) return "";
+  let last2 = numStr.toString().slice(-2);
+  if(last2.length === 1) last2 = '0'+last2;
+  return lookup[last2] || "";
+}
+
+function recalc(){
+  const sg1 = document.getElementById('sg1').value.trim();
+  const sg2 = document.getElementById('sg2').value.trim();
+  const sg3 = document.getElementById('sg3').value.trim();
+  const ca1 = document.getElementById('ca1').value.trim();
+
+  const lookup = getShioLookup();
+
+  // Singapore block
+  document.getElementById('sg-p1').textContent = `Prize 1 : ${right(sg1,4)}`;
+  document.getElementById('sg-p2').textContent = `Prize 2 : ${right(sg2,4)}`;
+  document.getElementById('sg-p3').textContent = `Prize 3 : ${right(sg3,4)}`;
+  document.getElementById('sg-shio').textContent = `SHIO : ${shioFromNumber(sg1, lookup)}`;
+
+  // California block
+  document.getElementById('ca-result').textContent = `Hasil : ${right(ca1,5)}`;
+  document.getElementById('ca-shio').textContent = `SHIO : ${shioFromNumber(ca1, lookup)}`;
+
+  // Nama pasaran (judul ikut menyesuaikan)
+  const sgName = document.getElementById('sg-name').textContent.trim();
+  const caName = document.getElementById('ca-name').textContent.trim();
+  document.getElementById('sg-title').textContent = `Hasil Pengeluaran ${sgName}`;
+  document.getElementById('ca-title').textContent = `Hasil Pengeluaran ${caName}`;
+
+  autoCentangJadwal(sgName, sg1);
+  autoCentangJadwal(caName, ca1);
+
+  autoFitAll();
+}
+
+// Samakan nama pasaran walau beda spasi/huruf besar-kecil (mis. "TOTOMACAU PAGI" = "totomacau pagi" = "Totomacau  Pagi")
+function normalisasiNama(str){
+  return (str || '').toString().toLowerCase().replace(/\s+/g,'').trim();
+}
+
+// Jika nama pasaran + angka sudah diisi dan namanya cocok dengan salah satu baris Jadwal Pasaran,
+// centang otomatis checkbox baris tersebut
+function autoCentangJadwal(namaPasaran, angka){
+  const nama = normalisasiNama(namaPasaran);
+  if(!nama || !angka) return;
+  const tbody = document.getElementById('jadwalBody');
+  if(!tbody) return;
+  tbody.querySelectorAll('tr').forEach(tr=>{
+    const namaCell = tr.querySelector('.jadwal-nama');
+    if(!namaCell) return;
+    if(normalisasiNama(namaCell.textContent) === nama){
+      const cb = tr.querySelector('input[type="checkbox"]');
+      if(cb && !cb.checked){
+        cb.checked = true;
+        cb.dispatchEvent(new Event('change', { bubbles:true }));
+      }
+    }
+  });
+}
+
+['sg1','sg2','sg3','ca1'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', recalc);
+});
+
+['sg-name','ca-name'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', recalc);
+});
+
+document.querySelectorAll('.shio-name, .shio-nums').forEach(cell=>{
+  cell.addEventListener('input', recalc);
+});
+
+isiTanggalHariIni();
+recalc();
+autoFitAll();
+
+// Paste otomatis: baris 1 = nama pasaran, baris berikutnya = angka (berurutan)
+function setupSmartPaste(blockEl){
+  if(!blockEl) return;
+  blockEl.addEventListener('paste', function(e){
+    const text = (e.clipboardData || window.clipboardData).getData('text');
+    if(!text) return;
+    const lines = text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+    if(lines.length < 2) return; // biarkan paste normal jika cuma 1 baris
+
+    e.preventDefault();
+
+    const nameEl = blockEl.querySelector('.lbl-cell');
+    if(nameEl) nameEl.textContent = lines[0];
+
+    const inputs = blockEl.querySelectorAll('.editable');
+    for(let i=1; i<lines.length && (i-1)<inputs.length; i++){
+      const digits = lines[i].replace(/\D/g,'');
+      const inp = inputs[i-1];
+      const max = inp.maxLength > 0 ? inp.maxLength : digits.length;
+      inp.value = digits.slice(-max);
+    }
+
+    recalc();
+    autoFitAll();
+  });
+}
+
+document.querySelectorAll('.block').forEach(setupSmartPaste);
+
+// Salin semua info blok sekaligus (judul, hari, hasil, shio, ucapan)
+function salinTeks(jenis, btn){
+  let baris = [];
+
+  if(jenis === 'sg'){
+    baris = [
+      document.getElementById('sg-title').textContent.trim(),
+      document.getElementById('sg-hari-cell').textContent.trim(),
+      document.getElementById('sg-p1').textContent.trim(),
+      document.getElementById('sg-p2').textContent.trim(),
+      document.getElementById('sg-p3').textContent.trim(),
+      document.getElementById('sg-shio').textContent.trim(),
+      'Selamat Kepada Pemenang, Salam Jp'
+    ];
+  } else if(jenis === 'ca'){
+    baris = [
+      document.getElementById('ca-title').textContent.trim(),
+      document.getElementById('ca-hari-cell').textContent.trim(),
+      document.getElementById('ca-result').textContent.trim(),
+      document.getElementById('ca-shio').textContent.trim(),
+      'Selamat Kepada Pemenang, Salam Jp'
+    ];
+  }
+
+  const teks = baris.join('\n');
+
+  function tandaiTersalin(){
+    if(!btn) return;
+    const asli = btn.textContent;
+    btn.textContent = '✅ Tersalin!';
+    btn.classList.add('copied');
+    setTimeout(()=>{
+      btn.textContent = asli;
+      btn.classList.remove('copied');
+    }, 1500);
+  }
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(teks).then(tandaiTersalin).catch(()=>{
+      salinFallback(teks);
+      tandaiTersalin();
+    });
+  } else {
+    salinFallback(teks);
+    tandaiTersalin();
+  }
+}
+
+function salinFallback(teks){
+  const ta = document.createElement('textarea');
+  ta.value = teks;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try{ document.execCommand('copy'); }catch(e){}
+  document.body.removeChild(ta);
+}
+
+// Hapus nama pasaran & angka pada blok terkait
+function hapusData(jenis, btn){
+  if(jenis === 'sg'){
+    document.getElementById('sg-name').textContent = '';
+    document.getElementById('sg1').value = '';
+    document.getElementById('sg2').value = '';
+    document.getElementById('sg3').value = '';
+  } else if(jenis === 'ca'){
+    document.getElementById('ca-name').textContent = '';
+    document.getElementById('ca1').value = '';
+  }
+  recalc();
+  autoFitAll();
+}
+
+// ===== JADWAL PASARAN (data & logika sama seperti html yang diberikan) =====
+const dataJadwal = [
+["HOKIDRAW","result 24X","1 JAM SEKALI","Senin s/d Minggu"],
+["MACAU PAGI","tutup 00:00 WIB","result 00:15 WIB","Senin s/d Minggu"],
+["HUAHIN 0100","tutup 00:45 WIB","Result 01:00 WIB","Senin s/d Minggu"],
+["KENTUCKYMID","tutup 00:05 WIB","result 00:20 WIB","Senin s/d Minggu"],
+["FLORIDAMID","tutup 00:20 WIB","result 00:30 WIB","Senin s/d Minggu"],
+["BANGKOK 0130","tutup 01:15 WIB","result 01:30 WIB","Senin s/d Minggu"],
+["NEWYORKMID","tutup 01:15 WIB","result 01:25 WIB","Senin s/d Minggu"],
+["BRUNEI 02","tutup 02:30 WIB","result 02:45 WIB","Senin s/d Minggu"],
+["CAROLINADAY","tutup 01:45 WIB","result 02:00 WIB","Senin s/d Minggu"],
+["OREGON03","tutup 02:50 WIB","result 03:00 WIB","Senin s/d Minggu"],
+["OREGON06","tutup 05:50 WIB","result 06:00 WIB","Senin s/d Minggu"],
+["CALIFORNIA","tutup 08:25 WIB","result 08:30 WIB","Senin s/d Minggu"],
+["BANGKOK 0930","tutup 09:15 WIB","result 09:30 WIB","Senin s/d Minggu"],
+["FLORIDAEVE","tutup 08:35 WIB","result 08:45 WIB","Senin s/d Minggu"],
+["OREGON09","tutup 08:50 WIB","result 09:00 WIB","Senin s/d Minggu"],
+["NEWYORKEVE","tutup 09:25 WIB","result 09:35 WIB","Senin s/d Minggu"],
+["KENTUCKYEVE","tutup 09:45 WIB","result 10:00 WIB","Senin s/d Minggu"],
+["TOTOCAMBODIA","tutup 10:45 WIB","result 11:00 WIB","Senin s/d Minggu"],
+["CHELSEA 11","tutup 11:00 WIB","result 11:15 WIB","Senin s/d Minggu"],
+["CAROLINAEVE","tutup 11:17 WIB","result 11:22 WIB","Senin s/d Minggu"],
+["POIPET12","tutup 12:15 WIB","result 12:30 WIB","Senin s/d Minggu"],
+["BULLSEYE","tutup 13:00 WIB","result 13:15 WIB","Senin s/d Minggu"],
+["OREGON12","tutup 11:50 WIB","result 12:00 WIB","Senin s/d Minggu"],
+["TOTOMACAU SIANG","tutup 13:00 WIB","result 13:15 WIB","Senin s/d Minggu"],
+["SYDNEY","tutup 13:49 WIB","result 14:05 WIB","Senin s/d Minggu"],
+["JAKARTA 1400","tutup 13:55 WIB","result 14:10 WIB","Senin s/d Minggu"],
+["BRUNEI 14","tutup 14:30 WIB","result 14:45 WIB","Senin s/d Minggu"],
+["CHELSEA 15","tutup 15:00 WIB","result 15:15 WIB","Senin s/d Minggu"],
+["TOTOMALI 1530","tutup 15:15 WIB","result 15:30 WIB","Senin s/d Minggu"],
+["TOTOMACAU 5D SORE","tutup 15:15 WIB","result 21:00 WIB","Senin s/d Minggu"],
+["POIPET15","tutup 15:15 WIB","result 15:30 WIB","Senin s/d Minggu"],
+["TOTOMACAU SORE","tutup 16:00 WIB","result 16:15 WIB","Senin s/d Minggu"],
+["HUAHIN 1630","tutup 16:15 WIB","result 16:30 WIB","Senin s/d Minggu"],
+["KING KONG4D I","tutup 17:00 WIB","result 17:15 WIB","Senin s/d Minggu"],
+["SINGAPORE","tutup 17:30 WIB","result 17:45 WIB","HARI SELASA & JUM'AT ( LIBUR )"],
+["MAGNUM4D","tutup 18:10 WIB","result 18:40 WIB","HARI RABU, SABTU & MINGGU"],
+["TOTOMACAU MALAM I","tutup 19:00 WIB","result 19:15 WIB","Senin s/d Minggu"],
+["CHELSEA 19","tutup 19:00 WIB","result 19:15 WIB","Senin s/d Minggu"],
+["POIPET19","tutup 19:30 WIB","result 19:45 WIB","Senin s/d Minggu"],
+["PCSO","tutup 19:50 WIB","result 20:10 WIB","Minggu tututp"],
+["TOTOMALI 2030","tutup 20:15 WIB","result 20:30 WIB","Senin s/d Minggu"],
+["HUAHIN 2100","tutup 20:45 WIB","result 21:00 WIB","Senin s/d Minggu"],
+["CHELSEA 21","tutup 21:00 WIB","result 21:15 WIB","Senin s/d Minggu"],
+["TOTOMACAU 5D MALAM","tutup 21:15 WIB","result 21:30 WIB","Senin s/d Minggu"],
+["NEVADA","tutup 21:15 WIB","result 21:30 WIB","Senin s/d Minggu"],
+["BRUNEI 21","tutup 21:30 WIB","result 21:45 WIB","Senin s/d Minggu"],
+["TOTOMACAU MALAM II","tutup 22:00 WIB","result 22:15 WIB","Senin s/d Minggu"],
+["POIPET22","tutup 22:30 WIB","result 22:45 WIB","Senin s/d Minggu"],
+["HONGKONG","tutup 22:59 WIB","result 23:15 WIB","Senin s/d Minggu"],
+["TOTOMACAU MALAM III","tutup 23:00 WIB","result 23:15 WIB","Senin s/d Minggu"],
+["TOTOMALI 2330","tutup 23:15 WIB","result 23:30 WIB","Senin s/d Minggu"],
+["JAKARTA 2330","tutup 23:25 WIB","result 23:40 WIB","Senin s/d Minggu"],
+["KING KONG4D II","tutup 23:30 WIB","result 23:45 WIB","Senin s/d Minggu"]
+];
+
+const jadwalBody = document.getElementById('jadwalBody');
+const JADWAL_STORAGE_KEY = 'jadwalPasaranData';
+const JADWAL_DATE_KEY = 'jadwalPasaranDate';
+
+function getTodayStr() {
+  return new Date().toDateString();
+}
+
+function loadJadwalStorage() {
+  try {
+    return JSON.parse(localStorage.getItem(JADWAL_STORAGE_KEY)) || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+const jadwalSaved = loadJadwalStorage();
+const jadwalSavedDate = localStorage.getItem(JADWAL_DATE_KEY);
+const jadwalDayChanged = jadwalSavedDate !== getTodayStr();
+
+dataJadwal.forEach((row, idx) => {
+  const saved = jadwalSaved[idx] || {};
+  const tutup = saved.tutup !== undefined ? saved.tutup : row[1];
+  const result = saved.result !== undefined ? saved.result : row[2];
+  const jadwal = saved.jadwal !== undefined ? saved.jadwal : row[3];
+  // Checkbox otomatis terhapus (tidak dipulihkan) jika sudah pergantian hari
+  const checked = jadwalDayChanged ? false : !!saved.checked;
+
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="checkbox" ${checked ? 'checked' : ''}></td>
+    <td class="jadwal-nama">${row[0]}</td>
+    <td class="jadwal-editable" contenteditable="true">${tutup}</td>
+    <td class="jadwal-editable" contenteditable="true">${result}</td>
+    <td class="jadwal-editable" contenteditable="true">${jadwal}</td>
+    <td class="jadwal-hasil${checked ? ' jadwal-result' : ''}">${checked ? 'RESULT' : 'BELUM RESULT'}</td>
+  `;
+  jadwalBody.appendChild(tr);
+});
+
+// Kumpulkan seluruh isi tabel Jadwal Pasaran lalu simpan ke localStorage
+function simpanJadwalData() {
+  const rows = jadwalBody.querySelectorAll('tr');
+  const data = [];
+  rows.forEach((tr) => {
+    const editable = tr.querySelectorAll('.jadwal-editable');
+    const checkbox = tr.querySelector('input[type="checkbox"]');
+    data.push({
+      tutup: editable[0] ? editable[0].textContent.trim() : '',
+      result: editable[1] ? editable[1].textContent.trim() : '',
+      jadwal: editable[2] ? editable[2].textContent.trim() : '',
+      checked: checkbox ? checkbox.checked : false
+    });
+  });
+  localStorage.setItem(JADWAL_STORAGE_KEY, JSON.stringify(data));
+  localStorage.setItem(JADWAL_DATE_KEY, getTodayStr());
+}
+
+// Simpan langsung saat halaman dimuat (memastikan tanggal & checkbox yang
+// sudah dibersihkan akibat pergantian hari langsung tercatat)
+simpanJadwalData();
+
+jadwalBody.addEventListener('change', (e) => {
+  if (e.target.type === 'checkbox') {
+    const tr = e.target.closest('tr');
+    const hasilCell = tr.querySelector('.jadwal-hasil');
+    if (e.target.checked) {
+      hasilCell.textContent = 'RESULT';
+      hasilCell.classList.add('jadwal-result');
+    } else {
+      hasilCell.textContent = 'BELUM RESULT';
+      hasilCell.classList.remove('jadwal-result');
+    }
+    simpanJadwalData();
+  }
+});
+
+// Real-time: setiap perubahan pada kolom Jam Tutup, Result, atau Jadwal langsung disimpan
+jadwalBody.addEventListener('input', (e) => {
+  if (e.target.classList.contains('jadwal-editable')) {
+    simpanJadwalData();
+  }
+});
+
+// Tombol "Simpan Data" manual di bawah Rumus Saldo Awal (memberi konfirmasi visual)
+const simpanDataBtn = document.getElementById('simpanDataBtn');
+if (simpanDataBtn) {
+  simpanDataBtn.addEventListener('click', () => {
+    simpanJadwalData();
+    if (typeof simpanShioData === 'function') simpanShioData();
+    const originalText = simpanDataBtn.textContent;
+    simpanDataBtn.textContent = 'Data Tersimpan ✓';
+    simpanDataBtn.classList.add('simpan-btn-success');
+    setTimeout(() => {
+      simpanDataBtn.textContent = originalText;
+      simpanDataBtn.classList.remove('simpan-btn-success');
+    }, 1500);
+  });
+}
+
+// Pantau pergantian hari secara berkala selagi halaman tetap terbuka,
+// agar checkbox otomatis terhapus tanpa perlu reload manual
+setInterval(() => {
+  const lastDate = localStorage.getItem(JADWAL_DATE_KEY);
+  if (lastDate && lastDate !== getTodayStr()) {
+    const checkboxes = jadwalBody.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((cb) => {
+      if (cb.checked) {
+        cb.checked = false;
+        const tr = cb.closest('tr');
+        const hasilCell = tr.querySelector('.jadwal-hasil');
+        hasilCell.textContent = 'BELUM RESULT';
+        hasilCell.classList.remove('jadwal-result');
+      }
+    });
+    simpanJadwalData();
+  }
+}, 60000);
+</script>
+
+<!-- Script HITUNGAN TOTO SINGAPORE (tidak diubah) -->
+<script>
+    document.addEventListener('paste', function (e) {
+        let activeEl = document.activeElement;
+        if (activeEl && activeEl.tagName === 'INPUT' && activeEl.type === 'number') {
+            let clipboardData = e.clipboardData || window.clipboardData;
+            let pastedData = clipboardData.getData('Text').trim();
+            let numbers = pastedData.split(/\s+/);
+
+            if (numbers.length >= 6) {
+                e.preventDefault();
+                let inputs = [
+                    document.getElementById('t1'),
+                    document.getElementById('t2'),
+                    document.getElementById('t3'),
+                    document.getElementById('t4'),
+                    document.getElementById('t5'),
+                    document.getElementById('t6')
+                ];
+
+                for (let i = 0; i < 6; i++) {
+                    if (inputs[i] && numbers[i] !== undefined) {
+                        inputs[i].value = numbers[i];
+                    }
+                }
+                hitung();
+            }
+        }
+    });
+
+    function hitung() {
+        // Mapping kolom sesuai spreadsheet:
+        // t1=Q91, t2=R91, t3=S91, t4=T91, t5=U91, t6=V91, add1=Q93
+        let t1 = parseFloat(document.getElementById('t1').value) || 0;
+        let t2 = parseFloat(document.getElementById('t2').value) || 0;
+        let t3 = parseFloat(document.getElementById('t3').value) || 0;
+        let t4 = parseFloat(document.getElementById('t4').value) || 0;
+        let t5 = parseFloat(document.getElementById('t5').value) || 0;
+        let t6 = parseFloat(document.getElementById('t6').value) || 0;
+        let add1 = parseFloat(document.getElementById('add1').value) || 0;
+
+        // out1 = SUM(Q91:V91)
+        let out1 = t1 + t2 + t3 + t4 + t5 + t6;
+
+        // out2 = W91*2
+        let out2 = out1 * 2;
+
+        // out3 = W92-Q91-V91
+        let out3 = out2 - t1 - t6;
+
+        // out4 = R91+S91
+        let out4 = t2 + t3;
+
+        // out5 = T91+U91
+        let out5 = t4 + t5;
+
+        // out6 = W93+Q93
+        let out6 = out3 + add1;
+
+        document.getElementById('out1').innerText = out1;
+        document.getElementById('out2').innerText = out2;
+        document.getElementById('out3').innerText = out3;
+        document.getElementById('out4').innerText = out4;
+        document.getElementById('out5').innerText = out5;
+        document.getElementById('out6').innerText = out6;
+
+        // res1 = RIGHT(W94,1) -> W94 = out4
+        let res1 = String(out4).slice(-1);
+
+        // res2 = RIGHT(W95,1) -> W95 = out5
+        let res2 = String(out5).slice(-1);
+
+        // res3 = IF(W96<99, LEFT(W96,1), MID(W96,2,1)) -> W96 = out6
+        let res3;
+        if (out6 < 99) {
+            res3 = String(out6).charAt(0) || "0";
+        } else {
+            res3 = String(out6).charAt(1) || "0";
+        }
+
+        // res4 = RIGHT(W96,1) -> W96 = out6
+        let res4 = String(out6).slice(-1);
+
+        document.getElementById('res1').innerText = res1;
+        document.getElementById('res2').innerText = res2;
+        document.getElementById('res3').innerText = res3;
+        document.getElementById('res4').innerText = res4;
+    }
+
+    hitung();
+</script>
+
+<!-- Script KALKULATOR RUMUS SALDO AWAL KAS (tidak diubah) -->
+<script>
+    function formatNumberSaldo(num) {
+        if (isNaN(num)) return "0";
+        let isNeg = num < 0;
+        let absNum = Math.abs(num);
+        let formatted = absNum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return isNeg ? "(" + formatted + ")" : formatted;
+    }
+
+    function parseValueSaldo(valStr) {
+        if (!valStr) return 0;
+        let cleanStr = valStr.trim();
+        let isNeg = false;
+        if (cleanStr.startsWith("(") && cleanStr.endsWith(")")) {
+            isNeg = true;
+            cleanStr = cleanStr.substring(1, cleanStr.length - 1);
+        }
+        cleanStr = cleanStr.replace(/,/g, "");
+        let num = parseFloat(cleanStr);
+        if (isNaN(num)) return 0;
+        return isNeg ? -num : num;
+    }
+
+    function hitungSaldo() {
+        let saldoAkhir = parseValueSaldo(document.getElementById('saldo_akhir').value);
+        let danaCancel = parseValueSaldo(document.getElementById('dana_cancel').value);
+        let totalBiaya = parseValueSaldo(document.getElementById('total_biaya').value);
+
+        let saldoAwal1 = saldoAkhir + danaCancel + totalBiaya;
+        document.getElementById('res_saldo_awal_1').innerText = formatNumberSaldo(saldoAwal1);
+
+        let saldoBank = parseValueSaldo(document.getElementById('saldo_bank').value);
+        let danaPendingan = parseValueSaldo(document.getElementById('dana_pendingan').value);
+        let saldoAwal2 = saldoBank - danaPendingan;
+        document.getElementById('res_saldo_awal_2').innerText = formatNumberSaldo(saldoAwal2);
+
+        let selisih = saldoAwal1 - saldoAwal2;
+        document.getElementById('res_selisih').innerText = formatNumberSaldo(selisih);
+    }
+</script>
+</div>
+  </div>
 </div>
 
 <script>
@@ -2315,13 +4004,15 @@
       prediksi: document.getElementById("navPrediksi"),
       png: document.getElementById("navPng"),
       idn: document.getElementById("navIdn"),
-      bola: document.getElementById("navBola")
+      bola: document.getElementById("navBola"),
+      hasilJadwal: document.getElementById("navHasilJadwal")
     };
     var pages = {
       prediksi: document.getElementById("pagePrediksi"),
       png: document.getElementById("pagePng"),
       idn: document.getElementById("pageIdn"),
-      bola: document.getElementById("pageBola")
+      bola: document.getElementById("pageBola"),
+      hasilJadwal: document.getElementById("pageHasilJadwal")
     };
 
     function showPage(page){
@@ -2335,6 +4026,7 @@
     navs.png.addEventListener("click", function(){ showPage("png"); });
     navs.idn.addEventListener("click", function(){ showPage("idn"); });
     navs.bola.addEventListener("click", function(){ showPage("bola"); });
+    navs.hasilJadwal.addEventListener("click", function(){ showPage("hasilJadwal"); });
 
     showPage("prediksi");
   }
