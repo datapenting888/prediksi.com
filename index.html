@@ -2544,9 +2544,13 @@ jadwalBody.addEventListener('input', (e) => {
   }
 });
 
-// Kirim data Jadwal Pasaran & Shio yang sedang tampil ke Firebase Realtime Database
+// Kirim data Jadwal Pasaran & Shio yang sedang tampil ke Firebase Realtime Database.
+// Mengembalikan Promise supaya tombol "Simpan Data" tahu persis apakah kirimnya
+// benar-benar berhasil atau gagal (tidak lagi berpura-pura sukses).
 function kirimDataKeFirebase() {
-  if (!hasilDB) return;
+  if (!hasilDB) {
+    return Promise.reject(new Error('Firebase belum terhubung (cek apiKey/config di firebaseConfig).'));
+  }
   const jadwalData = [];
   jadwalBody.querySelectorAll('tr').forEach((tr) => {
     const editable = tr.querySelectorAll('.jadwal-editable');
@@ -2565,10 +2569,29 @@ function kirimDataKeFirebase() {
     if (!nameCell || !numsCell) return;
     shioData.push({ name: nameCell.textContent.trim(), nums: numsCell.textContent.trim() });
   });
-  hasilDB.ref('resultJadwalPasaran/jadwal').set(jadwalData)
-    .catch((err) => console.error('Gagal mengirim data Jadwal Pasaran ke Firebase:', err));
-  hasilDB.ref('resultJadwalPasaran/shio').set(shioData)
-    .catch((err) => console.error('Gagal mengirim data Shio ke Firebase:', err));
+  return Promise.all([
+    hasilDB.ref('resultJadwalPasaran/jadwal').set(jadwalData),
+    hasilDB.ref('resultJadwalPasaran/shio').set(shioData)
+  ]);
+}
+
+// Tampilkan pesan error di layar (bukan cuma di console) supaya mudah dicek
+// tanpa perlu buka DevTools. Muncul di atas tombol "Simpan Data", hilang otomatis.
+function tampilkanErrorFirebase(pesan) {
+  let box = document.getElementById('firebaseErrorBox');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'firebaseErrorBox';
+    box.style.cssText = 'width:100%;max-width:520px;background:#3a0d10;border:1px solid rgba(200,60,60,.55);' +
+      'color:#f0c2c2;border-radius:8px;padding:10px 14px;font-family:var(--font-mono);font-size:12px;' +
+      'text-align:center;line-height:1.5;';
+    const wrap = document.querySelector('.simpan-btn-wrap');
+    if (wrap) wrap.parentNode.insertBefore(box, wrap);
+  }
+  box.textContent = '⚠ Gagal simpan ke Firebase: ' + pesan;
+  box.style.display = 'block';
+  clearTimeout(box._hideTimer);
+  box._hideTimer = setTimeout(() => { box.style.display = 'none'; }, 6000);
 }
 
 // Dengarkan perubahan data secara real-time dari Firebase (mis. disimpan dari perangkat lain)
@@ -2599,14 +2622,28 @@ if (simpanDataBtn) {
   simpanDataBtn.addEventListener('click', () => {
     simpanJadwalData();
     if (typeof simpanShioData === 'function') simpanShioData();
-    kirimDataKeFirebase();
+
     const originalText = simpanDataBtn.textContent;
-    simpanDataBtn.textContent = 'Data Tersimpan ✓';
-    simpanDataBtn.classList.add('simpan-btn-success');
-    setTimeout(() => {
-      simpanDataBtn.textContent = originalText;
-      simpanDataBtn.classList.remove('simpan-btn-success');
-    }, 1500);
+    simpanDataBtn.textContent = 'Menyimpan…';
+    simpanDataBtn.disabled = true;
+
+    kirimDataKeFirebase()
+      .then(() => {
+        simpanDataBtn.textContent = 'Data Tersimpan ✓';
+        simpanDataBtn.classList.add('simpan-btn-success');
+      })
+      .catch((err) => {
+        console.error('Gagal mengirim data ke Firebase:', err);
+        simpanDataBtn.textContent = 'Tersimpan Lokal (Firebase Gagal)';
+        tampilkanErrorFirebase(err && err.message ? err.message : String(err));
+      })
+      .finally(() => {
+        simpanDataBtn.disabled = false;
+        setTimeout(() => {
+          simpanDataBtn.textContent = originalText;
+          simpanDataBtn.classList.remove('simpan-btn-success');
+        }, 2200);
+      });
   });
 }
 
