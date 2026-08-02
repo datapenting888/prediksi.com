@@ -387,6 +387,9 @@
     max-width:100%;
     width:100%;
     margin:0;
+    display:flex;
+    flex-direction:column;
+    min-height:100%;
   }
   .prediksi-header{
     background:#c1440e;
@@ -396,6 +399,7 @@
     margin-bottom:30px;
     overflow:hidden;
     position:relative;
+    flex-shrink:0;
   }
   .prediksi-marquee{
     display:inline-block;
@@ -417,10 +421,14 @@
     display:flex;
     flex-wrap:wrap;
     gap:20px;
+    flex:1;
+    align-items:stretch;
   }
   .prediksi-col{
     flex:1 1 320px;
     min-width:280px;
+    display:flex;
+    flex-direction:column;
   }
   .prediksi-card{
     background:#4a2a1a;
@@ -428,6 +436,9 @@
     padding:20px;
     border-radius:15px;
     margin-bottom:20px;
+    display:flex;
+    flex-direction:column;
+    flex:1;
   }
   .prediksi-label{
     color:#f5c518;
@@ -472,16 +483,24 @@
     white-space:pre-wrap;
     margin-top:15px;
     border:1px solid #4a2a1a;
+    flex:1;
     min-height:300px;
-    max-height:750px;
     overflow-y:auto;
     line-height:1.5;
     font-weight:bold;
     scrollbar-width:none;
   }
   .prediksi-box::-webkit-scrollbar{ display:none; }
+  #pagePrediksi{
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+  }
   @media (max-width:768px){
-    .prediksi-box{ font-size:13px; }
+    .prediksi-box{ font-size:13px; min-height:220px; }
+    #pagePrediksi{ min-height:auto; }
+    .prediksi-row{ flex:none; }
+    .prediksi-card{ flex:none; }
   }
 </style>
 <style>
