@@ -2074,11 +2074,19 @@
     appId: "1:384090086406:web:c111526d2f4202d502b787"
   };
   let hasilDB = null;
-  try {
-    firebase.initializeApp(firebaseConfig);
-    hasilDB = firebase.database();
-  } catch (e) {
-    console.error('Firebase gagal diinisialisasi:', e);
+  if (typeof firebase === 'undefined') {
+    console.error('[Firebase] SDK gagal dimuat dari CDN (script firebase-app-compat.js / firebase-database-compat.js tidak jalan). Cek koneksi internet, ad-blocker, atau buka file lewat server lokal bukan langsung dobel-klik file.');
+  } else {
+    try {
+      firebase.initializeApp(firebaseConfig);
+      hasilDB = firebase.database();
+      console.log('[Firebase] Terhubung. Cek data langsung:', hasilDB.ref('resultJadwalPasaran').toString());
+      hasilDB.ref('.info/connected').on('value', (snap) => {
+        console.log('[Firebase] Status koneksi ke server:', snap.val() ? 'TERHUBUNG' : 'terputus...');
+      });
+    } catch (e) {
+      console.error('[Firebase] Gagal diinisialisasi:', e);
+    }
   }
 </script>
 
@@ -2548,6 +2556,7 @@ jadwalBody.addEventListener('input', (e) => {
 // Mengembalikan Promise supaya tombol "Simpan Data" tahu persis apakah kirimnya
 // benar-benar berhasil atau gagal (tidak lagi berpura-pura sukses).
 function kirimDataKeFirebase() {
+  console.log('[Firebase] kirimDataKeFirebase() dipanggil. hasilDB =', hasilDB);
   if (!hasilDB) {
     return Promise.reject(new Error('Firebase belum terhubung (cek apiKey/config di firebaseConfig).'));
   }
@@ -2569,10 +2578,13 @@ function kirimDataKeFirebase() {
     if (!nameCell || !numsCell) return;
     shioData.push({ name: nameCell.textContent.trim(), nums: numsCell.textContent.trim() });
   });
+  console.log('[Firebase] Mengirim jadwalData:', jadwalData, 'shioData:', shioData);
   return Promise.all([
     hasilDB.ref('resultJadwalPasaran/jadwal').set(jadwalData),
     hasilDB.ref('resultJadwalPasaran/shio').set(shioData)
-  ]);
+  ]).then(() => {
+    console.log('[Firebase] set() SUKSES tersimpan ke server.');
+  });
 }
 
 // Tampilkan pesan error di layar (bukan cuma di console) supaya mudah dicek
@@ -4154,11 +4166,14 @@ setInterval(() => {
       hasilJadwal: document.getElementById("pageHasilJadwal")
     };
 
+    var ACTIVE_PAGE_KEY = 'dashboardActivePage';
+
     function showPage(page){
       Object.keys(pages).forEach(function(key){
         pages[key].style.display = (key === page) ? "" : "none";
         navs[key].classList[key === page ? "add" : "remove"]("active");
       });
+      localStorage.setItem(ACTIVE_PAGE_KEY, page);
     }
 
     navs.prediksi.addEventListener("click", function(){ showPage("prediksi"); });
@@ -4167,7 +4182,8 @@ setInterval(() => {
     navs.bola.addEventListener("click", function(){ showPage("bola"); });
     navs.hasilJadwal.addEventListener("click", function(){ showPage("hasilJadwal"); });
 
-    showPage("prediksi");
+    var savedPage = localStorage.getItem(ACTIVE_PAGE_KEY);
+    showPage(pages[savedPage] ? savedPage : "prediksi");
   }
 
   // ---------------------------------------------------------------------
