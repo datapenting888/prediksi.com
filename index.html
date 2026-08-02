@@ -3,7 +3,7 @@
 <head>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,500;1,600;1,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Fraunces:ital,wght@0,400;0,600;0,700;1,500;1,600;1,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Perhitungan Hadiah Togel</title>
@@ -36,14 +36,14 @@
 
   /* ---------------- Sidebar / Menu Dashboard ---------------- */
   .sidebar{
-    width:252px;
+    width:clamp(260px, 18vw, 300px);
     flex-shrink:0;
     background:#13131c;
     padding:22px 14px;
     min-height:100vh;
   }
   .sidebar .brand{
-    font-size:30px;
+    font-size:24px;
     font-weight:800;
     letter-spacing:0.5px;
     margin-bottom:18px;
@@ -52,13 +52,13 @@
     flex-wrap:wrap;
     gap:6px;
   }
-  .sidebar .brand .smb{ color:#84e809; }
-  .sidebar .brand .group{ color:#288529; }
+  .sidebar .brand .smb{ color:#e0339f; }
+  .sidebar .brand .group{ color:#f4f2f8; }
   .sidebar .brand .brand-tag{
-    font-size:12px;
+    font-size:10px;
     font-weight:600;
-    letter-spacing:0.9px;
-    color:#e0eb17;
+    letter-spacing:0.5px;
+    color:#8b8b9a;
     text-transform:none;
   }
   .sidebar .brand-divider{
@@ -100,15 +100,16 @@
   }
   .sidebar .nav-item.active .icon{ color:#a78bfa; }
   .sidebar .nav-item .label{
-    font-size:16px;
-    font-weight:700;
+    font-family:'Bree Serif', serif;
+    font-size:14.5px;
+    font-weight:400;
     line-height:1.35;
     color:#dcdce3;
     white-space:nowrap;
   }
   .sidebar .nav-item.active .label{ color:#a78bfa; }
   .sidebar .nav-item .label.label-sm{
-    font-size:12.5px;
+    font-size:14.5px;
     letter-spacing:-0.2px;
   }
 
@@ -131,7 +132,7 @@
     .sidebar .brand-divider{ display:none; }
     .sidebar .nav-item{ margin-bottom:0; }
     .sidebar .nav-item .label{ white-space:normal; }
-    .sidebar .nav-item .label.label-sm{ font-size:11px; }
+    .sidebar .nav-item .label.label-sm{ font-size:13px; }
   }
   .topbar{
     background: var(--header-orange);
@@ -391,38 +392,13 @@
     flex-direction:column;
     min-height:100%;
   }
-  .prediksi-header{
-    background:#c1440e;
-    border:1px solid #e2610f;
-    padding:15px 0;
-    border-radius:10px;
-    margin-bottom:30px;
-    overflow:hidden;
-    position:relative;
-    flex-shrink:0;
-  }
-  .prediksi-marquee{
-    display:inline-block;
-    white-space:nowrap;
-    font-weight:900;
-    font-size:24px;
-    letter-spacing:5px;
-    text-transform:uppercase;
-    color:#f3ede7;
-    text-shadow:2px 2px 10px rgba(176,137,104,0.5);
-    animation: prediksiScrollLeft 20s linear infinite;
-    padding-left:100%;
-  }
-  @keyframes prediksiScrollLeft{
-    0%{ transform:translateX(0); }
-    100%{ transform:translateX(-100%); }
-  }
   .prediksi-row{
     display:flex;
     flex-wrap:wrap;
     gap:20px;
     flex:1;
     align-items:stretch;
+    margin:20px 16px 16px;
   }
   .prediksi-col{
     flex:1 1 320px;
@@ -4000,8 +3976,8 @@ setInterval(() => {
 
   var PREDIKSI_BODY =
     '<div class="prediksi-wrap">' +
-      '<div class="prediksi-header">' +
-        '<div class="prediksi-marquee">DASHBOARD PREDIKSI TOGEL &nbsp;&nbsp; &bull; &nbsp;&nbsp; DASHBOARD PREDIKSI TOGEL &nbsp;&nbsp; &bull; &nbsp;&nbsp; DASHBOARD PREDIKSI TOGEL</div>' +
+      '<div class="topbar">' +
+        '<h1>DASHBOARD PREDIKSI TOGEL &nbsp;&nbsp; \u2022 &nbsp;&nbsp; DASHBOARD PREDIKSI TOGEL &nbsp;&nbsp; \u2022 &nbsp;&nbsp; DASHBOARD PREDIKSI TOGEL &nbsp;&nbsp; \u2022 &nbsp;&nbsp; DASHBOARD PREDIKSI TOGEL</h1>' +
       '</div>' +
       '<div class="prediksi-row">' +
         '<div class="prediksi-col">' +
