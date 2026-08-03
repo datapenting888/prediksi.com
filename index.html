@@ -199,6 +199,11 @@
   @media (max-width:480px){
     .topbar h1 span{ font-size:15px; letter-spacing:1.5px; padding-right:40px; }
   }
+  #pageCekNawala{
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+  }
   .panel{
     margin: 14px 16px;
     background: var(--bg-panel);
@@ -1597,8 +1602,8 @@
     text-align:left;
     color:var(--gold-bright);
     font-weight:600;
-    font-family:var(--font-display);
-    font-style:italic;
+    font-family:Arial, sans-serif;
+    font-style:normal;
   }
   .hasil-scope .jadwal-editable { cursor:text; }
   .hasil-scope .jadwal-editable:focus {
@@ -2916,7 +2921,7 @@ setInterval(() => {
     <h1><span>CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA</span></h1>
   </div>
 
-  <div class="panel" style="padding:16px;">
+  <div class="panel" style="padding:16px; flex:1; display:flex; flex-direction:column;">
     <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
       <span style="font-family:'Bree Serif', serif; color:#dcdce3; font-size:14.5px;">
         Menampilkan situs Cek Nawala langsung di dalam dashboard.
@@ -2935,7 +2940,7 @@ setInterval(() => {
       </a>
     </div>
 
-    <div style="position:relative; width:100%; height:75vh; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
+    <div style="position:relative; width:100%; flex:1; min-height:520px; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
       <iframe
         id="cekNawalaFrame"
         src="https://www.nawala.asia/"
