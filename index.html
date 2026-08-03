@@ -2574,6 +2574,14 @@ function simpanJadwalData() {
 // Simpan langsung saat halaman dimuat (memastikan tanggal & checkbox yang
 // sudah dibersihkan akibat pergantian hari langsung tercatat)
 simpanJadwalData();
+if (jadwalDayChanged && jadwalSaved.some((r) => r && r.checked)) {
+  // Tanggal sudah berganti sejak terakhir dibuka dan ada centang lama yang
+  // barusan dibersihkan -> kirim kondisi bersih ini ke Firebase juga,
+  // supaya browser/perangkat lain tidak melihat centang lama yang basi.
+  kirimDataKeFirebase().catch((err) => {
+    console.error('[Firebase] Gagal sinkron reset pergantian hari (saat load):', err);
+  });
+}
 
 jadwalBody.addEventListener('change', (e) => {
   if (e.target.type === 'checkbox') {
@@ -2587,13 +2595,27 @@ jadwalBody.addEventListener('change', (e) => {
       hasilCell.classList.remove('jadwal-result');
     }
     simpanJadwalData();
+    // Kirim langsung ke Firebase supaya centang real-time tersinkron
+    // ke semua browser/perangkat lain, tidak menunggu tombol "Simpan Data".
+    kirimDataKeFirebase().catch((err) => {
+      console.error('[Firebase] Gagal sinkron otomatis (checkbox):', err);
+    });
   }
 });
 
 // Real-time: setiap perubahan pada kolom Jam Tutup, Result, atau Jadwal langsung disimpan
+let jadwalEditableSyncTimer = null;
 jadwalBody.addEventListener('input', (e) => {
   if (e.target.classList.contains('jadwal-editable')) {
     simpanJadwalData();
+    // Kirim ke Firebase dengan sedikit jeda (debounce) agar tidak spam
+    // request saat user sedang mengetik, tapi tetap tersinkron otomatis.
+    clearTimeout(jadwalEditableSyncTimer);
+    jadwalEditableSyncTimer = setTimeout(() => {
+      kirimDataKeFirebase().catch((err) => {
+        console.error('[Firebase] Gagal sinkron otomatis (jadwal):', err);
+      });
+    }, 800);
   }
 });
 
@@ -2710,9 +2732,11 @@ setInterval(() => {
   const lastDate = localStorage.getItem(JADWAL_DATE_KEY);
   if (lastDate && lastDate !== getTodayStr()) {
     const checkboxes = jadwalBody.querySelectorAll('input[type="checkbox"]');
+    let adaYangDireset = false;
     checkboxes.forEach((cb) => {
       if (cb.checked) {
         cb.checked = false;
+        adaYangDireset = true;
         const tr = cb.closest('tr');
         const hasilCell = tr.querySelector('.jadwal-hasil');
         hasilCell.textContent = 'BELUM RESULT';
@@ -2720,6 +2744,11 @@ setInterval(() => {
       }
     });
     simpanJadwalData();
+    if (adaYangDireset) {
+      kirimDataKeFirebase().catch((err) => {
+        console.error('[Firebase] Gagal sinkron reset pergantian hari:', err);
+      });
+    }
   }
 }, 5000);
 </script>
