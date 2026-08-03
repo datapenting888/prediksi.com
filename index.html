@@ -199,11 +199,6 @@
   @media (max-width:480px){
     .topbar h1 span{ font-size:15px; letter-spacing:1.5px; padding-right:40px; }
   }
-  #pageCekNawala{
-    display:flex;
-    flex-direction:column;
-    min-height:100vh;
-  }
   .panel{
     margin: 14px 16px;
     background: var(--bg-panel);
@@ -2921,7 +2916,7 @@ setInterval(() => {
     <h1><span>CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA &nbsp;&nbsp; • &nbsp;&nbsp; CEK NAWALA</span></h1>
   </div>
 
-  <div class="panel" style="padding:16px; flex:1; display:flex; flex-direction:column;">
+  <div class="panel" style="padding:16px;">
     <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
       <span style="font-family:'Bree Serif', serif; color:#dcdce3; font-size:14.5px;">
         Menampilkan situs Cek Nawala langsung di dalam dashboard.
@@ -2940,7 +2935,13 @@ setInterval(() => {
       </a>
     </div>
 
-    <div style="position:relative; width:100%; flex:1; min-height:520px; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
+    <!--
+      Tinggi kontainer iframe di bawah ini DIATUR LEWAT JAVASCRIPT (lihat fungsi
+      resizeCekNawalaFrame di bawah), bukan lewat CSS flex/vh statis. Ini supaya
+      kontainernya selalu memanjang penuh sampai ke bagian bawah layar (bukan
+      makin kecil), berapa pun tinggi layar/konten di atasnya.
+    -->
+    <div id="cekNawalaWrap" style="position:relative; width:100%; height:70vh; min-height:420px; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
       <iframe
         id="cekNawalaFrame"
         src="https://www.nawala.asia/"
@@ -2951,6 +2952,34 @@ setInterval(() => {
     </div>
   </div>
 </div>
+
+<script>
+(function(){
+  // Menghitung ulang tinggi kontainer iframe Cek Nawala supaya selalu
+  // memenuhi sisa layar sampai ke bawah (viewport), bukan terpaku pada
+  // vh statis yang bisa membuatnya terlihat "mengecil" di beberapa layar.
+  function resizeCekNawalaFrame(){
+    var wrap = document.getElementById('cekNawalaWrap');
+    var page = document.getElementById('pageCekNawala');
+    if (!wrap || !page || page.style.display === 'none') return;
+    var top = wrap.getBoundingClientRect().top;
+    var target = window.innerHeight - top - 20; // sisakan sedikit jarak di bawah
+    if (target < 420) target = 420;
+    wrap.style.height = target + 'px';
+  }
+  window.addEventListener('resize', resizeCekNawalaFrame);
+  window.addEventListener('load', resizeCekNawalaFrame);
+  // Dipanggil juga tiap kali menu "Cek Nawala" diklik di sidebar
+  var navCekNawalaEl = document.getElementById('navCekNawala');
+  if (navCekNawalaEl){
+    navCekNawalaEl.addEventListener('click', function(){
+      setTimeout(resizeCekNawalaFrame, 0);
+    });
+  }
+  // Jalankan sekali saat load, untuk kasus halaman Cek Nawala aktif dari awal
+  setTimeout(resizeCekNawalaFrame, 0);
+})();
+</script>
 
 <script>
 (function(){
