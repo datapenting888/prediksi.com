@@ -18,6 +18,10 @@
     --pink-dark: #c2185b;
     --blue: #2196d8;
     --white: #f5f3cb;
+    --calm-teal: #3e6a63;
+    --calm-teal-dark: #2c4d47;
+    --calm-taupe: #6e5f52;
+    --calm-taupe-dark: #55483e;
     --greend: #e6f5cb;
     --input-bg: #e9edf3;
     --input-text: #6b7280;
@@ -214,6 +218,7 @@
     align-items:center;
     gap:8px;
     padding:2px 0;
+    font-family:Arial, sans-serif;
   }
   .market-toggle .caret{
     font-size:14px;
@@ -259,6 +264,7 @@
     color: var(--text-light);
     border-bottom:1px solid rgba(255,255,255,0.06);
     white-space:nowrap;
+    font-family:Arial, sans-serif;
   }
   .market-item:last-child{ border-bottom:none; }
   .market-item:hover{ background: rgba(255,255,255,0.08); }
@@ -317,7 +323,7 @@
     background: var(--bg-card);
     border-radius:8px;
     padding:16px 16px 18px;
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.35);
   }
   .card h3{
     font-size:18px;
@@ -366,10 +372,10 @@
     cursor:pointer;
     color:#fff;
   }
-  .btn-hitung{ background: var(--pink); }
-  .btn-hitung:hover{ background: var(--pink-dark); }
-  .btn-reset{ background: var(--blue); }
-  .btn-reset:hover{ background: var(--white); }
+  .btn-hitung{ background: var(--calm-teal); }
+  .btn-hitung:hover{ background: var(--calm-teal-dark); }
+  .btn-reset{ background: var(--calm-taupe); }
+  .btn-reset:hover{ background: var(--calm-taupe-dark); }
   .result-box{
     margin-top:10px;
     border:1px dashed rgba(255,255,255,0.4);
@@ -467,6 +473,7 @@
     height:45px;
     font-size:15px;
     padding:0 10px;
+    font-family:Arial, sans-serif;
   }
   .prediksi-copybtn{
     background-color:#3a1b5e;
@@ -1201,14 +1208,7 @@
       0 0 0 1px var(--line);
   }
   .hasil-scope .block::before {
-    content:"";
-    position:absolute;
-    top:0; left:0; right:0;
-    height:12px;
-    background-image:radial-gradient(circle at 10px 6px, var(--void) 6px, transparent 6.4px);
-    background-size:20px 12px;
-    background-repeat:repeat-x;
-    z-index:2;
+    content:none;
   }
   .hasil-scope table {
     width:100%;
@@ -1230,7 +1230,7 @@
     color:var(--text-uniform);
     text-align:center;
     width:36%;
-    font-family:var(--font-display);
+    font-family:Arial, sans-serif;
     font-style:italic;
     font-weight:600;
     font-size:19px;
@@ -1245,7 +1245,7 @@
   .hasil-scope .block-ca .lbl-cell { color:var(--text-uniform); }
 
   .hasil-scope .val-cell {
-    background:rgba(230,190,80,.05);
+    background:#050506;
     text-align:center;
   }
   .hasil-scope .info-cell {
@@ -1403,7 +1403,7 @@
   }
 
   .hasil-scope .copy-row {
-    background:rgba(230,190,80,.05);
+    background:#050506;
     text-align:center;
     padding:7px 14px !important;
   }
@@ -1413,9 +1413,9 @@
     font-size:12px;
     letter-spacing:2px;
     text-transform:uppercase;
-    color:#bdeccb;
-    background:#0c2e1c;
-    border:2px dashed rgba(64,176,110,.55);
+    color:var(--text-uniform);
+    background:#050506;
+    border:2px dashed var(--line-strong);
     border-radius:4px;
     width:92%;
     padding:7px 6px;
@@ -1423,16 +1423,16 @@
     transition:box-shadow .15s ease, background .15s ease, border-color .15s ease;
   }
   .hasil-scope .copy-btn:hover {
-    background:#123f27;
-    border-color:#5fce8f;
+    background:#0f0b04;
+    border-color:var(--gold-bright);
   }
   .hasil-scope .copy-btn:active {
-    box-shadow:0 0 0 3px rgba(64,176,110,.22);
+    box-shadow:0 0 0 3px rgba(230,190,80,.18);
   }
   .hasil-scope .copy-btn.copied {
-    border-color:#5fce8f;
+    border-color:var(--gold-bright);
     color:#08150d;
-    background:#5fce8f;
+    background:var(--gold-bright);
   }
 
   .hasil-scope .clear-row {
@@ -2721,7 +2721,7 @@ setInterval(() => {
     });
     simpanJadwalData();
   }
-}, 60000);
+}, 5000);
 </script>
 
 <!-- Script HITUNGAN TOTO SINGAPORE (tidak diubah) -->
