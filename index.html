@@ -45,6 +45,21 @@
     background:#13131c;
     padding:22px 14px;
     min-height:100vh;
+    height:100vh;
+    position:sticky;
+    top:0;
+    align-self:flex-start;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+  }
+  .sidebar-footer{
+    margin-top:auto;
+    padding-top:18px;
+    text-align:center;
+    font-size:11px;
+    letter-spacing:0.3px;
+    color:#ffffff;
   }
   .sidebar .brand{
     font-size: clamp(20px, 1.5vw + 12px, 28px);
@@ -152,6 +167,9 @@
     .sidebar{
       width:100%;
       min-height:auto;
+      height:auto;
+      max-height:none;
+      overflow-y:visible;
       padding:14px;
       display:flex;
       align-items:center;
@@ -163,6 +181,7 @@
     .sidebar .nav-item{ margin-bottom:0; }
     .sidebar .nav-item .label{ white-space:normal; }
     .sidebar .nav-item .label.label-sm{ font-size:13px; }
+    .sidebar-footer{ display:none; }
   }
   .topbar{
     background: var(--header-biru);
@@ -916,6 +935,8 @@
     </span>
     <span class="label label-sm">CEK NAWALA</span>
   </div>
+
+  <div class="sidebar-footer">© 2026 RIKI GOLAN — All Rights Reserved</div>
 </div>
 
 <div class="main-content">
