@@ -106,6 +106,26 @@
     border-top:1px solid rgba(255,255,255,0.1);
     margin:0 0 18px;
   }
+  .sidebar .sidebar-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .sidebar .header-icon-link{
+    flex-shrink:0;
+    width:30px;
+    height:30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#c9c9d6;
+    text-decoration:none;
+    transition: color .15s ease;
+  }
+  .sidebar .header-icon-link:hover{
+    color:#a78bfa;
+  }
   .sidebar .menu-caption{
     color:#8b8b9a;
     font-size:13px;
@@ -176,7 +196,7 @@
       gap:12px;
     }
     .sidebar .menu-caption{ display:none; }
-    .sidebar .brand{ display:none; }
+    .sidebar .sidebar-header{ display:none; }
     .sidebar .brand-divider{ display:none; }
     .sidebar .nav-item{ margin-bottom:0; }
     .sidebar .nav-item .label{ white-space:normal; }
@@ -552,6 +572,80 @@
     .prediksi-row{ flex:none; }
     .prediksi-card{ flex:none; }
   }
+
+  /* ---------------- Peringatan Perubahan Zona Waktu (DST) ----------------
+     Muncul di atas SEMUA menu (di luar .main-content, posisi fixed) setiap
+     tanggal 1 November, sampai ditutup (x) atau sampai Jam Tutup & Result
+     seluruh pasaran terkait sudah dimutakhirkan pada menu RESULT & JADWAL
+     PASARAN (lihat dstJadwalSudahDiubah() di script). */
+  .dst-warning-banner{
+    position:fixed;
+    top:16px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:9999;
+    width:calc(100% - 40px);
+    max-width:640px;
+    background:linear-gradient(135deg,#3a3115,#4a3d24);
+    border:1px solid var(--accent-emas);
+    border-radius:14px;
+    padding:16px 42px 16px 18px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
+    font-family:'Work Sans', Arial, sans-serif;
+  }
+  .dst-warning-banner.hidden{ display:none; }
+  .dst-warning-banner .dst-title{
+    margin:0 0 6px;
+    font-weight:700;
+    font-size:15px;
+    color:var(--accent-emas);
+  }
+  .dst-warning-banner .dst-desc{
+    margin:0 0 10px;
+    font-size:13px;
+    line-height:1.55;
+    color:#f2ead9;
+  }
+  .dst-warning-banner .dst-markets{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .dst-warning-banner .dst-market-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.3px;
+    color:var(--accent-emas);
+    background:rgba(219,195,110,0.15);
+    border:1px solid rgba(219,195,110,0.4);
+    border-radius:20px;
+    padding:3px 9px;
+  }
+  .dst-warning-banner .dst-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:26px;
+    height:26px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:transparent;
+    border:none;
+    color:#f2ead9;
+    font-size:18px;
+    line-height:1;
+    cursor:pointer;
+    border-radius:6px;
+  }
+  .dst-warning-banner .dst-close:hover{
+    color:var(--accent-emas);
+    background:rgba(255,255,255,0.08);
+  }
+  @media (max-width:760px){
+    .dst-warning-banner{ top:8px; width:calc(100% - 20px); padding:14px 38px 14px 14px; }
+  }
 </style>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -862,13 +956,546 @@
   letter-spacing: 0.01em;
   text-shadow: 0 0 10px rgba(219,245,0,0.25);
 }
+
+/* =====================================================================
+   Menu "DATA SCREENSHOT" — di-scope lewat class ".ds-scope" (sama seperti
+   ".bola-scope" pada menu PERHITUNGAN BOLA PNG) supaya style di bawah ini
+   TIDAK bocor/bentrok ke menu lain. Palet warna & nuansa gelap+emas
+   sengaja dibuat senada dengan ".bola-scope" agar terlihat konsisten.
+   ===================================================================== */
+.ds-scope {
+  --ds-bg-deep: #0a0d1a;
+  --ds-bg-mid: #12162a;
+  --ds-surface: #161b31;
+  --ds-surface-alt: #1c2138;
+  --ds-border: rgba(255,255,255,0.08);
+  --ds-border-soft: rgba(255,255,255,0.05);
+  --ds-text-primary: #f5f3f8;
+  --ds-text-muted: #9297b3;
+  --ds-teal: #2dd4bf;
+  --ds-teal-dim: rgba(45,212,191,0.15);
+  --ds-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  --ds-gold-light: #f6e7a8;
+  --ds-gold: #d9b45a;
+  --ds-gold-deep: #a7782c;
+  --ds-gold-dim: rgba(217,180,90,0.15);
+  --ds-gold-gradient: linear-gradient(120deg, var(--ds-gold-light) 0%, var(--ds-gold) 45%, var(--ds-gold-deep) 100%);
+}
+
+.ds-scope, .ds-scope *{ box-sizing: border-box; }
+
+.ds-scope {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: radial-gradient(1200px 600px at 15% -10%, #1b1440 0%, transparent 60%),
+              radial-gradient(1000px 500px at 110% 10%, #101c3a 0%, transparent 55%),
+              linear-gradient(180deg, var(--ds-bg-deep) 0%, var(--ds-bg-mid) 100%);
+  background-attachment: fixed;
+  margin: 0;
+  padding: 40px 20px;
+  color: var(--ds-text-primary);
+  min-height: 100vh;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-scope .container {
+  max-width: 100%;
+  margin: auto;
+  background: linear-gradient(180deg, var(--ds-surface) 0%, var(--ds-bg-mid) 100%);
+  padding: 36px 40px 44px;
+  border-radius: 18px;
+  border: 1px solid var(--ds-border);
+  box-shadow: var(--ds-shadow);
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.ds-scope .container::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--ds-gold-gradient);
+  box-shadow: 0 0 14px rgba(217,180,90,0.5);
+  border-radius: 18px 18px 0 0;
+}
+
+.ds-scope .container::after {
+  content: "";
+  position: absolute;
+  bottom: -60px; right: -60px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217,180,90,0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.ds-scope .container > * { position: relative; z-index: 1; }
+
+.ds-scope .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ds-gold-light);
+  background: rgba(217,180,90,0.08);
+  border: 1px solid rgba(217,180,90,0.35);
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+.ds-scope .eyebrow::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ds-gold);
+  box-shadow: 0 0 8px var(--ds-gold);
+}
+
+.ds-scope h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 2.2vw, 28px);
+  background: var(--ds-gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  padding-bottom: 16px;
+  margin: 0 0 22px;
+  letter-spacing: -0.01em;
+  filter: drop-shadow(0 0 18px rgba(217,180,90,0.18));
+}
+.ds-scope h2::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 8px;
+  background:
+    linear-gradient(90deg, transparent 0%, var(--ds-gold) 100%) bottom / 100% 1px no-repeat,
+    radial-gradient(circle at 0 0, var(--ds-gold-light) 0 3px, transparent 4px) left bottom no-repeat;
+  opacity: 0.9;
+}
+
+.ds-scope .controls {
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 10;
+}
+.ds-scope .left-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+.ds-scope .info-container {
+    position: relative;
+    display: inline-block;
+}
+.ds-scope .info-btn {
+    background: var(--ds-gold-gradient);
+    color: #1c1608;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 8px 20px rgba(217,180,90,0.25);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+.ds-scope .info-btn:hover { filter: brightness(1.08); box-shadow: 0 10px 26px rgba(217,180,90,0.35); transform: translateY(-1px); }
+.ds-scope .info-icon {
+    width: 17px;
+    height: 17px;
+    background-color: #1c1608;
+    color: var(--ds-gold-light);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+}
+.ds-scope .info-popup {
+    display: none;
+    position: absolute;
+    top: 42px;
+    left: 0;
+    background: var(--ds-surface-alt);
+    border: 1px solid rgba(217,180,90,0.35);
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--ds-text-primary);
+    box-shadow: var(--ds-shadow);
+    z-index: 20;
+    width: 340px;
+    max-width: 80vw;
+    line-height: 1.6;
+}
+.ds-scope .info-popup.show { display: block; }
+.ds-scope .info-popup b { color: var(--ds-gold-light); }
+.ds-scope .info-popup ul { margin: 8px 0 0 15px; padding: 0; }
+.ds-scope .info-popup li { margin-bottom: 8px; }
+
+.ds-scope .search-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+.ds-scope .search-wrapper svg {
+    position: absolute;
+    left: 12px;
+    width: 16px;
+    height: 16px;
+    fill: var(--ds-text-muted);
+    pointer-events: none;
+}
+.ds-scope .search-box {
+    padding: 9px 14px 9px 36px;
+    border: 1px solid var(--ds-border);
+    border-radius: 999px;
+    font-size: 13px;
+    width: 180px;
+    background: rgba(255,255,255,0.03);
+    color: var(--ds-text-primary);
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.ds-scope .search-box::placeholder { color: var(--ds-text-muted); }
+.ds-scope .search-box:focus {
+    background: rgba(217,180,90,0.06);
+    border-color: var(--ds-gold);
+    box-shadow: 0 0 0 3px var(--ds-gold-dim);
+}
+.ds-scope .date-search-wrapper { margin-left: 4px; }
+.ds-scope .date-search-box {
+    padding: 9px 14px;
+    width: 145px;
+    text-align: center;
+    cursor: pointer;
+    color-scheme: dark;
+}
+.ds-scope .date-search-box::-webkit-calendar-picker-indicator {
+    filter: invert(0.75) sepia(1) saturate(4) hue-rotate(5deg);
+    cursor: pointer;
+}
+
+.ds-scope .table-scroll {
+  margin-top: 4px;
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px solid var(--ds-border);
+  flex: 1;
+  min-height: 200px;
+}
+.ds-scope .table-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.ds-scope table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: transparent;
+}
+.ds-scope th {
+  background: var(--ds-surface-alt);
+  color: var(--ds-gold-light);
+  text-align: center;
+  padding: 14px 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(217,180,90,0.25);
+}
+.ds-scope td {
+  border-bottom: 1px solid var(--ds-border-soft);
+  padding: 8px;
+  text-align: center;
+  vertical-align: middle;
+  background: rgba(255,255,255,0.015);
+  color: var(--ds-text-primary);
+}
+.ds-scope tbody tr:last-child td { border-bottom: none; }
+
+.ds-scope input[type="text"], .ds-scope select {
+    width: 90%;
+    height: 38px;
+    box-sizing: border-box;
+    padding: 0 7px;
+    border: 1px solid var(--ds-border);
+    border-radius: 6px;
+    text-align: center;
+    font-size: 13px;
+    background: rgba(255,255,255,0.03);
+    color: var(--ds-text-primary);
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.ds-scope select {
+    /* Hilangkan ikon panah bawaan browser pada dropdown JENIS */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: none;
+}
+.ds-scope select option {
+    /* Beri warna latar gelap & teks terang supaya nama-nama bank pada
+       daftar pilihan tetap terbaca jelas (bukan putih di atas putih). */
+    background-color: var(--ds-surface-alt);
+    color: var(--ds-text-primary);
+}
+.ds-scope input[type="text"]:focus, .ds-scope select:focus {
+    outline: none;
+    border-color: var(--ds-gold);
+    background: rgba(217,180,90,0.06);
+    box-shadow: 0 0 0 3px var(--ds-gold-dim);
+}
+.ds-scope .ds-row-rek.samar { color: var(--ds-text-muted); }
+.ds-scope input[type="text"]:disabled, .ds-scope select:disabled {
+    background-color: rgba(255,255,255,0.05);
+    color: var(--ds-text-primary);
+    border-color: var(--ds-border);
+    font-weight: 700;
+}
+.ds-scope .ds-row-date { cursor: default; }
+.ds-scope .ds-row-date:read-only {
+    background-color: transparent;
+    color: var(--ds-gold-light);
+    font-weight: 700;
+    border-color: var(--ds-border);
+}
+
+.ds-scope .ds-paste-area {
+    border: 2px dashed var(--ds-border);
+    background: rgba(255,255,255,0.02);
+    padding: 0 10px;
+    border-radius: 8px;
+    height: 38px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+.ds-scope .ds-paste-area:focus {
+    border-color: var(--ds-gold);
+    background: rgba(217,180,90,0.06);
+}
+.ds-scope .ds-paste-area span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.ds-scope .ds-preview-img {
+    max-width: 70px;
+    max-height: 32px;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid var(--ds-border);
+}
+
+.ds-scope .ds-link-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.ds-scope .link-placeholder {
+    color: var(--ds-text-muted);
+    font-size: 13px;
+}
+.ds-scope .ds-row-link {
+    width: 100%;
+    padding: 7px 8px;
+    border: 1px solid var(--ds-border);
+    border-radius: 6px;
+    font-size: 12px;
+    background: rgba(255,255,255,0.03);
+    color: var(--ds-teal);
+    outline: none;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+}
+.ds-scope .ds-row-link::placeholder {
+    color: var(--ds-text-muted);
+    font-style: italic;
+    font-family: 'Inter', sans-serif;
+}
+.ds-scope .ds-row-link:focus {
+    border-color: var(--ds-gold);
+    background: rgba(217,180,90,0.06);
+}
+.ds-scope .ds-row-link.locked {
+    color: var(--ds-teal);
+    font-weight: 700;
+    cursor: default;
+    background-color: rgba(255,255,255,0.02);
+}
+.ds-scope .ds-open-link-btn {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--ds-border);
+    background: var(--ds-surface-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s ease;
+}
+.ds-scope .ds-open-link-btn svg { width: 14px; height: 14px; fill: var(--ds-gold-light); }
+.ds-scope .ds-open-link-btn:hover { background: var(--ds-gold-gradient); border-color: var(--ds-gold); }
+.ds-scope .ds-open-link-btn:hover svg { fill: #1c1608; }
+.ds-scope .ds-copy-open-btn { width: 32px; height: 32px; border-color: var(--ds-teal); }
+.ds-scope .ds-copy-open-btn svg { fill: var(--ds-teal); }
+.ds-scope .ds-copy-open-btn:hover { background: var(--ds-teal); border-color: var(--ds-teal); }
+.ds-scope .ds-copy-open-btn:hover svg { fill: #0f1016; }
+
+@media (max-width: 720px) {
+  .ds-scope .container { padding: 24px 18px 30px; }
+}
+
+/* Toast & modal untuk halaman DATA SCREENSHOT — sengaja TIDAK di-scope di
+   dalam ".ds-scope" karena posisinya "position:fixed" menutupi seluruh
+   layar/viewport, jadi elemennya berada di luar div ".container". */
+.ds-toast-notif {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1c2138;
+    border: 1px solid var(--ds-gold, #d9b45a);
+    color: #f5f3f8;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 420px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+.ds-toast-notif.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.ds-toast-notif b { color: #f6e7a8; }
+
+.ds-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.85);
+}
+.ds-modal-content {
+    margin: auto;
+    display: block;
+    max-width: 80%;
+    max-height: 80vh;
+    border-radius: 8px;
+}
+.ds-close {
+    position: absolute;
+    top: 30px;
+    right: 45px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
 </style>
 
 </head>
 <body>
 
+<!--
+  Peringatan Perubahan Zona Waktu (DST) — muncul otomatis setiap tanggal
+  1 November di SEMUA menu (elemen ini sengaja diletakkan di luar
+  .sidebar/.main-content, posisi fixed, supaya tidak ikut disembunyikan
+  saat pindah menu). Logika tampil/sembunyi & isi daftar pasaran ada di
+  script bagian "PERINGATAN PERUBAHAN ZONA WAKTU (DST)".
+-->
+<div class="dst-warning-banner hidden" id="dstWarningBanner">
+  <button type="button" class="dst-close" id="dstWarningClose" title="Tutup peringatan" aria-label="Tutup peringatan">&times;</button>
+  <p class="dst-title">Perubahan Zona Waktu &mdash; musim dingin dimulai</p>
+  <p class="dst-desc">
+    Sedang beralih ke UTC -5 / Eastern Standard Time (EST).<br>
+    Waktu akan diatur mundur satu jam dari 02:00 ke 01:00 waktu lokal.
+  </p>
+  <div class="dst-markets" id="dstWarningMarkets"></div>
+</div>
+
+<!--
+  Peringatan Perubahan Zona Waktu (DST) untuk 1 Maret (kembali ke musim
+  panas/EDT) — pasangan dari #dstWarningBanner di atas, dengan logika
+  tampil/sembunyi & isi daftar pasaran yang sama (lihat script bagian
+  "PERINGATAN PERUBAHAN ZONA WAKTU (DST)").
+-->
+<div class="dst-warning-banner hidden" id="dstWarningBannerMaret">
+  <button type="button" class="dst-close" id="dstWarningMaretClose" title="Tutup peringatan" aria-label="Tutup peringatan">&times;</button>
+  <p class="dst-title">Perubahan Zona Waktu &mdash; musim dingin dimulai</p>
+  <p class="dst-desc">
+    Telah beralih ke UTC -4 / Eastern Daylight Time (EDT).<br>
+    Waktu diset maju satu jam untuk pasaran:
+  </p>
+  <div class="dst-markets" id="dstWarningMarketsMaret"></div>
+</div>
+
 <div class="sidebar">
-  <div class="brand"><span class="uy">UY</span> <span class="lab">LAB</span> <span class="brand-tag">By GOLAN</span></div>
+  <div class="sidebar-header">
+    <div class="brand"><span class="uy">UY</span> <span class="lab">LAB</span> <span class="brand-tag">By GOLAN</span></div>
+    <!--
+      Ikon "DATA PENTING" — dipindahkan ke sini (hanya ikonnya, tanpa label)
+      di samping logo, tetap menuju chat.html (dibuka di tab baru).
+    -->
+    <a class="header-icon-link" id="navDataPrivasi" href="chat.html" target="_blank" rel="noopener" title="Data Penting">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 13h6M9 17h6M9 9h1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
   <hr class="brand-divider">
   <div class="menu-caption">MENU DASBOARD</div>
   <div class="nav-item active" id="navPrediksi">
@@ -909,6 +1536,16 @@
     </span>
     <span class="label label-sm">PERHITUNGAN BOLA PNG</span>
   </div>
+  <div class="nav-item" id="navBolaOdds">
+    <span class="icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 7l2.9 2.1-1.1 3.4H10.2l-1.1-3.4L12 7z" fill="currentColor"/>
+        <path d="M12 3v4M12 17v4M4.2 9l3.9 1.5M15.9 10.5L19.8 9M6.5 17.5l2.6-3.2M14.9 14.3l2.6 3.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="label label-sm">PERHITUNGAN BOLA ODDS</span>
+  </div>
   <div class="nav-item" id="navHasilJadwal">
     <span class="icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -934,6 +1571,38 @@
       </svg>
     </span>
     <span class="label label-sm">CEK NAWALA</span>
+  </div>
+
+  <!--
+    Menu "DATA SCREENSHOT" — galeri untuk menyimpan & melihat screenshot
+    (bukti taruhan/hasil, dll) langsung di dalam dashboard (lihat
+    <div id="pageDataScreenshot"> di bawah). Data disimpan real-time di
+    Firebase Realtime Database (path "dataScreenshot"), sehingga tersinkron
+    otomatis antar perangkat/browser, dan otomatis terhapus sendiri setelah
+    3 minggu.
+  -->
+  <div class="nav-item" id="navDataScreenshot">
+    <span class="icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+        <circle cx="8.5" cy="10.5" r="1.7" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M3 16l5-4 4 3 3-2.5 6 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="label label-sm">DATA SCREENSHOT</span>
+  </div>
+
+  <!--
+    Menu "CARA BETTING TOGEL" — halaman panduan cara betting togel
+    (lihat <div id="pageCaraBetting"> di bawah).
+  -->
+  <div class="nav-item" id="navCaraBetting">
+    <span class="icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="label label-sm">CARA BETTING TOGEL PNG</span>
   </div>
 
   <div class="sidebar-footer">© 2026 RIKI GOLAN — All Rights Reserved</div>
@@ -1072,6 +1741,1854 @@
       </div>
     </div>
   </div>
+</div>
+
+<div id="pageBolaOdds" style="display:none;">
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Odds</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0b130f;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            inherits: false;
+            initial-value: 0deg;
+        }
+
+        @keyframes spin-border {
+            to { --angle: 360deg; }
+        }
+
+        @keyframes pulse-glow {
+            0%, 15% { opacity: 0; }
+            35%, 65% { opacity: 1; }
+            85%, 100% { opacity: 0; }
+        }
+
+        .glow-border {
+            position: relative;
+        }
+
+        .glow-border::before,
+        .glow-border::after {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            padding: 2px;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: spin-border 3.5s linear infinite, pulse-glow 3.5s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+            filter: drop-shadow(0 0 4px rgba(0, 230, 118, 0.7));
+        }
+
+        /* Ular 1: mulai dari atas */
+        .glow-border::before {
+            background: conic-gradient(from var(--angle),
+                transparent 0deg,
+                transparent 250deg,
+                rgba(0, 176, 255, 0) 285deg,
+                #00b0ff 315deg,
+                #00e676 340deg,
+                #76ff03 360deg);
+        }
+
+        /* Ular 2: mulai dari bawah (offset 180deg), hilang-timbul berlawanan fase */
+        .glow-border::after {
+            background: conic-gradient(from calc(var(--angle) + 180deg),
+                transparent 0deg,
+                transparent 250deg,
+                rgba(0, 176, 255, 0) 285deg,
+                #00b0ff 315deg,
+                #00e676 340deg,
+                #76ff03 360deg);
+            animation-delay: 1.75s, 1.75s;
+            filter: drop-shadow(0 0 4px rgba(0, 176, 255, 0.7));
+        }
+
+        /* Header Title */
+        .main-header {
+            text-align: center;
+            background-color: #111d16;
+            border: 1px solid #1e3828;
+            border-radius: 30px;
+            padding: 12px 20px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            font-size: 19px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Step Guide Grid */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .step-card {
+            background-color: #111d16;
+            border: 1px solid #1e3828;
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+        }
+
+        .step-badge {
+            background-color: #76ff03;
+            color: #000;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 17px;
+            margin-bottom: 10px;
+        }
+
+        .step-card h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .step-card p {
+            font-size: 16px;
+            color: #a0b0a5;
+            line-height: 1.4;
+        }
+
+        /* Menu Navigation Tabs */
+        .menu-tabs {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        @media(max-width: 900px) {
+            .menu-tabs {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .tab-btn {
+                font-size: 15px;
+                white-space: normal;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .menu-tabs {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .tab-btn {
+                font-size: 15px;
+                white-space: normal;
+            }
+        }
+
+        .tab-btn {
+            background-color: #111d16;
+            border: 1px solid #1e3828;
+            border-radius: 10px;
+            padding: 10px 8px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 13px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #00b0ff, #00e676);
+            color: #000;
+            border: none;
+            box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+        }
+
+        /* Main Content Layout */
+        .content-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 20px;
+        }
+
+        @media(max-width: 900px) {
+            .content-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: grid;
+        }
+
+        /* Calculator Panel */
+        .calc-panel {
+            background-color: #111d16;
+            border: 1px solid #1e3828;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .calc-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .calc-title span {
+            background-color: #76ff03;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 17px;
+        }
+
+        .calc-subtitle {
+            font-size: 16px;
+            color: #a0b0a5;
+            margin-bottom: 15px;
+            margin-left: 34px;
+        }
+
+        /* Tag pills */
+        .tag-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tag-row-spread {
+            justify-content: space-between;
+        }
+
+        .tag-pill {
+            background-color: #76ff03;
+            color: #000;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .tag-pill-outline {
+            background-color: #0d1711;
+            border: 1px solid #1e3828;
+            color: #fff;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .info-boxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .info-box {
+            background-color: #0d1711;
+            border: 1px solid #1e3828;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .info-box h5 {
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+
+        .info-box p, .info-box ul {
+            font-size: 15px;
+            color: #a0b0a5;
+            line-height: 1.5;
+        }
+
+        .info-box ul {
+            padding-left: 16px;
+        }
+
+        .input-group-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(118, 255, 3, 0.15);
+            border-radius: 14px;
+            padding: 12px 16px;
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 18px;
+            font-weight: normal !important;
+            outline: none;
+            text-align: left;
+            appearance: none;
+            transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .input-group input:not(:placeholder-shown) {
+            color: #fff;
+            font-weight: bold !important;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .input-group select {
+            text-align: center;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2376ff03' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 34px;
+        }
+
+        .input-group select option {
+            color: #000 !important;
+            background-color: #fff !important;
+            font-weight: bold !important;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: rgba(118, 255, 3, 0.5);
+            background-color: rgba(255, 255, 255, 0.04);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 4fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-calc-full {
+            width: 100%;
+            background: linear-gradient(90deg, #76ff03, #00e676);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            text-align: left;
+            padding-left: 15px;
+            margin-bottom: 10px;
+        }
+
+        .secondary-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-calc {
+            background: linear-gradient(90deg, #76ff03, #00e676);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            text-align: left;
+            padding-left: 15px;
+        }
+
+        .btn-reset,
+        .btn-outline {
+            background-color: #0d1711;
+            color: #ff5252;
+            border: 1px solid #ff5252;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 12px;
+        }
+
+        .btn-reset:hover,
+        .btn-outline:hover {
+            background-color: #ff5252;
+            color: #fff;
+        }
+
+        .btn-example {
+            background-color: #0d1711;
+            color: #a0b0a5;
+            border: 1px solid #1e3828;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 12px;
+        }
+
+        .btn-example:hover {
+            background-color: #1e3828;
+            color: #fff;
+        }
+
+        /* Result Panel */
+        .result-panel {
+            background-color: #111d16;
+            border: 1px solid #1e3828;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .result-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #76ff03;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .result-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #d4ffb0, #76ff03 55%, #2e7d0a);
+            box-shadow: 0 0 8px rgba(118, 255, 3, 0.8);
+            flex-shrink: 0;
+        }
+
+        .result-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .result-card {
+            background-color: #0d1711;
+            border: 1px solid #1e3828;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .result-card .label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #00e676;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .result-card .value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        /* ===== HDP / Over Under (Tab 5) ===== */
+        .calc-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .calc-title-row .calc-title {
+            margin-bottom: 0;
+        }
+
+        .badge-accent {
+            font-size: 14px;
+            font-weight: bold;
+            color: #76ff03;
+            background-color: rgba(118, 255, 3, 0.08);
+            border: 1px solid rgba(118, 255, 3, 0.25);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .hint-text {
+            font-size: 13px;
+            color: #00b0ff;
+            margin-top: 6px;
+        }
+
+        .input-prefix-wrap {
+            position: relative;
+        }
+
+        .input-prefix {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(118, 255, 3, 0.6);
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .input-prefix-wrap input.has-prefix {
+            padding-left: 40px;
+        }
+
+        .result-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .result-header-row .result-header {
+            margin-bottom: 0;
+        }
+
+        .total-kembali-box {
+            background: linear-gradient(135deg, rgba(118, 255, 3, 0.08), rgba(0, 176, 255, 0.06));
+            border: 1px solid rgba(118, 255, 3, 0.25);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .total-kembali-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #76ff03;
+            margin-bottom: 6px;
+        }
+
+        .total-kembali-value {
+            font-size: 30px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .hdp-result-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .hdp-result-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #0d1711;
+            border: 1px solid #1e3828;
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+
+        .hdp-row-label {
+            font-size: 15px;
+            font-weight: bold;
+            color: #a0b0a5;
+        }
+
+        .hdp-row-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .hdp-footnote {
+            font-size: 13px;
+            color: #00b0ff;
+            background-color: rgba(0, 176, 255, 0.06);
+            border: 1px solid rgba(0, 176, 255, 0.2);
+            border-radius: 10px;
+            padding: 10px 14px;
+            line-height: 1.5;
+        }
+
+        .btn-clear-result {
+            background-color: #0d1711;
+            color: #ff5252;
+            border: 1px solid #ff5252;
+            border-radius: 8px;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .placeholder-box {
+            text-align: center;
+            color: #a0b0a5;
+            font-size: 17px;
+            padding: 40px 10px;
+        }
+
+        /* Detail Perhitungan (Parlay) */
+        .result-detail-box {
+            background-color: #0d1711;
+            border: 1px solid #1e3828;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result-detail-title {
+            font-size: 15px;
+            color: #a0b0a5;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .result-detail-heading {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .result-detail-list {
+            font-size: 16px;
+            color: #cfe9d6;
+            line-height: 1.8;
+        }
+
+        .result-detail-divider {
+            border-top: 1px solid #1e3828;
+            margin: 10px 0;
+        }
+
+        .result-detail-formula {
+            font-size: 16px;
+            color: #00e676;
+            font-weight: bold;
+        }
+
+        /* Parlay dynamic match rows */
+        .parlay-matches-wrap {
+            margin-bottom: 15px;
+        }
+
+        .parlay-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 40px;
+            gap: 10px;
+            align-items: end;
+            margin-bottom: 15px;
+        }
+
+        .parlay-row .input-group {
+            margin-bottom: 0;
+        }
+
+        .btn-remove-match {
+            background-color: #1a0d0d;
+            border: 1px solid #ff5252;
+            color: #ff5252;
+            border-radius: 8px;
+            height: 40px;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-remove-match:hover {
+            background-color: #ff5252;
+            color: #fff;
+        }
+
+        .btn-add-match {
+            width: 100%;
+            background-color: #0d1711;
+            border: 1px dashed #76ff03;
+            color: #76ff03;
+            border-radius: 8px;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: 0.2s;
+        }
+
+        .btn-add-match:hover {
+            background-color: #16241a;
+        }
+            * { font-weight: bold !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="main-header glow-border">
+        Bantuan Untuk Perhitungan ODDS
+    </div>
+
+    <!-- Steps -->
+    <div class="steps-grid">
+        <div class="step-card glow-border">
+            <div class="step-badge">1</div>
+            <h4>Pilih Menu</h4>
+            <p>Pilih jenis kalkulator yang ingin digunakan.</p>
+        </div>
+        <div class="step-card glow-border">
+            <div class="step-badge">2</div>
+            <h4>Baca Arahan</h4>
+            <p>Lihat penjelasan singkat dan contohnya.</p>
+        </div>
+        <div class="step-card glow-border">
+            <div class="step-badge">3</div>
+            <h4>Isi Data</h4>
+            <p>Masukkan modal, odds, atau angka yang diperlukan.</p>
+        </div>
+        <div class="step-card glow-border">
+            <div class="step-badge">4</div>
+            <h4>Hasil Hasil</h4>
+            <p>Hasil langsung tampil jelas di panel kanan.</p>
+        </div>
+    </div>
+
+    <!-- Menu Tabs -->
+    <div class="menu-tabs">
+        <button class="tab-btn active" id="tabBtn1" onclick="switchTab(1)">1. Single Bet</button>
+        <button class="tab-btn" id="tabBtn2" onclick="switchTab(2)">2. Parlay</button>
+        <button class="tab-btn" id="tabBtn3" onclick="switchTab(3)">3. Target Profit / KEI</button>
+        <button class="tab-btn" id="tabBtn4" onclick="switchTab(4)">4. Cash Out</button>
+        <button class="tab-btn" id="tabBtn5" onclick="switchTab(5)">5. HDP / Over Under</button>
+        <button class="tab-btn" id="tabBtn6" onclick="switchTab(6)">6. Kalkulator 1X2</button>
+    </div>
+
+    <!-- ============ TAB 1: SINGLE BET ============ -->
+    <div class="content-layout tab-panel active" id="panel1">
+        <div class="calc-panel glow-border">
+            <div class="calc-title">
+                <span>1</span> Single Bet (Taruhan Tunggal)
+            </div>
+            <div class="calc-subtitle">Untuk 1 pertandingan atau 1 pilihan saja.</div>
+
+            <div class="tag-row tag-row-spread">
+                <div class="tag-pill">Arahan Single Bet</div>
+                <div class="tag-pill-outline">Cocok untuk 1 tiket</div>
+            </div>
+
+            <div class="info-boxes">
+                <div class="info-box">
+                    <h5>Apa itu?</h5>
+                    <p>Anda hanya memasang taruhan pada 1 pertandingan atau 1 pilihan saja.</p>
+                </div>
+                <div class="info-box">
+                    <h5>Apa yang dihitung?</h5>
+                    <ul>
+                        <li>Uang yang diterima jika menang.</li>
+                        <li>Keuntungan bersih yang didapat.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-boxes">
+                <div class="info-box">
+                    <h5>Contoh</h5>
+                    <p>Modal: Rp100.000, Odds: 1.80<br>Uang diterima: Rp180.000<br>Profit: Rp80.000</p>
+                </div>
+                <div class="info-box">
+                    <h5>Rumus Cepat</h5>
+                    <p>Payout = Modal x Odds<br>Profit = Payout - Modal</p>
+                </div>
+            </div>
+
+            <div class="input-group-grid">
+                <div class="input-group">
+                    <label>Modal / Stake</label>
+                    <input type="number" id="sbModalInput" placeholder="100000">
+                </div>
+                <div class="input-group">
+                    <label>Odds</label>
+                    <input type="number" id="sbOddsInput" placeholder="1.80" step="0.01">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Hasil Tiket</label>
+                <select id="sbHasilTiket">
+                    <option value="menang">Menang</option>
+                    <option value="kalah">Kalah</option>
+                    <option value="void">Void / Refund</option>
+                    <option value="halfwin">Half Win</option>
+                    <option value="halflose">Half Lose</option>
+                    <option value="cashout">Cash Out</option>
+                </select>
+            </div>
+
+            <button class="btn-calc-full" onclick="hitungSingleBet()">Hitung</button>
+            <div class="secondary-buttons">
+                <button class="btn-example" onclick="contohSingleBet()">Contoh</button>
+                <button class="btn-reset" onclick="resetSingleBet()">Reset</button>
+            </div>
+        </div>
+
+        <div class="result-panel glow-border">
+            <div>
+                <div class="result-header">
+                    <span class="result-dot"></span> Panel Hasil
+                </div>
+                <div class="result-cards">
+                    <div class="result-card">
+                        <div class="label">MODAL</div>
+                        <div class="value" id="sbResModal">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">ODDS AKHIR</div>
+                        <div class="value" id="sbResOdds">0.000</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PAYOUT</div>
+                        <div class="value" id="sbResPayout">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PROFIT / LOSS</div>
+                        <div class="value" id="sbResProfit">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">STATUS</div>
+                        <div class="value" id="sbResStatus">Bersih</div>
+                    </div>
+                </div>
+                <div class="result-detail-box" id="sbDetailBox" style="display:none;">
+                    <div class="result-detail-title">DETAIL PERHITUNGAN</div>
+                    <div class="result-detail-heading">Rincian</div>
+                    <div class="result-detail-list" id="sbDetailList"></div>
+                    <div class="result-detail-divider"></div>
+                    <div class="result-detail-formula" id="sbDetailFormula"></div>
+                </div>
+            </div>
+            <button class="btn-clear-result" onclick="resetSingleBet()">Bersihkan Hasil</button>
+        </div>
+    </div>
+
+    <!-- ============ TAB 2: PARLAY ============ -->
+    <div class="content-layout tab-panel" id="panel2">
+        <div class="calc-panel glow-border">
+            <div class="calc-title">
+                <span>2</span> Parlay
+            </div>
+            <div class="calc-subtitle">Untuk menggabungkan 2 atau lebih taruhan.</div>
+
+            <div class="tag-row tag-row-spread">
+                <div class="tag-pill">Arahan Parlay</div>
+                <div class="tag-pill-outline">Semua harus menang</div>
+            </div>
+
+            <div class="info-boxes">
+                <div class="info-box">
+                    <h5>Apa itu?</h5>
+                    <p>Anda menggabungkan 2 atau lebih taruhan menjadi satu tiket. Semua pilihan harus benar agar tiket menang.</p>
+                </div>
+                <div class="info-box">
+                    <h5>Apa yang dihitung?</h5>
+                    <ul>
+                        <li>Total odds gabungan.</li>
+                        <li>Total uang yang diterima.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-boxes">
+                <div class="info-box">
+                    <h5>Contoh</h5>
+                    <p>Odds 1: 1.80, Odds 2: 2.00, Odds 3: 1.50<br>Total odds = 5.40<br>Modal Rp100k &rarr; Payout Rp540k</p>
+                </div>
+                <div class="info-box">
+                    <h5>Rumus Cepat</h5>
+                    <p>Total Odds = odds1 x odds2 ...<br>Payout = Modal x Total Odds</p>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Modal / Stake</label>
+                <input type="number" id="plModalInput" placeholder="10000">
+            </div>
+
+            <div class="parlay-matches-wrap" id="parlayMatches">
+                <div class="parlay-row" id="parlayRow0">
+                    <div class="input-group">
+                        <label>Odds</label>
+                        <input type="number" class="parlay-odds-input" step="0.01" placeholder="1.95">
+                    </div>
+                    <div class="input-group">
+                        <label>Hasil</label>
+                        <select class="parlay-hasil-select">
+                            <option value="win">Win</option>
+                            <option value="lose">Lose</option>
+                            <option value="void">Void</option>
+                            <option value="hwin">H-Win</option>
+                            <option value="hlose">H-Lose</option>
+                        </select>
+                    </div>
+                    <button class="btn-remove-match" onclick="removeParlayMatch(0)">x</button>
+                </div>
+                <div class="parlay-row" id="parlayRow1">
+                    <div class="input-group">
+                        <label>Odds</label>
+                        <input type="number" class="parlay-odds-input" step="0.01" placeholder="2.5">
+                    </div>
+                    <div class="input-group">
+                        <label>Hasil</label>
+                        <select class="parlay-hasil-select">
+                            <option value="win">Win</option>
+                            <option value="lose">Lose</option>
+                            <option value="void">Void</option>
+                            <option value="hwin">H-Win</option>
+                            <option value="hlose">H-Lose</option>
+                        </select>
+                    </div>
+                    <button class="btn-remove-match" onclick="removeParlayMatch(1)">x</button>
+                </div>
+            </div>
+
+            <button class="btn-add-match" onclick="addParlayMatch()">+ Tambah Match</button>
+
+            <button class="btn-calc-full" onclick="hitungParlay()">Hitung Parlay</button>
+            <div class="secondary-buttons">
+                <button class="btn-example" onclick="contohParlay()">Contoh</button>
+                <button class="btn-reset" onclick="resetParlay()">Reset</button>
+            </div>
+        </div>
+
+        <div class="result-panel glow-border">
+            <div>
+                <div class="result-header">
+                    <span class="result-dot"></span> Panel Hasil
+                </div>
+                <div class="result-cards">
+                    <div class="result-card">
+                        <div class="label">MODAL</div>
+                        <div class="value" id="plResModal">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">ODDS AKHIR</div>
+                        <div class="value" id="plResOdds">0.000</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PAYOUT</div>
+                        <div class="value" id="plResPayout">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PROFIT / LOSS</div>
+                        <div class="value" id="plResProfit">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">STATUS</div>
+                        <div class="value" id="plResStatus">Bersih</div>
+                    </div>
+                </div>
+                <div class="result-detail-box" id="plDetailBox" style="display:none;">
+                    <div class="result-detail-title">DETAIL PERHITUNGAN</div>
+                    <div class="result-detail-heading">Rincian</div>
+                    <div class="result-detail-list" id="plDetailList"></div>
+                    <div class="result-detail-divider"></div>
+                    <div class="result-detail-formula" id="plDetailFormula"></div>
+                </div>
+            </div>
+            <button class="btn-clear-result" onclick="resetParlay()">Bersihkan Hasil</button>
+        </div>
+    </div>
+
+    <!-- ============ TAB 3: TARGET PROFIT / KEI ============ -->
+    <div class="content-layout tab-panel" id="panel3">
+        <!-- Calculator Input Area -->
+        <div class="calc-panel glow-border">
+            <div class="calc-title">
+                <span>3</span> Target Profit / KEI
+            </div>
+
+            <div class="info-boxes">
+                <div class="info-box">
+                    <h5>Apa itu?</h5>
+                    <p>Dipakai jika sudah menentukan target untung, tapi belum tahu modalnya berapa.</p>
+                </div>
+                <div class="info-box">
+                    <h5>Contoh</h5>
+                    <p>Odds: 1.85, Target: 100k<br>Modal = Rp117.647<br>Total diterima = Rp217.647</p>
+                </div>
+            </div>
+
+            <div class="input-group-grid">
+                <div class="input-group">
+                    <label>Odds</label>
+                    <input type="number" id="oddsInput" placeholder="1.85" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label>Target Profit</label>
+                    <input type="number" id="targetInput" placeholder="100000">
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-calc" onclick="hitungModal()">Hitung Modal</button>
+                <button class="btn-reset" onclick="resetForm()">Reset</button>
+            </div>
+        </div>
+
+        <!-- Result Panel -->
+        <div class="result-panel glow-border">
+            <div>
+                <div class="result-header">
+                    <span class="result-dot"></span> Panel Hasil
+                </div>
+                <div class="result-cards">
+                    <div class="result-card">
+                        <div class="label">MODAL</div>
+                        <div class="value" id="resModal">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">ODDS AKHIR</div>
+                        <div class="value" id="resOdds">0.000</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PAYOUT</div>
+                        <div class="value" id="resPayout">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PROFIT / LOSS</div>
+                        <div class="value" id="resProfit">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">STATUS</div>
+                        <div class="value" id="resStatus">Bersih</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-clear-result" onclick="resetForm()">Bersihkan Hasil</button>
+        </div>
+    </div>
+
+    <!-- ============ TAB 4: CASH OUT ============ -->
+    <div class="content-layout tab-panel" id="panel4">
+        <div class="calc-panel glow-border">
+            <div class="calc-title"><span>4</span> Cash Out</div>
+
+            <div class="input-group-grid">
+                <div class="input-group">
+                    <label>Modal / Stake</label>
+                    <input type="number" id="coModalInput" placeholder="100000">
+                </div>
+                <div class="input-group">
+                    <label>Nominal Cash Out</label>
+                    <input type="number" id="coCashOutInput" placeholder="120000">
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-calc" onclick="hitungCashOut()">Hitung</button>
+                <button class="btn-reset" onclick="resetCashOut()">Reset</button>
+            </div>
+        </div>
+
+        <div class="result-panel glow-border">
+            <div>
+                <div class="result-header">
+                    <span class="result-dot"></span> Panel Hasil
+                </div>
+                <div class="result-cards">
+                    <div class="result-card">
+                        <div class="label">MODAL</div>
+                        <div class="value" id="coResModal">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">ODDS AKHIR</div>
+                        <div class="value" id="coResOdds">0.000</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PAYOUT</div>
+                        <div class="value" id="coResPayout">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">PROFIT / LOSS</div>
+                        <div class="value" id="coResProfit">Rp 0</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="label">STATUS</div>
+                        <div class="value" id="coResStatus">Bersih</div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-clear-result" onclick="resetCashOut()">Bersihkan Hasil</button>
+        </div>
+    </div>
+
+    <!-- ============ TAB 5: HDP / OVER UNDER ============ -->
+    <div class="content-layout tab-panel" id="panel5">
+        <div class="calc-panel glow-border">
+            <div class="calc-title-row">
+                <div class="calc-title"><span>5</span> HDP / Over Under</div>
+                <div class="badge-accent">Indo Odds</div>
+            </div>
+
+            <div class="input-group">
+                <label>Odds</label>
+                <input type="number" id="hdpOddsInput" placeholder="Contoh: 0.95 atau -1.15" step="0.01">
+                <div class="hint-text">Gunakan minus jika odds kei, contoh: -1.15</div>
+            </div>
+
+            <div class="input-group">
+                <label>Status Hasil</label>
+                <select id="hdpHasilTiket">
+                    <option value="winfull">Win Full</option>
+                    <option value="winhalf">Win 1/2</option>
+                    <option value="void">Draw / Seri</option>
+                    <option value="losehalf">Lose 1/2</option>
+                    <option value="losefull">Lose Full</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Nominal Betting</label>
+                <div class="input-prefix-wrap">
+                    <span class="input-prefix">Rp</span>
+                    <input type="number" id="hdpNominalInput" class="has-prefix" placeholder="100.000">
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-calc" onclick="hitungHdp()">Hitung HDP / O-U</button>
+                <button class="btn-reset" onclick="resetHdp()">Reset</button>
+            </div>
+        </div>
+
+        <div class="result-panel glow-border">
+            <div>
+                <div class="result-header-row">
+                    <div class="result-header">
+                        <span class="result-dot"></span> Hasil HDP
+                    </div>
+                    <div class="badge-accent">Live Result</div>
+                </div>
+
+                <div class="total-kembali-box">
+                    <div class="total-kembali-label">Total Kembali</div>
+                    <div class="total-kembali-value" id="hdpResTotal">Rp0</div>
+                </div>
+
+                <div class="hdp-result-rows">
+                    <div class="hdp-result-row">
+                        <span class="hdp-row-label">Modal / Risk</span>
+                        <span class="hdp-row-value" id="hdpResModal">Rp0</span>
+                    </div>
+                    <div class="hdp-result-row">
+                        <span class="hdp-row-label">Bersih</span>
+                        <span class="hdp-row-value" id="hdpResBersih">Rp0</span>
+                    </div>
+                    <div class="hdp-result-row">
+                        <span class="hdp-row-label">Status</span>
+                        <span class="hdp-row-value" id="hdpResStatus">Win Full</span>
+                    </div>
+                </div>
+
+                <div class="hdp-footnote">Untuk odds negatif, sistem membaca nilai tersebut sebagai risk. Contoh odds -1.15 berarti risk dihitung dari nominal x 1.15.</div>
+            </div>
+            <button class="btn-clear-result" onclick="resetHdp()">Bersihkan Hasil</button>
+        </div>
+    </div>
+
+    <!-- ============ TAB 6: KALKULATOR 1X2 ============ -->
+    <div class="content-layout tab-panel" id="panel6">
+        <div class="calc-panel glow-border">
+            <div class="calc-title-row">
+                <div class="calc-title"><span>6</span> Kalkulator 1X2</div>
+                <div class="badge-accent">Decimal Odds</div>
+            </div>
+
+            <div class="input-group-grid">
+                <div class="input-group">
+                    <label>Odds Pertandingan</label>
+                    <input type="number" id="oneXTwoOddsInput" placeholder="Contoh: 1.85" step="0.01">
+                    <div class="hint-text">Gunakan format decimal odds, contoh: 1.85, 2.00, 3.50</div>
+                </div>
+                <div class="input-group">
+                    <label>Status Hasil</label>
+                    <select id="oneXTwoHasilTiket">
+                        <option value="winfull">Win Full</option>
+                        <option value="draw">Draw / Refund</option>
+                        <option value="losefull">Lose Full</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Nominal Betting</label>
+                <div class="input-prefix-wrap">
+                    <span class="input-prefix">Rp</span>
+                    <input type="number" id="oneXTwoNominalInput" class="has-prefix" placeholder="100.000">
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-calc" onclick="hitung1X2()">Hitung 1X2</button>
+                <button class="btn-reset" onclick="reset1X2()">Reset</button>
+            </div>
+        </div>
+
+        <div class="result-panel glow-border">
+            <div>
+                <div class="result-header-row">
+                    <div class="result-header">
+                        <span class="result-dot"></span> Hasil 1X2
+                    </div>
+                    <div class="badge-accent">Live Result</div>
+                </div>
+
+                <div class="total-kembali-box">
+                    <div class="total-kembali-label">Total Kembali</div>
+                    <div class="total-kembali-value" id="oneXTwoResTotal">Rp0</div>
+                </div>
+
+                <div class="hdp-result-rows">
+                    <div class="hdp-result-row">
+                        <span class="hdp-row-label">Modal</span>
+                        <span class="hdp-row-value" id="oneXTwoResModal">Rp0</span>
+                    </div>
+                    <div class="hdp-result-row">
+                        <span class="hdp-row-label">Kemenangan Bersih</span>
+                        <span class="hdp-row-value" id="oneXTwoResBersih">Rp0</span>
+                    </div>
+                    <div class="hdp-result-row">
+                        <span class="hdp-row-label">Status</span>
+                        <span class="hdp-row-value" id="oneXTwoResStatus">Win Full</span>
+                    </div>
+                </div>
+
+                <div class="hdp-footnote">Jika status Draw / Refund dipilih, total kembali sama dengan modal awal.</div>
+            </div>
+            <button class="btn-clear-result" onclick="reset1X2()">Bersihkan Hasil</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    /* ===== TAB SWITCHING ===== */
+    function switchTab(tabNum) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+        document.getElementById('tabBtn' + tabNum).classList.add('active');
+        document.getElementById('panel' + tabNum).classList.add('active');
+    }
+
+    /* ===== TAB 1: SINGLE BET ===== */
+    function hitungSingleBet() {
+        let modal = parseFloat(document.getElementById('sbModalInput').value);
+        let odds = parseFloat(document.getElementById('sbOddsInput').value);
+        let hasil = document.getElementById('sbHasilTiket').value;
+
+        if (isNaN(modal) || isNaN(odds) || modal <= 0 || odds <= 0) {
+            alert("Masukkan angka yang valid!");
+            return;
+        }
+
+        let payout = 0;
+        let profit = 0;
+        let statusText = "";
+        let statusColor = "#fff";
+
+        switch (hasil) {
+            case "menang":
+                // Payout = Modal x Odds | Profit = Payout - Modal
+                payout = modal * odds;
+                profit = payout - modal;
+                statusText = "MENANG";
+                statusColor = "#00e676";
+                break;
+            case "kalah":
+                payout = 0;
+                profit = -modal;
+                statusText = "KALAH";
+                statusColor = "#ff5252";
+                break;
+            case "void":
+                payout = modal;
+                profit = 0;
+                statusText = "VOID / REFUND";
+                statusColor = "#ffca28";
+                break;
+            case "halfwin":
+                payout = modal + (modal * (odds - 1)) / 2;
+                profit = payout - modal;
+                statusText = "HALF WIN";
+                statusColor = "#76ff03";
+                break;
+            case "halflose":
+                payout = modal / 2;
+                profit = payout - modal;
+                statusText = "HALF LOSE";
+                statusColor = "#ff9800";
+                break;
+            case "cashout":
+                statusText = "GUNAKAN MENU CASH OUT";
+                statusColor = "#00b0ff";
+                break;
+        }
+
+        document.getElementById('sbResModal').innerText = "Rp " + Math.round(modal).toLocaleString('id-ID');
+        document.getElementById('sbResOdds').innerText = odds.toFixed(3);
+
+        let profitEl = document.getElementById('sbResProfit');
+        if (hasil === "cashout") {
+            document.getElementById('sbResPayout').innerText = "-";
+            profitEl.innerText = "-";
+            profitEl.style.color = "#fff";
+        } else {
+            document.getElementById('sbResPayout').innerText = "Rp " + Math.round(payout).toLocaleString('id-ID');
+            let prefix = profit >= 0 ? "Rp " : "-Rp ";
+            profitEl.innerText = prefix + Math.round(Math.abs(profit)).toLocaleString('id-ID');
+            profitEl.style.color = profit >= 0 ? "#00e676" : "#ff5252";
+        }
+
+        let statusEl = document.getElementById('sbResStatus');
+        statusEl.innerText = statusText;
+        statusEl.style.color = statusColor;
+
+        // Detail Perhitungan
+        let hasilLabel = {
+            menang: "WIN",
+            kalah: "LOSE",
+            void: "VOID",
+            halfwin: "H-WIN",
+            halflose: "H-LOSE",
+            cashout: "CASH OUT"
+        };
+        document.getElementById('sbDetailList').innerHTML = `Match 1: ${hasilLabel[hasil]}`;
+
+        let modalFmt = Math.round(modal).toLocaleString('id-ID');
+        let formulaText = "";
+        if (hasil === "cashout") {
+            formulaText = "Gunakan menu Cash Out untuk menghitung tiket ini.";
+        } else {
+            let payoutFmt = Math.round(payout).toLocaleString('id-ID');
+            formulaText = `Hitung: Rp ${modalFmt} x ${odds.toFixed(3)} = Rp ${payoutFmt}`;
+        }
+        document.getElementById('sbDetailFormula').innerText = formulaText;
+        document.getElementById('sbDetailBox').style.display = "block";
+    }
+
+    function contohSingleBet() {
+        document.getElementById('sbModalInput').value = 100000;
+        document.getElementById('sbOddsInput').value = 1.80;
+        document.getElementById('sbHasilTiket').value = "menang";
+        hitungSingleBet();
+    }
+
+    function resetSingleBet() {
+        document.getElementById('sbModalInput').value = "";
+        document.getElementById('sbOddsInput').value = "";
+        document.getElementById('sbHasilTiket').value = "menang";
+        document.getElementById('sbResModal').innerText = "Rp 0";
+        document.getElementById('sbResOdds').innerText = "0.000";
+        document.getElementById('sbResPayout').innerText = "Rp 0";
+        let profitEl = document.getElementById('sbResProfit');
+        profitEl.innerText = "Rp 0";
+        profitEl.style.color = "#fff";
+        let statusEl = document.getElementById('sbResStatus');
+        statusEl.innerText = "Bersih";
+        statusEl.style.color = "#fff";
+
+        document.getElementById('sbDetailBox').style.display = "none";
+        document.getElementById('sbDetailList').innerHTML = "";
+        document.getElementById('sbDetailFormula').innerText = "";
+    }
+
+    /* ===== TAB 5: HDP / OVER UNDER ===== */
+    function hitungHdp() {
+        let odds = parseFloat(document.getElementById('hdpOddsInput').value);
+        let nominal = parseFloat(document.getElementById('hdpNominalInput').value);
+        let hasil = document.getElementById('hdpHasilTiket').value;
+
+        if (isNaN(odds) || odds === 0 || isNaN(nominal) || nominal <= 0) {
+            alert("Masukkan angka yang valid!");
+            return;
+        }
+
+        // Konversi Odds Indo: odds negatif dibaca sebagai risk (modal = nominal x |odds|),
+        // odds positif berarti nominal langsung menjadi modal.
+        let modal, winAmount;
+        if (odds < 0) {
+            modal = nominal * Math.abs(odds);
+            winAmount = nominal;
+        } else {
+            modal = nominal;
+            winAmount = nominal * odds;
+        }
+
+        // totalKembali = seluruh uang yang kembali ke tangan bettor (payout).
+        // bersih SELALU dihitung dari (totalKembali - modal) -- satu sumber
+        // kebenaran tunggal -- supaya nilai "Bersih" untuk status Lose Full
+        // maupun Lose 1/2 tidak pernah "nyangkut" di Rp0 (bug sebelumnya:
+        // bersih di-set terpisah per-case sehingga rawan tidak sinkron
+        // dengan totalKembali).
+        let totalKembali = 0;
+        let statusText = "";
+        let statusColor = "#fff";
+
+        switch (hasil) {
+            case "winfull":
+                totalKembali = modal + winAmount;
+                statusText = "Win Full";
+                statusColor = "#00e676";
+                break;
+            case "winhalf":
+                totalKembali = modal + (winAmount / 2);
+                statusText = "Win 1/2";
+                statusColor = "#76ff03";
+                break;
+            case "void":
+                totalKembali = modal;
+                statusText = "Draw / Seri";
+                statusColor = "#ffca28";
+                break;
+            case "losehalf":
+                totalKembali = modal / 2;
+                statusText = "Lose 1/2";
+                statusColor = "#ff9800";
+                break;
+            case "losefull":
+                totalKembali = 0;
+                statusText = "Lose Full";
+                statusColor = "#ff5252";
+                break;
+        }
+
+        let bersih = totalKembali - modal;
+
+        document.getElementById('hdpResTotal').innerText = "Rp" + Math.round(totalKembali).toLocaleString('id-ID');
+        let modalPrefix = odds < 0 ? "Risk: Rp" : "Modal: Rp";
+        document.getElementById('hdpResModal').innerText = modalPrefix + Math.round(modal).toLocaleString('id-ID');
+
+        let bersihEl = document.getElementById('hdpResBersih');
+        let prefix = bersih > 0 ? "+Rp" : (bersih < 0 ? "-Rp" : "Rp");
+        bersihEl.innerText = prefix + Math.round(Math.abs(bersih)).toLocaleString('id-ID');
+        bersihEl.style.color = bersih > 0 ? "#00e676" : (bersih < 0 ? "#ff5252" : "#fff");
+
+        let statusEl = document.getElementById('hdpResStatus');
+        statusEl.innerText = statusText;
+        statusEl.style.color = statusColor;
+    }
+
+    function resetHdp() {
+        document.getElementById('hdpOddsInput').value = "";
+        document.getElementById('hdpNominalInput').value = "";
+        document.getElementById('hdpHasilTiket').value = "winfull";
+        document.getElementById('hdpResTotal').innerText = "Rp0";
+        document.getElementById('hdpResModal').innerText = "Rp0";
+        let bersihEl = document.getElementById('hdpResBersih');
+        bersihEl.innerText = "Rp0";
+        bersihEl.style.color = "#fff";
+        let statusEl = document.getElementById('hdpResStatus');
+        statusEl.innerText = "Win Full";
+        statusEl.style.color = "#fff";
+    }
+
+    /* ===== TAB 6: KALKULATOR 1X2 ===== */
+    function hitung1X2() {
+        let odds = parseFloat(document.getElementById('oneXTwoOddsInput').value);
+        let modal = parseFloat(document.getElementById('oneXTwoNominalInput').value);
+        let hasil = document.getElementById('oneXTwoHasilTiket').value;
+
+        if (isNaN(odds) || odds <= 0 || isNaN(modal) || modal <= 0) {
+            alert("Masukkan angka yang valid!");
+            return;
+        }
+
+        let bersih = 0;
+        let totalKembali = 0;
+        let statusText = "";
+        let statusColor = "#fff";
+
+        switch (hasil) {
+            case "winfull":
+                totalKembali = modal * odds;
+                bersih = totalKembali - modal;
+                statusText = "Win Full";
+                statusColor = "#00e676";
+                break;
+            case "draw":
+                totalKembali = modal;
+                bersih = 0;
+                statusText = "Draw / Refund";
+                statusColor = "#ffca28";
+                break;
+            case "losefull":
+                totalKembali = 0;
+                bersih = -modal;
+                statusText = "Lose Full";
+                statusColor = "#ff5252";
+                break;
+        }
+
+        document.getElementById('oneXTwoResTotal').innerText = "Rp" + Math.round(totalKembali).toLocaleString('id-ID');
+        document.getElementById('oneXTwoResModal').innerText = "Rp" + Math.round(modal).toLocaleString('id-ID');
+
+        let bersihEl = document.getElementById('oneXTwoResBersih');
+        let prefix = bersih >= 0 ? "Rp" : "-Rp";
+        bersihEl.innerText = prefix + Math.round(Math.abs(bersih)).toLocaleString('id-ID');
+        bersihEl.style.color = bersih >= 0 ? "#00e676" : "#ff5252";
+
+        let statusEl = document.getElementById('oneXTwoResStatus');
+        statusEl.innerText = statusText;
+        statusEl.style.color = statusColor;
+    }
+
+    function reset1X2() {
+        document.getElementById('oneXTwoOddsInput').value = "";
+        document.getElementById('oneXTwoNominalInput').value = "";
+        document.getElementById('oneXTwoHasilTiket').value = "winfull";
+        document.getElementById('oneXTwoResTotal').innerText = "Rp0";
+        document.getElementById('oneXTwoResModal').innerText = "Rp0";
+        let bersihEl = document.getElementById('oneXTwoResBersih');
+        bersihEl.innerText = "Rp0";
+        bersihEl.style.color = "#fff";
+        let statusEl = document.getElementById('oneXTwoResStatus');
+        statusEl.innerText = "Win Full";
+        statusEl.style.color = "#fff";
+    }
+
+    /* ===== TAB 2: PARLAY ===== */
+    let parlayMatchCounter = 2; // baris 0 dan 1 sudah ada di HTML
+
+    function addParlayMatch(oddsVal, hasilVal) {
+        let idx = parlayMatchCounter++;
+        let wrap = document.getElementById('parlayMatches');
+        let row = document.createElement('div');
+        row.className = 'parlay-row';
+        row.id = 'parlayRow' + idx;
+        row.innerHTML = `
+            <div class="input-group">
+                <label>Odds</label>
+                <input type="number" class="parlay-odds-input" step="0.01" value="${oddsVal !== undefined ? oddsVal : ''}">
+            </div>
+            <div class="input-group">
+                <label>Hasil</label>
+                <select class="parlay-hasil-select">
+                    <option value="win">Win</option>
+                    <option value="lose">Lose</option>
+                    <option value="void">Void</option>
+                    <option value="hwin">H-Win</option>
+                    <option value="hlose">H-Lose</option>
+                </select>
+            </div>
+            <button class="btn-remove-match" onclick="removeParlayMatch(${idx})">x</button>
+        `;
+        wrap.appendChild(row);
+        if (hasilVal) {
+            row.querySelector('.parlay-hasil-select').value = hasilVal;
+        }
+    }
+
+    function removeParlayMatch(idx) {
+        let row = document.getElementById('parlayRow' + idx);
+        if (row) row.remove();
+    }
+
+    function hitungParlay() {
+        let modal = parseFloat(document.getElementById('plModalInput').value);
+        if (isNaN(modal) || modal <= 0) {
+            alert("Masukkan modal yang valid!");
+            return;
+        }
+
+        let rows = document.querySelectorAll('#parlayMatches .parlay-row');
+        if (rows.length < 2) {
+            alert("Parlay membutuhkan minimal 2 pertandingan!");
+            return;
+        }
+
+        let totalOdds = 1;
+        let adaLose = false;
+        let legs = [];
+
+        for (let row of rows) {
+            let odds = parseFloat(row.querySelector('.parlay-odds-input').value);
+            let hasil = row.querySelector('.parlay-hasil-select').value;
+
+            if (isNaN(odds) || odds <= 0) {
+                alert("Masukkan odds yang valid di semua pertandingan!");
+                return;
+            }
+            legs.push({ odds, hasil });
+        }
+
+        // Total odds = perkalian seluruh odds (mengikuti "Rumus Cepat": Total Odds = odds1 x odds2 ...)
+        // Hasil tiap leg menentukan kontribusinya terhadap total odds:
+        // Win -> odds penuh | Void -> dianggap 1 (dikeluarkan dari perhitungan)
+        // H-Win -> (odds + 1) / 2 | H-Lose -> faktor 0.5 | Lose -> seluruh tiket kalah
+        legs.forEach(leg => {
+            switch (leg.hasil) {
+                case "win":
+                    totalOdds *= leg.odds;
+                    break;
+                case "void":
+                    totalOdds *= 1;
+                    break;
+                case "hwin":
+                    totalOdds *= (leg.odds + 1) / 2;
+                    break;
+                case "hlose":
+                    totalOdds *= 0.5;
+                    break;
+                case "lose":
+                    adaLose = true;
+                    break;
+            }
+        });
+
+        let payout, profit, statusText, statusColor;
+
+        if (adaLose) {
+            totalOdds = 0;
+            payout = 0;
+            profit = -modal;
+            statusText = "KALAH";
+            statusColor = "#ff5252";
+        } else {
+            payout = modal * totalOdds;
+            profit = payout - modal;
+            if (profit > 0) {
+                statusText = "MENANG";
+                statusColor = "#00e676";
+            } else if (profit < 0) {
+                statusText = "RUGI";
+                statusColor = "#ff5252";
+            } else {
+                statusText = "IMPAS";
+                statusColor = "#ffca28";
+            }
+        }
+
+        document.getElementById('plResModal').innerText = "Rp " + Math.round(modal).toLocaleString('id-ID');
+        document.getElementById('plResOdds').innerText = totalOdds.toFixed(3);
+        document.getElementById('plResPayout').innerText = "Rp " + Math.round(payout).toLocaleString('id-ID');
+
+        let profitEl = document.getElementById('plResProfit');
+        let prefix = profit >= 0 ? "Rp " : "-Rp ";
+        profitEl.innerText = prefix + Math.round(Math.abs(profit)).toLocaleString('id-ID');
+        profitEl.style.color = profit >= 0 ? "#00e676" : "#ff5252";
+
+        let statusEl = document.getElementById('plResStatus');
+        statusEl.innerText = statusText;
+        statusEl.style.color = statusColor;
+
+        // Detail Perhitungan
+        let hasilLabel = {
+            win: "WIN",
+            lose: "LOSE",
+            void: "VOID",
+            hwin: "H-WIN",
+            hlose: "H-LOSE"
+        };
+        let listHtml = legs.map((leg, i) => `Match ${i + 1}: ${hasilLabel[leg.hasil]}`).join("<br>");
+        document.getElementById('plDetailList').innerHTML = listHtml;
+
+        let modalFmt = Math.round(modal).toLocaleString('id-ID');
+        let payoutFmt = Math.round(payout).toLocaleString('id-ID');
+        document.getElementById('plDetailFormula').innerText =
+            `Hitung: Rp ${modalFmt} x ${totalOdds.toFixed(3)} = Rp ${payoutFmt}`;
+        document.getElementById('plDetailBox').style.display = "block";
+    }
+
+    function contohParlay() {
+        document.getElementById('plModalInput').value = 100000;
+        document.getElementById('parlayMatches').innerHTML = '';
+        parlayMatchCounter = 0;
+        addParlayMatch(1.80, "win");
+        addParlayMatch(2.00, "win");
+        addParlayMatch(1.50, "win");
+        hitungParlay();
+    }
+
+    function resetParlay() {
+        document.getElementById('plModalInput').value = "";
+        document.getElementById('parlayMatches').innerHTML = '';
+        parlayMatchCounter = 0;
+        addParlayMatch("", "win");
+        addParlayMatch("", "win");
+
+        document.getElementById('plResModal').innerText = "Rp 0";
+        document.getElementById('plResOdds').innerText = "0.000";
+        document.getElementById('plResPayout').innerText = "Rp 0";
+        let profitEl = document.getElementById('plResProfit');
+        profitEl.innerText = "Rp 0";
+        profitEl.style.color = "#fff";
+        let statusEl = document.getElementById('plResStatus');
+        statusEl.innerText = "Bersih";
+        statusEl.style.color = "#fff";
+
+        document.getElementById('plDetailBox').style.display = "none";
+        document.getElementById('plDetailList').innerHTML = "";
+        document.getElementById('plDetailFormula').innerText = "";
+    }
+
+    /* ===== TAB 4: CASH OUT ===== */
+    function hitungCashOut() {
+        let modal = parseFloat(document.getElementById('coModalInput').value);
+        let cashOut = parseFloat(document.getElementById('coCashOutInput').value);
+
+        if (isNaN(modal) || isNaN(cashOut) || modal <= 0 || cashOut < 0) {
+            alert("Masukkan angka yang valid!");
+            return;
+        }
+
+        // Nominal Cash Out = uang yang diterima sekarang (payout)
+        let payout = cashOut;
+        let profit = payout - modal;
+
+        document.getElementById('coResModal').innerText = "Rp " + Math.round(modal).toLocaleString('id-ID');
+        // Cash Out tidak memiliki konsep "odds akhir" seperti taruhan biasa,
+        // karena nominal cash out sudah ditentukan langsung oleh bandar/platform.
+        document.getElementById('coResOdds').innerText = "0.000";
+        document.getElementById('coResPayout').innerText = "Rp " + Math.round(payout).toLocaleString('id-ID');
+
+        let profitEl = document.getElementById('coResProfit');
+        let prefix = profit >= 0 ? "Rp " : "-Rp ";
+        profitEl.innerText = prefix + Math.round(Math.abs(profit)).toLocaleString('id-ID');
+        profitEl.style.color = profit >= 0 ? "#00e676" : "#ff5252";
+
+        // Status Cash Out selalu menandakan transaksi sudah selesai/terkunci,
+        // terlepas dari untung atau rugi (sesuai sifat cash out itu sendiri).
+        let statusEl = document.getElementById('coResStatus');
+        statusEl.innerText = "CASHOUT SELESAI";
+        statusEl.style.color = "#ffffff";
+    }
+
+    function resetCashOut() {
+        document.getElementById('coModalInput').value = "";
+        document.getElementById('coCashOutInput').value = "";
+        document.getElementById('coResModal').innerText = "Rp 0";
+        document.getElementById('coResOdds').innerText = "0.000";
+        document.getElementById('coResPayout').innerText = "Rp 0";
+        let profitEl = document.getElementById('coResProfit');
+        profitEl.innerText = "Rp 0";
+        profitEl.style.color = "#fff";
+        let statusEl = document.getElementById('coResStatus');
+        statusEl.innerText = "Bersih";
+        statusEl.style.color = "#fff";
+    }
+
+    /* ===== TAB 3: TARGET PROFIT / KEI ===== */
+    function hitungModal() {
+        let odds = parseFloat(document.getElementById('oddsInput').value);
+        let target = parseFloat(document.getElementById('targetInput').value);
+
+        if (isNaN(odds) || isNaN(target) || odds <= 0) {
+            alert("Masukkan angka yang valid!");
+            return;
+        }
+
+        let modal = 0;
+        let payout = 0;
+
+        // Logika perhitungan Odds Minus (KEI negatif) atau Odds Lebih dari 1.00
+        if (odds < 1.00) {
+            // Contoh odds minus misal -0.85
+            let absOdds = Math.abs(odds);
+            modal = target * absOdds;
+            payout = modal + target;
+        } else {
+            // Odds normal (decimal odds misal 1.85, profit = modal * (odds - 1))
+            // Target Profit = Modal * (Odds - 1) => Modal = Target / (Odds - 1)
+            // Asumsi sederhana berdasarkan contoh: Odds 1.85, Target 100k -> Modal 117.647
+            modal = target / (odds - 1);
+            payout = modal + target;
+        }
+
+        // Format ke Rupiah
+        document.getElementById('resModal').innerText = "Rp " + Math.round(modal).toLocaleString('id-ID');
+        document.getElementById('resOdds').innerText = odds.toFixed(3);
+        document.getElementById('resPayout').innerText = "Rp " + Math.round(payout).toLocaleString('id-ID');
+        document.getElementById('resProfit').innerText = "Rp " + Math.round(target).toLocaleString('id-ID');
+        document.getElementById('resStatus').innerText = "MODAL DIBUTUHKAN";
+    }
+
+    function resetForm() {
+        document.getElementById('oddsInput').value = "";
+        document.getElementById('targetInput').value = "";
+        document.getElementById('resModal').innerText = "Rp 0";
+        document.getElementById('resOdds').innerText = "0.000";
+        document.getElementById('resPayout').innerText = "Rp 0";
+        document.getElementById('resProfit').innerText = "Rp 0";
+        document.getElementById('resStatus').innerText = "Bersih";
+    }
+</script>
+
+</body>
+</html>
+
 </div>
 
 <div id="pageHasilJadwal" style="display:none;">
@@ -1549,8 +4066,8 @@
     flex-direction:row;
     align-items:flex-start;
     justify-content:center;
-    gap:26px;
-    flex-wrap:wrap;
+    gap:clamp(8px, 2vw, 26px);
+    flex-wrap:nowrap;
   }
   .hasil-scope .col-left {
     display:flex;
@@ -1559,41 +4076,43 @@
     gap:18px;
     width:100%;
     max-width:520px;
-    flex:0 0 auto;
+    flex:1 1 320px;
+    min-width:0;
   }
   .hasil-scope .col-right {
     display:flex;
     flex-direction:column;
     align-items:stretch;
     gap:10px;
-    flex:1 1 680px;
-    min-width:320px;
+    flex:1 1 420px;
+    min-width:0;
     max-width:980px;
   }
   .hasil-scope .col-right .section-tag { max-width:none; }
   .hasil-scope .col-right .block { max-width:none; }
-  @media  (max-width:980px) {
-    .hasil-scope .layout { flex-direction:column; align-items:center; }
-    .hasil-scope .col-right { max-width:520px; }
-  }
+  /* Kontener kanan (Jadwal Pasaran) tetap sejajar di sisi kanan pada
+     ukuran layar berapa pun -- TIDAK berpindah ke bawah col-left.
+     Sebagai gantinya, ukuran tulisan pada tabel menyusut mengikuti
+     lebar layar lewat clamp()/vw di aturan .jadwal-table di bawah. */
 
   /* ===== JADWAL PASARAN ===== */
   .hasil-scope .jadwal-wrap { padding:2px; }
   .hasil-scope .jadwal-scroll {
-    overflow-x:auto;
+    overflow-x:visible;
     border-radius:2px;
   }
   .hasil-scope .jadwal-table {
     width:100%;
-    min-width:700px;
+    min-width:0;
+    table-layout:auto;
     border-collapse:collapse;
   }
   .hasil-scope .jadwal-table thead th {
     background:var(--panel-2);
     color:var(--gold-bright);
-    padding:9px 8px;
-    font-size:11.5px;
-    font-family:var(--font-mono);
+    padding:clamp(3px, 0.6vw, 9px) clamp(2px, 0.5vw, 8px);
+    font-size:clamp(7.5px, 1.05vw, 11.5px);
+    font-family:Arial, sans-serif;
     letter-spacing:1.5px;
     text-transform:uppercase;
     border:1px dashed var(--line);
@@ -1602,9 +4121,9 @@
     top:0;
   }
   .hasil-scope .jadwal-table tbody td {
-    padding:6px 6px;
-    font-size:12.5px;
-    font-family:var(--font-mono);
+    padding:clamp(2px, 0.45vw, 6px) clamp(2px, 0.45vw, 6px);
+    font-size:clamp(8px, 1vw, 12.5px);
+    font-family:Arial, sans-serif;
     text-align:center;
     border:1px dashed var(--line);
     color:var(--text-uniform);
@@ -1641,30 +4160,38 @@
     cursor:pointer;
   }
 
-  /* ===== HITUNGAN TOTO SINGAPORE (tidak diubah) ===== */
+  /* ===== HITUNGAN TOTO SINGAPORE ===== */
   .hasil-scope .toto-wrap {
     background-color: var(--panel);
     font-family: Arial, sans-serif;
-    font-size: 14px;
+    font-size: clamp(8px, 1vw, 14px);
     color: var(--text-uniform);
-    padding: 20px;
+    padding: clamp(8px, 1.6vw, 20px);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
   .hasil-scope .toto-wrap table {
     border-collapse: collapse;
     background-color: var(--panel);
-    width: auto;
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
   }
   .hasil-scope .toto-wrap td {
     border: 1px dashed var(--line);
     text-align: center;
-    padding: 3px 10px;
-    height: 20px;
+    padding: clamp(1px, 0.45vw, 3px) clamp(2px, 0.9vw, 10px);
+    height: clamp(15px, 2vw, 20px);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .hasil-scope .toto-wrap .header-main {
     background-color: var(--panel-2);
     color: var(--gold-bright);
     font-weight: normal;
-    font-size: 16px;
+    font-size: clamp(9px, 1.15vw, 16px);
     text-align: center;
     letter-spacing: 1px;
   }
@@ -1672,14 +4199,14 @@
     background-color: var(--panel-2);
     color: var(--gold-bright);
     font-weight: normal;
-    width: 70px;
+    width: 16%;
     white-space: nowrap;
   }
   .hasil-scope .toto-wrap .bola-num {
     background-color: transparent;
     color: var(--text-uniform);
     font-weight: normal;
-    width: 50px;
+    width: 11%;
   }
   .hasil-scope .toto-wrap .tempel {
     background-color: transparent;
@@ -1687,12 +4214,12 @@
     font-weight: normal;
   }
   .hasil-scope .toto-wrap .tempel input {
-    width: 45px;
+    width: 100%;
     background-color: transparent;
     border: none;
     text-align: center;
     font-weight: normal;
-    font-size: 14px;
+    font-size: clamp(8px, 1vw, 14px);
     color: var(--text-uniform);
     outline: none;
     -moz-appearance: textfield;
@@ -1707,6 +4234,7 @@
     background-color: var(--panel-2);
     color: var(--gold-bright);
     font-weight: normal;
+    width: 16%;
   }
   .hasil-scope .toto-wrap .add-val {
     background-color: transparent;
@@ -1714,12 +4242,12 @@
     font-weight: normal;
   }
   .hasil-scope .toto-wrap .add-val input {
-    width: 45px;
+    width: 100%;
     background-color: transparent;
     border: none;
     text-align: center;
     font-weight: normal;
-    font-size: 14px;
+    font-size: clamp(8px, 1vw, 14px);
     color: var(--text-uniform);
     outline: none;
     -moz-appearance: textfield;
@@ -1734,39 +4262,39 @@
     background-color: transparent;
     color: var(--text-uniform);
     font-weight: normal;
-    width: 75px;
+    width: 18%;
   }
   .hasil-scope .toto-wrap .col-right-2 {
     background-color: transparent;
     color: var(--text-uniform);
     font-weight: normal;
-    width: 75px;
+    width: 18%;
   }
   .hasil-scope .toto-wrap .col-right-3 {
     background-color: transparent;
     color: var(--text-uniform);
     font-weight: normal;
-    width: 75px;
+    width: 18%;
   }
   .hasil-scope .toto-wrap .col-right-4 {
     background-color: transparent;
     color: var(--text-uniform);
     font-weight: normal;
-    width: 75px;
+    width: 18%;
   }
   .hasil-scope .toto-wrap .result-label {
     background-color: var(--panel-2);
     color: var(--gold-bright);
     font-weight: normal;
     text-align: center;
-    width: 70px;
+    width: 16%;
   }
   .hasil-scope .toto-wrap .result-val {
     background-color: transparent;
     color: var(--gold-bright);
     font-weight: normal;
-    width: 50px;
-    font-size: 15px;
+    width: 11%;
+    font-size: clamp(9px, 1.1vw, 15px);
   }
   .hasil-scope .toto-wrap .dark-row {
     background-color: var(--void);
@@ -1854,11 +4382,6 @@
 <div class="block block-sg">
   <table class="lot-table">
     <tr>
-      <td colspan="2" class="clear-row">
-        <button type="button" class="clear-btn" onclick="hapusData('sg', this)"> Hapus Data</button>
-      </td>
-    </tr>
-    <tr>
       <td class="lbl-cell editable-text" id="sg-name" contenteditable="true"></td>
       <td class="info-cell" id="sg-title">Hasil Pengeluaran SINGAPORE</td>
     </tr>
@@ -1898,11 +4421,6 @@
 <!-- CALIFORNIA BLOCK -->
 <div class="block block-ca">
   <table class="lot-table">
-    <tr>
-      <td colspan="2" class="clear-row">
-        <button type="button" class="clear-btn" onclick="hapusData('ca', this)"> Hapus Data</button>
-      </td>
-    </tr>
     <tr>
       <td class="lbl-cell editable-text" id="ca-name" contenteditable="true"></td>
       <td class="info-cell" id="ca-title">Hasil Pengeluaran CALIFORNIA</td>
@@ -1999,9 +4517,9 @@
             <td class="col-right-1" id="out1">-</td>
         </tr>
 
-        <!-- Baris 3: TEMPEL -->
+        <!-- Baris 3: ISI -->
         <tr>
-            <td class="header-bola">TEMPEL &gt;&gt;</td>
+            <td class="header-bola">ISI &gt;&gt;</td>
             <td class="tempel"><input type="number" id="t1" value="" oninput="hitung()"></td>
             <td class="tempel"><input type="number" id="t2" value="" oninput="hitung()"></td>
             <td class="tempel"><input type="number" id="t3" value="" oninput="hitung()"></td>
@@ -2327,8 +4845,17 @@ function recalc(){
 }
 
 // Samakan nama pasaran walau beda spasi/huruf besar-kecil (mis. "TOTOMACAU PAGI" = "totomacau pagi" = "Totomacau  Pagi")
+// serta beda singkatan/istilah panjang yang umum dipakai saat input nomor,
+// supaya tetap dikenali sebagai pasaran yang sama dengan yang ada di Jadwal
+// Pasaran. Contoh: "FLORIDA EVENING" = "FLORIDAEVE", "NEW YORK MIDDAY" =
+// "NEWYORKMID", "KENTUCKY EVENING" = "KENTUCKYEVE", "NORTH CAROLINA DAY" =
+// "CAROLINADAY".
 function normalisasiNama(str){
-  return (str || '').toString().toLowerCase().replace(/\s+/g,'').trim();
+  let s = (str || '').toString().toLowerCase().replace(/\s+/g,'').trim();
+  s = s.replace(/evening/g, 'eve')
+       .replace(/midday/g, 'mid')
+       .replace(/^north/, '');
+  return s;
 }
 
 // Jika nama pasaran + angka sudah diisi dan namanya cocok dengan salah satu baris Jadwal Pasaran,
@@ -2442,6 +4969,11 @@ function salinTeks(jenis, btn){
     salinFallback(teks);
     tandaiTersalin();
   }
+
+  // Setelah teks berhasil disalin, kosongkan otomatis nama PASARAN &
+  // ANGKA pada blok terkait supaya siap dipakai untuk input berikutnya
+  // (menggantikan tombol "Hapus Data" yang sebelumnya harus diklik manual).
+  hapusData(jenis);
 }
 
 function salinFallback(teks){
@@ -2625,6 +5157,130 @@ if (jadwalDayChanged && jadwalSaved.some((r) => r && r.checked)) {
   });
 }
 
+// ===== PERINGATAN PERUBAHAN ZONA WAKTU (DST) =====
+// Tampil otomatis setiap tanggal 1 November (mulai musim dingin/EST) dan
+// setiap tanggal 1 Maret (kembali musim panas/EDT) di semua menu (lihat
+// #dstWarningBanner & #dstWarningBannerMaret yang diletakkan di luar
+// .main-content pada <body>).
+// - Bisa ditutup lewat tombol (x): tidak muncul lagi untuk sisa hari itu.
+// - Otomatis tidak muncul lagi (permanen) begitu Jam Tutup & Result SEMUA
+//   pasaran di bawah ini sudah dimutakhirkan pada menu RESULT & JADWAL
+//   PASARAN: peringatan November hilang begitu semuanya sudah DIUBAH dari
+//   nilai default (mundur 1 jam ke EST), peringatan Maret hilang begitu
+//   semuanya sudah KEMBALI ke nilai default (maju 1 jam lagi ke EDT).
+const DST_MARKETS = [
+  "KENTUCKYMID","FLORIDAMID","NEWYORKMID","CAROLINADAY","OREGON03","OREGON06",
+  "CALIFORNIA","FLORIDAEVE","OREGON09","NEWYORKEVE","KENTUCKYEVE","CAROLINAEVE","OREGON12"
+];
+const DST_WARNING_CLOSED_DATE_KEY = 'dstWarningClosedDate';
+const DST_WARNING_MARET_CLOSED_DATE_KEY = 'dstWarningMaretClosedDate';
+
+// Cocokkan tiap nama pasaran DST di atas ke baris & nilai default (tutup/result)
+// pada dataJadwal, supaya bisa dideteksi kalau sudah diubah.
+const dstMarketRows = DST_MARKETS.map((nama) => {
+  const idx = dataJadwal.findIndex((row) => row[0] === nama);
+  return idx === -1 ? null : { nama: nama, idx: idx, defaultTutup: dataJadwal[idx][1], defaultResult: dataJadwal[idx][2] };
+}).filter(Boolean);
+
+const dstBanner = document.getElementById('dstWarningBanner');
+const dstMarketsEl = document.getElementById('dstWarningMarkets');
+if (dstMarketsEl) {
+  dstMarketsEl.innerHTML = DST_MARKETS.map((m) => '<span class="dst-market-tag">' + m + '</span>').join('');
+}
+
+const dstBannerMaret = document.getElementById('dstWarningBannerMaret');
+const dstMarketsMaretEl = document.getElementById('dstWarningMarketsMaret');
+if (dstMarketsMaretEl) {
+  dstMarketsMaretEl.innerHTML = DST_MARKETS.map((m) => '<span class="dst-market-tag">' + m + '</span>').join('');
+}
+
+function isTanggalDstWarning() {
+  const now = new Date();
+  return now.getMonth() === 10 && now.getDate() === 1; // November = index 10
+}
+
+function isTanggalDstWarningMaret() {
+  const now = new Date();
+  return now.getMonth() === 2 && now.getDate() === 1; // Maret = index 2
+}
+
+// Apakah satu baris pasaran DST sudah diubah (Jam Tutup ATAU Result beda
+// dari nilai default)?
+function dstRowSudahDiubah(m, rows) {
+  const tr = rows[m.idx];
+  if (!tr) return false;
+  const editable = tr.querySelectorAll('.jadwal-editable');
+  const tutupNow = editable[0] ? editable[0].textContent.trim() : '';
+  const resultNow = editable[1] ? editable[1].textContent.trim() : '';
+  return tutupNow !== m.defaultTutup || resultNow !== m.defaultResult;
+}
+
+// true jika Jam Tutup & Result SEMUA pasaran DST di atas sudah diubah
+// dari nilai default (artinya jadwal sudah dimutakhirkan ke waktu musim dingin/EST)
+function dstJadwalSudahDiubah() {
+  const rows = jadwalBody.querySelectorAll('tr');
+  return dstMarketRows.every(function (m) { return dstRowSudahDiubah(m, rows); });
+}
+
+// true jika Jam Tutup & Result SEMUA pasaran DST di atas sudah KEMBALI ke
+// nilai default (artinya jadwal sudah dimutakhirkan lagi ke waktu musim panas/EDT)
+function dstJadwalSudahKembaliKeDefault() {
+  const rows = jadwalBody.querySelectorAll('tr');
+  return dstMarketRows.every(function (m) { return !dstRowSudahDiubah(m, rows); });
+}
+
+function updateDstWarningVisibility() {
+  if (!dstBanner) return;
+
+  if (dstJadwalSudahDiubah()) {
+    dstBanner.classList.add('hidden');
+    return;
+  }
+
+  const sudahDitutupHariIni = localStorage.getItem(DST_WARNING_CLOSED_DATE_KEY) === getTodayStr();
+  if (isTanggalDstWarning() && !sudahDitutupHariIni) {
+    dstBanner.classList.remove('hidden');
+  } else {
+    dstBanner.classList.add('hidden');
+  }
+}
+
+function updateDstWarningMaretVisibility() {
+  if (!dstBannerMaret) return;
+
+  if (dstJadwalSudahKembaliKeDefault()) {
+    dstBannerMaret.classList.add('hidden');
+    return;
+  }
+
+  const sudahDitutupHariIni = localStorage.getItem(DST_WARNING_MARET_CLOSED_DATE_KEY) === getTodayStr();
+  if (isTanggalDstWarningMaret() && !sudahDitutupHariIni) {
+    dstBannerMaret.classList.remove('hidden');
+  } else {
+    dstBannerMaret.classList.add('hidden');
+  }
+}
+
+const dstWarningCloseBtn = document.getElementById('dstWarningClose');
+if (dstWarningCloseBtn) {
+  dstWarningCloseBtn.addEventListener('click', () => {
+    localStorage.setItem(DST_WARNING_CLOSED_DATE_KEY, getTodayStr());
+    dstBanner.classList.add('hidden');
+  });
+}
+
+const dstWarningMaretCloseBtn = document.getElementById('dstWarningMaretClose');
+if (dstWarningMaretCloseBtn) {
+  dstWarningMaretCloseBtn.addEventListener('click', () => {
+    localStorage.setItem(DST_WARNING_MARET_CLOSED_DATE_KEY, getTodayStr());
+    dstBannerMaret.classList.add('hidden');
+  });
+}
+
+// Cek kondisi awal saat halaman dimuat
+updateDstWarningVisibility();
+updateDstWarningMaretVisibility();
+
 jadwalBody.addEventListener('change', (e) => {
   if (e.target.type === 'checkbox') {
     const tr = e.target.closest('tr');
@@ -2650,6 +5306,10 @@ let jadwalEditableSyncTimer = null;
 jadwalBody.addEventListener('input', (e) => {
   if (e.target.classList.contains('jadwal-editable')) {
     simpanJadwalData();
+    // Cek ulang apakah Jam Tutup & Result pasaran DST sudah dimutakhirkan,
+    // supaya peringatan langsung hilang begitu semuanya sudah diubah.
+    updateDstWarningVisibility();
+    updateDstWarningMaretVisibility();
     // Kirim ke Firebase dengan sedikit jeda (debounce) agar tidak spam
     // request saat user sedang mengetik, tapi tetap tersinkron otomatis.
     clearTimeout(jadwalEditableSyncTimer);
@@ -2724,6 +5384,8 @@ if (hasilDB) {
       applyJadwalData(data);
       localStorage.setItem(JADWAL_STORAGE_KEY, JSON.stringify(data));
       localStorage.setItem(JADWAL_DATE_KEY, getTodayStr());
+      updateDstWarningVisibility();
+      updateDstWarningMaretVisibility();
     }
   });
   hasilDB.ref('resultJadwalPasaran/shio').on('value', (snapshot) => {
@@ -2973,6 +5635,1132 @@ setInterval(() => {
     </div>
   </div>
 </div>
+
+<!--
+  Halaman "DATA SCREENSHOT" — tabel data rekening & bukti screenshot
+  transaksi. Setiap baris tersimpan REAL-TIME di Firebase Realtime Database
+  (path "dataScreenshot", pakai firebaseConfig yang sama dengan menu
+  "Result & Jadwal Pasaran"), sehingga otomatis tersinkron ke semua
+  perangkat/browser yang membuka menu ini, dan otomatis terhapus sendiri
+  setelah 3 minggu. Style-nya dibuat senada dengan menu "PERHITUNGAN BOLA
+  PNG" (nuansa gelap + aksen emas), lihat class ".ds-scope" di bawah.
+-->
+<div id="pageDataScreenshot" style="display:none;">
+  <div class="topbar">
+    <h1><span>DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT</span><span>DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT &nbsp;&nbsp; • &nbsp;&nbsp; DATA SCREENSHOT</span></h1>
+  </div>
+
+  <div class="panel" style="padding:0; background:transparent;">
+    <div class="ds-scope">
+      <div class="container">
+        <h2>DATA REKENING &amp; BUKTI SCREENSHOT</h2>
+
+        <div class="controls">
+            <div class="left-controls">
+                <div class="info-container">
+                    <button type="button" class="info-btn" onclick="dsToggleInfo(event)" title="Klik untuk informasi">
+                        <span class="info-icon">i</span> INFORMASI
+                    </button>
+                    <div id="dsInfoPopup" class="info-popup">
+                        <b>Informasi Penggunaan:</b>
+                        <ul>
+                            <li>Input nomor rekening dan gambar maka akan tersimpan secara otomatis.</li>
+                            <li>Data yang sudah di input akan terhapus secara otomatis jika sudah 3 x 24 (selama 3 minggu).</li>
+                            <li>Untuk melakukan pengecekan data/gambar yang sudah di simpan (Tanggal Semalam), atur dulu tanggal atau dapat gunakan menu cari.</li>
+                            <li>Klik tautan, langsung tekan ctrl+v pada keyboard maka dapat di klik unggah, kemudian salin linknya dan tempel pada kolom tautannya.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="search-wrapper">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    <input type="text" id="dsSearchInput" class="search-box" placeholder="Cari" onkeyup="dsFilterTable()">
+                </div>
+            </div>
+
+            <div class="search-wrapper date-search-wrapper">
+                <input type="date" id="dsSearchDate" class="search-box date-search-box" onchange="dsFilterTable()" onclick="if(this.showPicker) this.showPicker()" title="Klik untuk pilih tanggal yang ingin dicari">
+            </div>
+        </div>
+
+        <div class="table-scroll">
+          <table id="dsTransTable">
+              <thead>
+                  <tr>
+                      <th style="width: 14%;">TANGGAL</th>
+                      <th style="width: 22%;">NOMOR REKENING</th>
+                      <th style="width: 16%;">JENIS</th>
+                      <th style="width: 20%;">SCREENSHOT</th>
+                      <th style="width: 28%;">TAUTAN</th>
+                  </tr>
+              </thead>
+              <tbody id="dsTableBody">
+              </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--
+  Halaman "CARA BETTING TOGEL" — panduan/isi bebas, silakan ganti teks
+  di dalam .panel di bawah sesuai kebutuhan.
+-->
+<div id="pageCaraBetting" style="display:none;">
+  <div class="topbar">
+    <h1><span>CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL</span><span>CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL &nbsp;&nbsp; • &nbsp;&nbsp; CARA BETTING TOGEL</span></h1>
+  </div>
+
+  <style>
+    .cbt-scope{ font-family:Arial, Helvetica, sans-serif; margin:20px 16px 16px; }
+    .cbt-panel{
+      background:#0a0d1a;
+      border:1px solid rgba(237,224,212,0.2);
+      border-radius:15px;
+      padding:20px;
+      box-shadow: 0 0 30px rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    .cbt-header{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:14px;
+    }
+    .cbt-header .cbt-icon{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:22px; height:22px;
+      border-radius:5px;
+      background: rgba(122,90,248,0.18);
+      color:#a78bfa;
+      font-size:13px;
+    }
+    .cbt-header .cbt-title{
+      color: var(--text-light);
+      font-size:15px;
+      font-weight:700;
+      letter-spacing:0.4px;
+      text-transform:uppercase;
+    }
+    .cbt-header .cbt-pill{
+      margin-left:auto;
+      width:34px; height:16px;
+      border-radius:999px;
+      background: rgba(255,255,255,0.12);
+      border:1px solid var(--border-soft);
+      position:relative;
+      flex:none;
+    }
+    .cbt-header .cbt-pill::after{
+      content:"";
+      position:absolute;
+      top:2px; left:2px;
+      width:11px; height:11px;
+      border-radius:50%;
+      background: rgba(255,255,255,0.55);
+    }
+    .cbt-select{
+      position:relative;
+      width:100%;
+    }
+    .cbt-toggle{
+      width:100%;
+      box-sizing:border-box;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background: rgba(255,255,255,0.03);
+      border:1px solid rgba(122,140,255,0.35);
+      border-radius:8px;
+      padding:12px 16px;
+      color: var(--text-light);
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+      font-family:Arial, Helvetica, sans-serif;
+    }
+    .cbt-toggle .caret{
+      font-size:12px;
+      color: var(--text-light);
+      opacity:0.7;
+      transition: transform .15s ease;
+    }
+    .cbt-toggle.open .caret{ transform: rotate(180deg); }
+    .cbt-list{
+      position:absolute;
+      top:calc(100% + 6px);
+      left:0; right:0;
+      background: var(--bg-card);
+      border:1px solid var(--border-soft);
+      border-radius:8px;
+      max-height:320px;
+      overflow-y:auto;
+      z-index:20;
+      box-shadow:0 10px 26px rgba(0,0,0,0.45);
+      display:none;
+    }
+    .cbt-list.show{ display:block; }
+    .cbt-search-wrap{
+      position:sticky;
+      top:0;
+      background: var(--bg-card);
+      padding:8px;
+      border-bottom:1px solid var(--border-soft);
+      z-index:1;
+    }
+    .cbt-search{
+      width:100%;
+      box-sizing:border-box;
+      background: rgba(255,255,255,0.05);
+      border:1px solid rgba(122,140,255,0.35);
+      border-radius:6px;
+      padding:8px 10px;
+      color: var(--text-light);
+      font-size:14px;
+      font-family:Arial, Helvetica, sans-serif;
+      outline:none;
+    }
+    .cbt-search::placeholder{ color: rgba(255,255,255,0.4); }
+    .cbt-item.empty{
+      color: rgba(255,255,255,0.4);
+      cursor:default;
+    }
+    .cbt-item.empty:hover{ background:none; }
+    .cbt-item{
+      padding:10px 16px;
+      font-size:14.5px;
+      color: var(--text-light);
+      cursor:pointer;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .cbt-item:hover{ background: rgba(255,255,255,0.06); }
+    .cbt-item.active{ background:#2f6fed; color:#fff; }
+    .cbt-item.placeholder{
+      color: rgba(255,255,255,0.4);
+      cursor:default;
+    }
+    .cbt-item.placeholder:hover{ background:none; }
+    .cbt-content{
+      margin-top:16px;
+      color:#dcdce3;
+      font-size:14.5px;
+      line-height:1.7;
+      max-width:100%;
+      overflow:hidden;
+    }
+    .cbt-content img,
+    .cbt-content .cbt-shot{
+      display:block;
+      width:100%;
+      max-width:100%;
+      height:auto;
+      object-fit:contain;
+      border-radius:10px;
+      border:1px solid var(--border-soft);
+      margin-bottom:18px;
+      box-sizing:border-box;
+    }
+    .cbt-content .cbt-subheading{
+      color:#fff;
+      font-weight:700;
+      margin:14px 0 8px;
+    }
+    .cbt-content .cbt-step{ margin-bottom:12px; }
+    .cbt-content .cbt-num{ font-weight:700; color:#dcdce3; margin-right:2px; }
+    .cbt-content .cbt-example{ margin:0 0 12px; }
+    .cbt-content .cbt-red{ color:#ff5c5c; font-weight:700; }
+    .cbt-content .cbt-yellow{ color:#ffb020; font-weight:700; }
+    .cbt-content .cbt-purple{ color:#b48cff; font-weight:700; }
+    .cbt-content .cbt-green{ color:#2bd9a5; font-weight:700; }
+    .cbt-content .cbt-white-bold{ color:#fff; font-weight:700; }
+    .cbt-copybtn{
+      display:block;
+      background-color:#3a1b5e;
+      color:#ffffff;
+      border:none;
+      width:100%;
+      max-width:280px;
+      padding:10px 14px;
+      border-radius:8px;
+      font-weight:bold;
+      font-size:14.5px;
+      cursor:pointer;
+      transition:0.3s;
+      margin:10px 0 16px;
+    }
+    .cbt-copybtn:hover{ background-color:#4d2680; }
+  </style>
+
+  <div class="cbt-scope">
+    <div class="cbt-panel">
+      <div class="cbt-select">
+        <button type="button" class="cbt-toggle" id="cbtToggle">
+          <span id="cbtLabel">-- Ketuk untuk memilih --</span>
+          <span class="caret">&#9660;</span>
+        </button>
+        <div class="cbt-list" id="cbtList">
+          <div class="cbt-search-wrap">
+            <input type="text" class="cbt-search" id="cbtSearch" placeholder="Cari panduan..." autocomplete="off">
+          </div>
+          <div class="cbt-items" id="cbtItems"></div>
+        </div>
+      </div>
+
+      <div class="cbt-content" id="cbtContent"></div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var CBT_ITEMS = [
+      "Cara Bet 4D 3D 2D",
+      "Cara Bet Bb",
+      "Cara Bet Bbfs (Bb Campuran)",
+      "Cara Bet Angka Tarung",
+      "Cara Bet Fast 4D",
+      "Cara Bet 4D, 3D, 2D Easy",
+      "Cara Bet 3D",
+      "Cara Bet 2D Belakang",
+      "Cara Bet 2D Depan",
+      "Cara Bet 2D Tengah",
+      "Cara Bet Colok Bebas",
+      "Cara Bet Colok Bebas 2D",
+      "Cara Bet Colok Naga",
+      "Cara Bermain Colok Jitu",
+      "Cara Bermain Tengah Tepi",
+      "Cara Bermain Togel Menu Bet [Dasar]",
+      "Cara Bermain Dan Bet Togel 50-50",
+      "Cara Betting Shio",
+      "Cara Bermain Silang Homo",
+      "Cara Bermain Kembang Kempis",
+      "Cara Bermain Kombinasi"
+    ];
+
+    var CBT_CONTENT = {
+      "Cara Bet 4D 3D 2D":
+        '<img src="https://i.imgur.com/sAT9he1.png" alt="Cara Bet 4D 3D 2D">' +
+        '<p class="cbt-subheading">Panduan lengkap melakukan betting untuk jenis permainan 4D, 3D, dan 2D standar.</p>',
+
+      "Cara Bet Bb":
+        '<img src="https://i.imgur.com/4uosxH1.png" alt="Cara Bet Bb">' +
+        '<p class="cbt-subheading">Sistem Betting dimana angka yang dibet tepat maupun Bolak Balik (BB) akan mendapatkan kemenangan.</p>',
+
+      "Cara Bet Bbfs (Bb Campuran)":
+        '<img src="https://i.imgur.com/fzw0OQl.png" alt="Cara Bet Bbfs (Bb Campuran)">' +
+        '<p class="cbt-subheading">Cara melakukan betting BBFS (Bolak Balik Full Set) atau BB Campuran untuk memperbesar peluang.</p>',
+
+      "Cara Bet Angka Tarung":
+        '<img src="https://i.imgur.com/uctIKzf.png" alt="Cara Bet Angka Tarung">' +
+        '<p class="cbt-subheading">Panduan cara memasang taruhan dengan metode angka tarung (artar).</p>',
+
+      "Cara Bet Fast 4D":
+        '<img src="https://i.imgur.com/Q50jW4e.png" alt="Cara Bet Fast 4D">' +
+        '<p class="cbt-subheading">Cara cepat dan praktis melakukan betting khusus mode Fast 4D.</p>',
+
+      "Cara Bet 4D, 3D, 2D Easy":
+        '<img src="https://i.imgur.com/XHfBtfL.png" alt="Cara Bet 4D, 3D, 2D Easy">' +
+        '<p class="cbt-subheading">Metode termudah dan efisien dalam memasang taruhan 4D, 3D, serta 2D.</p>',
+
+      "Cara Bet 3D":
+        '<img src="https://i.imgur.com/uJFQarG.png" alt="Cara Bet 3D">' +
+        '<p class="cbt-subheading">Panduan khusus untuk melakukan pemasangan angka pada pasaran 3D.</p>',
+
+      "Cara Bet 2D Belakang":
+        '<img src="https://i.imgur.com/7gyU5lO.png" alt="Cara Bet 2D Belakang">' +
+        '<p class="cbt-subheading">Panduan memasang taruhan 2D pada posisi bagian belakang angka result.</p>',
+
+      "Cara Bet 2D Depan":
+        '<img src="https://i.imgur.com/Wh9LLZH.png" alt="Cara Bet 2D Depan">' +
+        '<p class="cbt-subheading">Panduan memasang taruhan 2D pada posisi bagian depan angka result.</p>',
+
+      "Cara Bet 2D Tengah":
+        '<img src="https://i.imgur.com/3HjkZCu.png" alt="Cara Bet 2D Tengah">' +
+        '<p class="cbt-subheading">Panduan memasang taruhan 2D pada posisi bagian tengah angka result.</p>',
+
+      "Cara Bet Colok Bebas":
+        '<img src="https://i.imgur.com/a4NHaIk.png" alt="Cara Bet Colok Bebas">' +
+        '<p class="cbt-subheading">Cara bermain colok bebas dengan menebak satu angka jitu pada posisi mana saja.</p>',
+
+      "Cara Bet Colok Bebas 2D":
+        '<img src="https://i.imgur.com/qtxc3tv.png" alt="Cara Bet Colok Bebas 2D">' +
+        '<p class="cbt-subheading">Cara bermain colok bebas dengan menebak dua angka jitu pada result keluaran.</p>',
+
+      "Cara Bet Colok Naga":
+        '<img src="https://i.imgur.com/JNCWCqu.png" alt="Cara Bet Colok Naga">' +
+        '<p class="cbt-subheading">Cara bermain colok naga dengan menebak tiga angka jitu pada posisi keluaran.</p>',
+
+      "Cara Bermain Colok Jitu":
+        '<img src="https://i.imgur.com/n39qLYT.png" alt="Cara Bermain Colok Jitu">' +
+        '<p class="cbt-subheading">Panduan menebak satu angka tepat pada posisi tertentu (As, Kop, Kepala, Ekor).</p>',
+
+      "Cara Bermain Tengah Tepi":
+        '<img src="https://i.imgur.com/E54ZOyy.png" alt="Cara Bermain Tengah Tepi">' +
+        '<p class="cbt-subheading">Panduan taruhan menebak posisi angka tengah atau tepi dari 2D belakang.</p>',
+
+      "Cara Bermain Togel Menu Bet [Dasar]":
+        '<img src="https://i.imgur.com/gBLLJlh.png" alt="Cara Bermain Togel Menu Bet [Dasar]">' +
+        '<p class="cbt-subheading">Pengenalan dasar menu betting togel untuk pemula agar lebih mudah dipahami.</p>',
+
+      "Cara Bermain Dan Bet Togel 50-50":
+        '<img src="https://i.imgur.com/fT8OwHk.png" alt="Cara Bermain Dan Bet Togel 50-50">' +
+        '<p class="cbt-subheading">Cara pasang taruhan 50-50 menebak Ganjil/Genap atau Besar/Kecil.</p>',
+
+      "Cara Betting Shio":
+        '<img src="https://i.imgur.com/XUmmNBE.png" alt="Cara Betting Shio">' +
+        '<p class="cbt-subheading">Panduan melakukan taruhan berdasarkan 12 lambang Shio dalam penanggalan Tionghoa.</p>',
+
+      "Cara Bermain Silang Homo":
+        '<img src="https://i.imgur.com/jW3gHDi.png" alt="Cara Bermain Silang Homo">' +
+        '<p class="cbt-subheading">Panduan taruhan menebak posisi silang (kombinasi besar/kecil) atau homo.</p>',
+
+      "Cara Bermain Kembang Kempis":
+        '<img src="https://i.imgur.com/1ZG3LGW.png" alt="Cara Bermain Kembang Kempis">' +
+        '<p class="cbt-subheading">Panduan menebak pola angka yang semakin membesar (kembang) atau mengecil (kempis).</p>',
+
+      "Cara Bermain Kombinasi":
+        '<img src="https://i.imgur.com/p6wPJon.png" alt="Cara Bermain Kombinasi">' +
+        '<p class="cbt-subheading">Panduan taruhan kombinasi dua jenis pasaran dalam satu formasi.</p>'
+    };
+
+    var cbtState = { selected: null };
+
+    // Menyalin HANYA gambar (screenshot panduan) ke clipboard, tanpa teks.
+    function cbtCopyImage(imgEl, btn){
+      var originalText = btn.textContent;
+      function showResult(ok){
+        btn.textContent = ok ? "\u2705 GAMBAR TERSALIN" : "GAGAL, COBA LAGI";
+        btn.style.backgroundColor = ok ? "#28a745" : "#c0392b";
+        setTimeout(function(){
+          btn.textContent = originalText;
+          btn.style.backgroundColor = "";
+        }, 1500);
+      }
+      if(!navigator.clipboard || !window.ClipboardItem){
+        alert("Browser ini tidak mendukung salin gambar ke clipboard.");
+        return;
+      }
+      fetch(imgEl.src)
+        .then(function(res){ return res.blob(); })
+        .then(function(blob){
+          return navigator.clipboard.write([
+            new ClipboardItem({ [blob.type]: blob })
+          ]);
+        })
+        .then(function(){ showResult(true); })
+        .catch(function(err){
+          console.warn("Gagal menyalin gambar:", err);
+          showResult(false);
+        });
+    }
+
+    function cbtInit(){
+      var toggle = document.getElementById("cbtToggle");
+      var list = document.getElementById("cbtList");
+      var items = document.getElementById("cbtItems");
+      var search = document.getElementById("cbtSearch");
+      var label = document.getElementById("cbtLabel");
+      var content = document.getElementById("cbtContent");
+      if(!toggle || !list || !items || !label) return;
+      if(toggle.dataset.cbtInit === "1") return;
+      toggle.dataset.cbtInit = "1";
+
+      function renderContent(){
+        if(!cbtState.selected){
+          content.innerHTML = "";
+          return;
+        }
+        if(CBT_CONTENT[cbtState.selected]){
+          content.innerHTML = CBT_CONTENT[cbtState.selected];
+        } else {
+          content.textContent = "Konten panduan \"" + cbtState.selected + "\" bisa diisi di sini.";
+          return;
+        }
+        var img = content.querySelector("img");
+        if(img){
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "cbt-copybtn";
+          btn.textContent = "\uD83D\uDCCB SALIN GAMBAR";
+          btn.addEventListener("click", function(){ cbtCopyImage(img, btn); });
+          img.insertAdjacentElement("afterend", btn);
+        }
+      }
+
+      function renderList(){
+        items.innerHTML = "";
+
+        var query = (search && search.value ? search.value : "").trim().toLowerCase();
+        var filtered = CBT_ITEMS.filter(function(name){
+          return name.toLowerCase().indexOf(query) !== -1;
+        });
+
+        if(filtered.length === 0){
+          var empty = document.createElement("div");
+          empty.className = "cbt-item empty";
+          empty.textContent = "Tidak ditemukan";
+          items.appendChild(empty);
+          return;
+        }
+
+        filtered.forEach(function(name){
+          var item = document.createElement("div");
+          item.className = "cbt-item" + (cbtState.selected && name === cbtState.selected ? " active" : "");
+          item.textContent = name;
+          item.addEventListener("click", function(){
+            cbtState.selected = name;
+            label.textContent = name;
+            list.classList.remove("show");
+            toggle.classList.remove("open");
+            renderList();
+            renderContent();
+          });
+          items.appendChild(item);
+        });
+      }
+
+      toggle.addEventListener("click", function(){
+        var willShow = !list.classList.contains("show");
+        list.classList.toggle("show");
+        toggle.classList.toggle("open");
+        if(willShow){
+          renderList();
+          if(search){
+            search.value = "";
+            setTimeout(function(){ search.focus(); }, 0);
+          }
+        }
+      });
+
+      if(search){
+        search.addEventListener("input", renderList);
+        search.addEventListener("click", function(e){ e.stopPropagation(); });
+      }
+
+      document.addEventListener("click", function(e){
+        if(!toggle.contains(e.target) && !list.contains(e.target)){
+          list.classList.remove("show");
+          toggle.classList.remove("open");
+        }
+      });
+
+      label.textContent = cbtState.selected ? cbtState.selected : "-- Ketuk untuk memilih --";
+      renderContent();
+    }
+
+    cbtInit();
+    var navCaraBettingEl = document.getElementById("navCaraBetting");
+    if(navCaraBettingEl) navCaraBettingEl.addEventListener("click", cbtInit);
+  })();
+  </script>
+</div>
+
+<div id="dsImgModal" class="ds-modal">
+    <span class="ds-close" onclick="dsCloseModal()">&times;</span>
+    <img class="ds-modal-content" id="dsModalImg">
+</div>
+
+<div id="dsToastNotif" class="ds-toast-notif"></div>
+
+<script>
+(function(){
+    // -----------------------------------------------------------------
+    // Halaman "DATA SCREENSHOT": tabel data rekening & bukti screenshot.
+    // Semua fungsi diberi prefix "ds" / diekspos lewat window.dsXxx
+    // (dibutuhkan karena dipanggil dari atribut onclick/oninput di HTML)
+    // supaya tidak bentrok dengan script menu lain di dashboard ini.
+    //
+    // Penyimpanan data: Firebase Realtime Database, path "dataScreenshot",
+    // memakai instance Firebase yang SAMA dengan menu "Result & Jadwal
+    // Pasaran" (firebaseConfig & firebase.initializeApp sudah dijalankan
+    // di sana, di sini kita cukup panggil firebase.database() lagi).
+    // Data disinkron real-time lewat listener child_added/child_changed/
+    // child_removed, dan baris yang timestamp-nya sudah lebih dari 21 hari
+    // (3 minggu) otomatis dihapus dari Firebase saat menu ini dibuka.
+    // -----------------------------------------------------------------
+    const dsBankList = ["DANA", "OVO", "GOPAY", "LINKAJA", "BCA", "BRI", "BNI", "MANDIRI", "JAGO", "MAYBANK", "BSI", "CIMB", "DANAMON", "SEABANK"];
+    const DS_FB_PATH = 'dataScreenshot';
+    const DS_EXPIRY_MS = 21 * 24 * 60 * 60 * 1000; // 3 minggu
+
+    let dsDB = null;
+
+    // Kunci tanggal (format yyyy-mm-dd) yang dipakai untuk mendeteksi
+    // pergantian hari secara otomatis selagi halaman tetap terbuka
+    // (tanpa perlu reload), lihat dsCheckDayChange() di bawah.
+    let dsCurrentDateKey = null;
+
+    function dsGetDateKey() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        dsCurrentDateKey = dsGetDateKey();
+        const searchDateEl = document.getElementById('dsSearchDate');
+        if (searchDateEl) searchDateEl.value = dsCurrentDateKey;
+
+        dsInitFirebase();
+        dsFilterTable();
+
+        // Cek pergantian hari tiap 30 detik. Kalau tanggal sistem sudah
+        // berganti (mis. lewat tengah malam) sementara menu ini masih
+        // terbuka, data tanggal sebelumnya (yang sudah tersimpan otomatis
+        // di Firebase) akan otomatis disembunyikan dari tampilan tanpa
+        // perlu reload halaman.
+        setInterval(dsCheckDayChange, 30000);
+    });
+
+    // Dipanggil berkala untuk mendeteksi pergantian hari. Saat hari
+    // berganti: (1) kolom "cari tanggal" otomatis diarahkan ke hari yang
+    // baru sehingga tabel hanya menampilkan baris draft kosong (data hari
+    // sebelumnya tetap tersimpan di Firebase, hanya disembunyikan dari
+    // tampilan), (2) tanggal pada baris draft ikut diperbarui supaya
+    // entri baru tercatat dengan tanggal yang benar, dan (3) pengguna
+    // diberi tahu lewat toast bahwa untuk melihat data lama tinggal atur
+    // ulang tanggal pencarian.
+    function dsCheckDayChange() {
+        const newKey = dsGetDateKey();
+        if (newKey === dsCurrentDateKey) return;
+
+        dsCurrentDateKey = newKey;
+
+        const searchDateEl = document.getElementById('dsSearchDate');
+        if (searchDateEl) searchDateEl.value = newKey;
+
+        const draft = dsGetDraftRow();
+        if (draft) {
+            const dateInput = draft.querySelector('.ds-row-date');
+            if (dateInput) dateInput.value = dsGetFormattedDate();
+        }
+
+        dsFilterTable();
+
+        dsShowToast('📅 Tanggal sudah berganti ke hari baru. Data tanggal sebelumnya tersimpan otomatis dan disembunyikan dari tampilan. Atur tanggal pencarian di atas untuk melihat data yang sudah tersimpan.', 8000);
+    }
+
+    // Inisialisasi koneksi ke Firebase Realtime Database & pasang listener
+    // real-time untuk path "dataScreenshot". Dipanggil sekali saat halaman
+    // dimuat (firebase.initializeApp() sendiri sudah dipanggil sekali di
+    // blok script menu "Result & Jadwal Pasaran", jadi TIDAK dipanggil lagi
+    // di sini supaya tidak error "Firebase App named '[DEFAULT]' already
+    // exists").
+    function dsInitFirebase() {
+        if (typeof firebase === 'undefined') {
+            console.error('[Firebase] SDK belum dimuat untuk DATA SCREENSHOT.');
+            dsShowToast('⚠ Firebase belum termuat. Cek koneksi internet Anda, lalu muat ulang halaman.', 8000);
+            dsEnsureDraftRow();
+            return;
+        }
+
+        try {
+            dsDB = firebase.database();
+        } catch (e) {
+            console.error('[Firebase] Gagal menghubungkan DATA SCREENSHOT ke Firebase:', e);
+            dsShowToast('⚠ Gagal terhubung ke Firebase: ' + (e && e.message ? e.message : String(e)), 8000);
+            dsEnsureDraftRow();
+            return;
+        }
+
+        dsCleanupExpired();
+
+        const ref = dsDB.ref(DS_FB_PATH).orderByChild('timestamp');
+        ref.on('child_added', (snap) => dsUpsertRowFromSnapshot(snap.key, snap.val()));
+        ref.on('child_changed', (snap) => dsUpsertRowFromSnapshot(snap.key, snap.val()));
+        ref.on('child_removed', (snap) => dsRemoveRowByKey(snap.key));
+
+        dsEnsureDraftRow();
+    }
+
+    // Hapus dari Firebase baris-baris yang timestamp-nya sudah lebih dari
+    // 3 minggu (21 hari). Dipanggil sekali tiap kali menu DATA SCREENSHOT
+    // dibuka; siapapun yang membuka menu ini akan otomatis memicu
+    // pembersihan data kadaluarsa untuk semua pengguna (real-time).
+    function dsCleanupExpired() {
+        if (!dsDB) return;
+        const cutoff = Date.now() - DS_EXPIRY_MS;
+        dsDB.ref(DS_FB_PATH).orderByChild('timestamp').endAt(cutoff).once('value').then((snapshot) => {
+            snapshot.forEach((child) => { child.ref.remove(); });
+        }).catch((err) => {
+            console.error('[Firebase] Gagal membersihkan data DATA SCREENSHOT yang kadaluarsa:', err);
+        });
+    }
+
+    // Pastikan selalu ada satu baris "draft" (kosong, belum terkunci) di
+    // baris paling bawah tabel untuk input data baru. Baris draft TIDAK
+    // punya data-fb-key karena belum tersimpan ke Firebase.
+    function dsEnsureDraftRow() {
+        const tbody = document.getElementById('dsTableBody');
+        if (!tbody) return;
+        const hasDraft = Array.from(tbody.children).some(r => !r.dataset.fbKey);
+        if (!hasDraft) {
+            dsAddRow(dsGetFormattedDate(), "NO REKENING", "-", "", false, null, "");
+        }
+    }
+
+    function dsGetDraftRow() {
+        const tbody = document.getElementById('dsTableBody');
+        if (!tbody) return null;
+        return Array.from(tbody.children).find(r => !r.dataset.fbKey) || null;
+    }
+
+    // Buat/perbarui baris tabel sesuai data terbaru dari Firebase untuk
+    // key tertentu (dipanggil dari listener child_added & child_changed).
+    function dsUpsertRowFromSnapshot(key, data) {
+        if (!data) return;
+        const tbody = document.getElementById('dsTableBody');
+        if (!tbody) return;
+        const existing = tbody.querySelector(`tr[data-fb-key="${CSS.escape(key)}"]`);
+        const built = dsAddRow(data.date, data.rek, data.jenis, data.imgUrl, true, data.timestamp, data.link || "", key, false);
+        if (existing) {
+            existing.replaceWith(built);
+        } else {
+            const draft = dsGetDraftRow();
+            if (draft) {
+                tbody.insertBefore(built, draft);
+            } else {
+                tbody.appendChild(built);
+            }
+        }
+        dsEnsureDraftRow();
+
+        // PENTING: baris yang baru dibuat/diperbarui dari Firebase belum
+        // dicocokkan dengan filter tanggal/pencarian yang sedang aktif
+        // (style.display bawaannya selalu tampil). Tanpa baris ini, data
+        // tanggal lain tetap muncul walau kolom "cari tanggal" sudah
+        // diarahkan ke hari ini. Jalankan ulang filter supaya baris ini
+        // langsung disembunyikan/ditampilkan sesuai tanggal yang dipilih.
+        dsFilterTable();
+    }
+
+    // Hapus baris tabel sesuai key yang sudah dihapus dari Firebase
+    // (dipanggil dari listener child_removed, mis. karena kadaluarsa 3
+    // minggu atau dihapus dari perangkat lain).
+    function dsRemoveRowByKey(key) {
+        const tbody = document.getElementById('dsTableBody');
+        if (!tbody) return;
+        const existing = tbody.querySelector(`tr[data-fb-key="${CSS.escape(key)}"]`);
+        if (existing) existing.remove();
+        dsEnsureDraftRow();
+    }
+
+    function dsToggleInfo(event) {
+        event.stopPropagation();
+        const popup = document.getElementById('dsInfoPopup');
+        popup.classList.toggle('show');
+    }
+
+    document.addEventListener('click', function(event) {
+        const popup = document.getElementById('dsInfoPopup');
+        if (popup && !event.target.closest('.info-container') && popup.classList.contains('show')) {
+            popup.classList.remove('show');
+        }
+
+        const modal = document.getElementById('dsImgModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+
+        // Klik pada kolom TAUTAN yang sudah terkunci (readonly): langsung
+        // seleksi seluruh teksnya supaya Ctrl+C bisa langsung dipakai, dan
+        // sekaligus salin otomatis ke clipboard sebagai kemudahan tambahan.
+        const linkInput = event.target.closest && event.target.closest('.ds-row-link[readonly]');
+        if (linkInput) {
+            linkInput.focus();
+            linkInput.select();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(linkInput.value).then(() => {
+                    dsShowToast('✓ Tautan disalin ke clipboard. Tekan Ctrl+C jika ingin menyalin ulang.', 3000);
+                }).catch(() => {
+                    // Clipboard API gagal (mis. browser tidak mendukung), teks
+                    // tetap sudah terseleksi sehingga Ctrl+C manual tetap bisa.
+                });
+            }
+        }
+    });
+
+    function dsGetFormattedDate() {
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        return `${dd}/${mm}/${yyyy}`;
+    }
+
+    function dsClearPlaceholder(input) {
+        if (input.value === "NO REKENING") {
+            input.value = "";
+            input.classList.remove("samar");
+        }
+    }
+
+    function dsRestorePlaceholder(input) {
+        if (input.value.trim() === "") {
+            input.value = "NO REKENING";
+            input.classList.add("samar");
+        }
+    }
+
+    function dsFilterTable() {
+        const input = document.getElementById('dsSearchInput');
+        const filter = input.value.toUpperCase();
+
+        const dateInput = document.getElementById('dsSearchDate');
+        const dateRaw = dateInput.value; // format: yyyy-mm-dd
+        let dateFilter = "";
+        if (dateRaw) {
+            const parts = dateRaw.split('-');
+            dateFilter = `${parts[2]}/${parts[1]}/${parts[0]}`; // ubah ke dd/mm/yyyy
+        }
+
+        const tbody = document.getElementById('dsTableBody');
+        const rows = tbody.getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            const rekInput = rows[i].querySelector('.ds-row-rek');
+            const jenisSelect = rows[i].querySelector('.ds-row-jenis');
+            const dateEl = rows[i].querySelector('.ds-row-date');
+
+            const isLastActiveRow = !rows[i].querySelector('.ds-row-rek').disabled;
+            if (isLastActiveRow) {
+                rows[i].style.display = "";
+                continue;
+            }
+
+            if (rekInput && jenisSelect) {
+                const rekValue = rekInput.value || "";
+                const jenisValue = jenisSelect.value || "";
+                const rowDateValue = dateEl ? dateEl.value : "";
+
+                const matchesText = rekValue.toUpperCase().indexOf(filter) > -1 || jenisValue.toUpperCase().indexOf(filter) > -1;
+                const matchesDate = !dateFilter || rowDateValue === dateFilter;
+
+                if (matchesText && matchesDate) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    function dsEscapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str || "";
+        return div.innerHTML;
+    }
+
+    const dsOpenLinkIconSvg = `<svg viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM5 5h5V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-5h-2v5H5V5z"/></svg>`;
+
+    function dsBuildLinkCellHtml(isLocked, linkVal) {
+        if (!isLocked) {
+            return `<span class="link-placeholder">-</span>`;
+        }
+        if (linkVal) {
+            return `
+                <input type="text" class="ds-row-link locked" value="${dsEscapeHtml(linkVal)}" readonly title="Tautan tersimpan (tidak dapat diubah)">
+                <button type="button" class="ds-open-link-btn" onclick="dsOpenSavedLink(this)" title="Buka tautan">
+                    ${dsOpenLinkIconSvg}
+                </button>`;
+        }
+        return `
+            <button type="button" class="ds-open-link-btn ds-copy-open-btn" onclick="dsHandleCopyAndOpen(this)" title="Salin screenshot & buka imgbb.com">
+                ${dsOpenLinkIconSvg}
+            </button>`;
+    }
+
+    function dsBuildEditableLinkInputHtml() {
+        return `
+            <input type="text" class="ds-row-link" placeholder="Tempel tautan di sini" onblur="dsLockLinkInput(this)" onkeydown="if(event.key==='Enter'){this.blur();}" title="Tempel tautan hasil unggah dari imgbb.com">
+            <button type="button" class="ds-open-link-btn" onclick="dsOpenSavedLink(this)" title="Belum ada tautan? Klik untuk kembali ke imgbb.com">
+                ${dsOpenLinkIconSvg}
+            </button>`;
+    }
+
+    // fbKey: kunci Firebase (push key) baris ini, null jika baris "draft"
+    // (belum tersimpan). append: jika false, baris dibuat TAPI TIDAK
+    // langsung ditambahkan ke tbody (dipakai saat merender ulang baris
+    // dari data Firebase, karena posisinya perlu disisipkan manual sebelum
+    // baris draft, bukan selalu di paling bawah).
+    function dsAddRow(dateVal = null, rekVal = "NO REKENING", jenisVal = "-", imgDataUrl = "", isLocked = false, timestamp = null, linkVal = "", fbKey = null, append = true) {
+        const newRow = document.createElement('tr');
+        if (timestamp) {
+            newRow.dataset.timestamp = timestamp;
+        }
+        if (fbKey) {
+            newRow.dataset.fbKey = fbKey;
+        }
+
+        let optionsHtml = '';
+        dsBankList.forEach(bank => {
+            const sel = (bank === jenisVal) ? ' selected' : '';
+            optionsHtml += `<option value="${bank}"${sel}>${bank}</option>`;
+        });
+
+        const isSamar = (rekVal === "NO REKENING") ? ' samar' : '';
+        const dateStr = dateVal !== null ? dateVal : dsGetFormattedDate();
+
+        newRow.innerHTML = `
+            <td><input type="text" class="ds-row-date" value="${dateStr}" ${isLocked ? 'disabled' : 'readonly'}></td>
+            <td><input type="text" class="ds-row-rek${isSamar}" value="${rekVal}" onfocus="dsClearPlaceholder(this)" onblur="dsRestorePlaceholder(this)" oninput="dsHandleRekInput(this)" ${isLocked ? 'disabled' : ''}></td>
+            <td>
+                <select class="ds-row-jenis" ${isLocked ? 'disabled' : ''}>
+                    <option value="-" ${jenisVal === '-' ? 'selected' : ''}>-</option>
+                    ${optionsHtml}
+                </select>
+            </td>
+            <td>
+                <div class="ds-paste-area" tabindex="0" onpaste="dsHandlePaste(event, this)" title="Klik lalu tekan Ctrl+V untuk paste gambar" ${isLocked ? 'style="border:none; background:transparent;"' : ''}>
+                    ${isLocked && imgDataUrl ?
+                        `<img src="${imgDataUrl}" class="ds-preview-img" title="Klik untuk memperbesar gambar" onclick="dsOpenModal('${imgDataUrl}')">` :
+                        `<span style="font-size:11px; color:var(--ds-text-muted);">Paste ( Ctrl+V )</span>`
+                    }
+                </div>
+            </td>
+            <td>
+                <div class="ds-link-cell">
+                    ${dsBuildLinkCellHtml(isLocked, linkVal)}
+                </div>
+            </td>
+        `;
+        if (append) {
+            const tbody = document.getElementById('dsTableBody');
+            tbody.appendChild(newRow);
+        }
+        return newRow;
+    }
+
+    let dsToastTimer = null;
+    function dsShowToast(message, duration = 6000) {
+        const toast = document.getElementById('dsToastNotif');
+        toast.innerHTML = message;
+        toast.classList.add('show');
+        clearTimeout(dsToastTimer);
+        dsToastTimer = setTimeout(() => {
+            toast.classList.remove('show');
+        }, duration);
+    }
+
+    async function dsCopyScreenshotAndOpenUploadSite(row) {
+        const imgElem = row.querySelector('.ds-preview-img');
+        if (!imgElem) {
+            alert("Belum ada screenshot pada baris ini. Silakan tempel gambar terlebih dahulu.");
+            return false;
+        }
+
+        try {
+            const response = await fetch(imgElem.src);
+            const blob = await response.blob();
+            if (navigator.clipboard && window.ClipboardItem) {
+                await navigator.clipboard.write([
+                    new ClipboardItem({ [blob.type]: blob })
+                ]);
+            }
+        } catch (err) {
+            console.warn("Gagal menyalin gambar ke clipboard:", err);
+        }
+
+        window.open('https://imgbb.com/', '_blank', 'noopener');
+        dsShowToast("<b>Langkah selanjutnya:</b> di tab imgbb.com, klik UNGGAH lalu klik SALIN pada tautan yang muncul. Setelah tersalin, tutup tab tersebut lalu kembali ke sini dan tempel tautannya di kolom TAUTAN pada baris ini.", 60000);
+        return true;
+    }
+
+    async function dsHandleCopyAndOpen(btn) {
+        const row = btn.closest('tr');
+        const success = await dsCopyScreenshotAndOpenUploadSite(row);
+        if (!success) {
+            return;
+        }
+
+        const linkCell = row.querySelector('.ds-link-cell');
+        linkCell.innerHTML = dsBuildEditableLinkInputHtml();
+
+        const newInput = linkCell.querySelector('.ds-row-link');
+        if (newInput) {
+            newInput.focus();
+        }
+    }
+
+    function dsLockLinkInput(input) {
+        const val = input.value.trim();
+        if (!val) {
+            return;
+        }
+        input.readOnly = true;
+        input.classList.add('locked');
+
+        const row = input.closest('tr');
+        const key = row ? row.dataset.fbKey : null;
+        if (key && dsDB) {
+            dsDB.ref(`${DS_FB_PATH}/${key}`).update({ link: val }).catch((err) => {
+                console.error('[Firebase] Gagal menyimpan tautan:', err);
+                dsShowToast('⚠ Gagal menyimpan tautan ke Firebase: ' + (err && err.message ? err.message : String(err)));
+            });
+        }
+    }
+
+    async function dsOpenSavedLink(btn) {
+        const row = btn.closest('tr');
+        const linkInput = row.querySelector('.ds-row-link');
+        const url = linkInput.value.trim();
+
+        if (!url) {
+            await dsCopyScreenshotAndOpenUploadSite(row);
+            linkInput.focus();
+            return;
+        }
+
+        const finalUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+        window.open(finalUrl, '_blank', 'noopener');
+    }
+
+    function dsHandlePaste(event, pasteArea) {
+        const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf("image") !== -1) {
+                const blob = items[i].getAsFile();
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    dsProcessImageInput(pasteArea, e.target.result);
+                };
+                reader.readAsDataURL(blob);
+                event.preventDefault();
+                break;
+            }
+        }
+    }
+
+    function dsProcessImageInput(pasteArea, dataUrl) {
+        const row = pasteArea.closest('tr');
+
+        // Tidak ada lagi keharusan mengisi nomor rekening terlebih dahulu.
+        // Screenshot boleh ditempel duluan atau belakangan — gambar yang
+        // baru ditempel langsung ditampilkan sebagai pratinjau di baris
+        // draft ini sambil menunggu nomor rekening diisi (atau langsung
+        // tersimpan bila nomor rekening sudah terisi lebih dulu).
+        row.dataset.dsPendingImg = dataUrl;
+        pasteArea.innerHTML = `<img src="${dataUrl}" class="ds-preview-img" title="Klik untuk memperbesar gambar" onclick="dsOpenModal('${dataUrl}')">`;
+
+        dsTrySaveDraftRow(row);
+    }
+
+    // Dipanggil setiap kali kolom NOMOR REKENING pada baris draft diketik.
+    // Jika screenshot sudah ditempel lebih dulu (menunggu di
+    // row.dataset.dsPendingImg), pengisian nomor rekening ini akan langsung
+    // memicu penyimpanan — tanpa peduli mana yang diisi lebih dulu.
+    function dsHandleRekInput(input) {
+        const row = input.closest('tr');
+        if (row) {
+            dsTrySaveDraftRow(row);
+        }
+    }
+
+    // Menyimpan baris draft ke Firebase HANYA jika kedua data wajib sudah
+    // lengkap: nomor rekening terisi DAN screenshot sudah ditempel. Jika
+    // salah satu masih kosong, fungsi ini berhenti diam-diam dan menunggu
+    // input berikutnya (dipanggil ulang dari dsProcessImageInput / dsHandleRekInput).
+    function dsTrySaveDraftRow(row) {
+        const rekInput = row.querySelector('.ds-row-rek');
+        const jenisSelect = row.querySelector('.ds-row-jenis');
+        const dateInput = row.querySelector('.ds-row-date');
+        const dataUrl = row.dataset.dsPendingImg;
+
+        const rekFilled = rekInput.value.trim() !== "" && rekInput.value !== "NO REKENING";
+        if (!rekFilled || !dataUrl) {
+            return;
+        }
+
+        if (!dsDB) {
+            alert("Firebase belum terhubung, data tidak dapat disimpan. Cek koneksi internet Anda lalu muat ulang halaman.");
+            return;
+        }
+
+        const dataToSave = {
+            date: dateInput.value,
+            rek: rekInput.value,
+            jenis: jenisSelect.value,
+            imgUrl: dataUrl,
+            link: "",
+            timestamp: Date.now()
+        };
+
+        dsDB.ref(DS_FB_PATH).push(dataToSave).catch((err) => {
+            console.error('[Firebase] Gagal menyimpan screenshot:', err);
+            dsShowToast('⚠ Gagal menyimpan ke Firebase: ' + (err && err.message ? err.message : String(err)));
+        });
+
+        delete row.dataset.dsPendingImg;
+
+        // Baris "terkunci" (locked) untuk entri ini akan otomatis muncul di
+        // atas baris draft lewat listener child_added (real-time). Baris
+        // draft ini sendiri di-reset ke kondisi kosong supaya siap dipakai
+        // untuk input entri berikutnya, tanpa membuat baris draft ganda.
+        dsResetDraftRow(row);
+    }
+
+    function dsResetDraftRow(row) {
+        const rekInput = row.querySelector('.ds-row-rek');
+        const jenisSelect = row.querySelector('.ds-row-jenis');
+        const dateInput = row.querySelector('.ds-row-date');
+        const pasteArea = row.querySelector('.ds-paste-area');
+        const linkCell = row.querySelector('.ds-link-cell');
+
+        rekInput.value = "NO REKENING";
+        rekInput.classList.add('samar');
+        jenisSelect.value = "-";
+        dateInput.value = dsGetFormattedDate();
+        pasteArea.innerHTML = '<span style="font-size:11px; color:var(--ds-text-muted);">Paste ( Ctrl+V )</span>';
+        linkCell.innerHTML = dsBuildLinkCellHtml(false, "");
+
+        rekInput.focus();
+        rekInput.select();
+    }
+
+    function dsOpenModal(src) {
+        const modal = document.getElementById('dsImgModal');
+        const modalImg = document.getElementById('dsModalImg');
+        modal.style.display = 'block';
+        modalImg.src = src;
+    }
+
+    function dsCloseModal() {
+        const modal = document.getElementById('dsImgModal');
+        modal.style.display = 'none';
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('dsImgModal');
+            if (modal && modal.style.display === 'block') {
+                dsCloseModal();
+            }
+        }
+    });
+
+    // Fungsi-fungsi berikut dipanggil lewat atribut onclick/oninput/onblur/
+    // onfocus/onpaste/onkeyup/onchange di HTML, jadi perlu diekspos ke scope
+    // global (window) supaya tetap bisa dipanggil dari luar IIFE ini.
+    window.dsToggleInfo = dsToggleInfo;
+    window.dsFilterTable = dsFilterTable;
+    window.dsClearPlaceholder = dsClearPlaceholder;
+    window.dsRestorePlaceholder = dsRestorePlaceholder;
+    window.dsLockLinkInput = dsLockLinkInput;
+    window.dsOpenSavedLink = dsOpenSavedLink;
+    window.dsHandleCopyAndOpen = dsHandleCopyAndOpen;
+    window.dsHandlePaste = dsHandlePaste;
+    window.dsHandleRekInput = dsHandleRekInput;
+    window.dsOpenModal = dsOpenModal;
+    window.dsCloseModal = dsCloseModal;
+})();
+</script>
 
 <script>
 (function(){
@@ -4350,16 +8138,22 @@ setInterval(() => {
       png: document.getElementById("navPng"),
       idn: document.getElementById("navIdn"),
       bola: document.getElementById("navBola"),
+      bolaOdds: document.getElementById("navBolaOdds"),
       hasilJadwal: document.getElementById("navHasilJadwal"),
-      cekNawala: document.getElementById("navCekNawala")
+      cekNawala: document.getElementById("navCekNawala"),
+      dataScreenshot: document.getElementById("navDataScreenshot"),
+      caraBetting: document.getElementById("navCaraBetting")
     };
     var pages = {
       prediksi: document.getElementById("pagePrediksi"),
       png: document.getElementById("pagePng"),
       idn: document.getElementById("pageIdn"),
       bola: document.getElementById("pageBola"),
+      bolaOdds: document.getElementById("pageBolaOdds"),
       hasilJadwal: document.getElementById("pageHasilJadwal"),
-      cekNawala: document.getElementById("pageCekNawala")
+      cekNawala: document.getElementById("pageCekNawala"),
+      dataScreenshot: document.getElementById("pageDataScreenshot"),
+      caraBetting: document.getElementById("pageCaraBetting")
     };
 
     var ACTIVE_PAGE_KEY = 'dashboardActivePage';
@@ -4376,8 +8170,11 @@ setInterval(() => {
     navs.png.addEventListener("click", function(){ showPage("png"); });
     navs.idn.addEventListener("click", function(){ showPage("idn"); });
     navs.bola.addEventListener("click", function(){ showPage("bola"); });
+    navs.bolaOdds.addEventListener("click", function(){ showPage("bolaOdds"); });
     navs.hasilJadwal.addEventListener("click", function(){ showPage("hasilJadwal"); });
     navs.cekNawala.addEventListener("click", function(){ showPage("cekNawala"); });
+    navs.dataScreenshot.addEventListener("click", function(){ showPage("dataScreenshot"); });
+    navs.caraBetting.addEventListener("click", function(){ showPage("caraBetting"); });
 
     var savedPage = localStorage.getItem(ACTIVE_PAGE_KEY);
     showPage(pages[savedPage] ? savedPage : "prediksi");
