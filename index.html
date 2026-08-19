@@ -293,7 +293,7 @@
     }
     body.sidebar-open .sidebar{ transform:translateX(0); }
 
-    .sidebar .sidebar-header{ display:flex; margin-top:36px; }
+    .sidebar .sidebar-header{ display:flex; }
     .sidebar .brand-divider{ display:block; }
     .sidebar .menu-caption{ display:block; }
     .sidebar .nav-item{ margin-bottom:8px; }
@@ -301,27 +301,10 @@
     .sidebar .nav-item .label.label-sm{ font-size:13px; }
     .sidebar-footer{ display:block; font-size:10px; }
 
-    /* Tombol X kecil di pojok drawer untuk menutup, diposisikan di ATAS
-       ikon "Data Penting" (bukan sejajar), supaya tidak saling menutupi.
-       .sidebar-header diberi margin-top di atas supaya turun ke bawah
-       tombol X ini. */
-    .sidebar-close-btn{
-      display:flex;
-      position:absolute;
-      top:14px;
-      right:14px;
-      width:30px;
-      height:30px;
-      border-radius:8px;
-      border:1px solid rgba(255,255,255,0.15);
-      background:#1c1c28;
-      color:#c9c9d6;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      font-size:18px;
-      line-height:1;
-    }
+    /* Tombol X (close drawer) DIHAPUS dari versi mobile atas permintaan —
+       drawer tetap bisa ditutup lewat tap area gelap (overlay), tombol
+       Escape, atau otomatis saat memilih salah satu menu. */
+    .sidebar-close-btn{ display:none !important; }
   }
   @media (min-width:761px){
     .sidebar-close-btn{ display:none; }
