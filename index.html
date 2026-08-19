@@ -293,27 +293,23 @@
     }
     body.sidebar-open .sidebar{ transform:translateX(0); }
 
-    .sidebar .sidebar-header{ display:flex; }
+    .sidebar .sidebar-header{ display:flex; margin-top:36px; }
     .sidebar .brand-divider{ display:block; }
     .sidebar .menu-caption{ display:block; }
     .sidebar .nav-item{ margin-bottom:8px; }
-    .sidebar .nav-item .icon{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      flex-shrink:0;
-      color:#7de8a8;
-    }
     .sidebar .nav-item .label{ white-space:normal; }
     .sidebar .nav-item .label.label-sm{ font-size:13px; }
     .sidebar-footer{ display:block; font-size:10px; }
 
-    /* Tombol X kecil di pojok drawer untuk menutup, selain klik overlay */
+    /* Tombol X kecil di pojok drawer untuk menutup, diposisikan di ATAS
+       ikon "Data Penting" (bukan sejajar), supaya tidak saling menutupi.
+       .sidebar-header diberi margin-top di atas supaya turun ke bawah
+       tombol X ini. */
     .sidebar-close-btn{
       display:flex;
       position:absolute;
       top:14px;
-      right:12px;
+      right:14px;
       width:30px;
       height:30px;
       border-radius:8px;
