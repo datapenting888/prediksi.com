@@ -190,26 +190,145 @@
     flex:1;
     min-width:0;
   }
+
+  /* ---------------- Mobile Topbar (hamburger) ---------------- */
+  /* Hanya tampil di layar <=760px (lihat media query di bawah). Berisi
+     tombol hamburger untuk membuka/menutup sidebar sebagai drawer, plus
+     brand kecil supaya identitas tetap terlihat tanpa perlu buka menu. */
+  .mobile-topbar{
+    display:none;
+    align-items:center;
+    gap:12px;
+    position:sticky;
+    top:0;
+    z-index:2500;
+    background:#13131c;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    padding:12px 14px;
+  }
+  .mobile-topbar .mt-brand{
+    font-size:17px;
+    font-weight:800;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    background:linear-gradient(90deg, #ff5f6d, #ffc371, #47cf73, #35c8f0, #a55eea, #ff5f6d);
+    background-size:400% 100%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    -webkit-text-fill-color:transparent;
+    animation: brandColorShift 6s linear infinite, brandBrightPulse 2.4s ease-in-out infinite;
+  }
+  .hamburger-btn{
+    flex-shrink:0;
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.15);
+    background:#1c1c28;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .hamburger-btn span{
+    display:block;
+    width:18px;
+    height:2px;
+    border-radius:2px;
+    background:#e8e6f5;
+    position:relative;
+    transition:transform .2s ease, opacity .2s ease;
+  }
+  .hamburger-btn span::before,
+  .hamburger-btn span::after{
+    content:'';
+    position:absolute;
+    left:0;
+    width:18px;
+    height:2px;
+    border-radius:2px;
+    background:#e8e6f5;
+    transition:transform .2s ease, top .2s ease;
+  }
+  .hamburger-btn span::before{ top:-6px; }
+  .hamburger-btn span::after{ top:6px; }
+  body.sidebar-open .hamburger-btn span{ background:transparent; }
+  body.sidebar-open .hamburger-btn span::before{ top:0; transform:rotate(45deg); }
+  body.sidebar-open .hamburger-btn span::after{ top:0; transform:rotate(-45deg); }
+
+  /* Overlay gelap di belakang drawer, menutup layar & menutup drawer saat diklik */
+  .sidebar-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(4,4,10,0.6);
+    -webkit-backdrop-filter:blur(1px);
+    backdrop-filter:blur(1px);
+    z-index:2999;
+    opacity:0;
+    transition:opacity .25s ease;
+  }
+  body.sidebar-open .sidebar-overlay{ display:block; opacity:1; }
+
   @media (max-width:760px){
     body{ flex-direction:column; }
+    .mobile-topbar{ display:flex; }
+
+    /* Sidebar jadi drawer yang meluncur dari kiri, tersembunyi secara default */
     .sidebar{
-      width:100%;
-      min-height:auto;
-      height:auto;
-      max-height:none;
-      overflow-y:visible;
-      padding:14px;
-      display:flex;
-      align-items:center;
-      gap:12px;
+      position:fixed;
+      top:0;
+      left:0;
+      width:min(82vw, 300px);
+      height:100vh;
+      max-height:100vh;
+      z-index:3000;
+      padding:18px 14px;
+      transform:translateX(-100%);
+      transition:transform .28s ease;
+      box-shadow:8px 0 30px rgba(0,0,0,0.45);
     }
-    .sidebar .menu-caption{ display:none; }
-    .sidebar .sidebar-header{ display:none; }
-    .sidebar .brand-divider{ display:none; }
-    .sidebar .nav-item{ margin-bottom:0; }
+    body.sidebar-open .sidebar{ transform:translateX(0); }
+
+    .sidebar .sidebar-header{ display:flex; }
+    .sidebar .brand-divider{ display:block; }
+    .sidebar .menu-caption{ display:block; }
+    .sidebar .nav-item{ margin-bottom:8px; }
+    .sidebar .nav-item .icon{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      flex-shrink:0;
+      color:#7de8a8;
+    }
     .sidebar .nav-item .label{ white-space:normal; }
     .sidebar .nav-item .label.label-sm{ font-size:13px; }
-    .sidebar-footer{ display:none; }
+    .sidebar-footer{ display:block; font-size:10px; }
+
+    /* Tombol X kecil di pojok drawer untuk menutup, selain klik overlay */
+    .sidebar-close-btn{
+      display:flex;
+      position:absolute;
+      top:14px;
+      right:12px;
+      width:30px;
+      height:30px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.15);
+      background:#1c1c28;
+      color:#c9c9d6;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      font-size:18px;
+      line-height:1;
+    }
+  }
+  @media (min-width:761px){
+    .sidebar-close-btn{ display:none; }
   }
   .topbar{
     background: var(--header-biru);
@@ -1489,7 +1608,24 @@
   <div class="dst-markets" id="dstWarningMarketsMaret"></div>
 </div>
 
-<div class="sidebar">
+<!--
+  Topbar khusus tampilan mobile (<=760px) — berisi tombol hamburger untuk
+  membuka drawer sidebar, plus brand kecil. Tersembunyi otomatis di layar
+  desktop lewat CSS (.mobile-topbar). Logika buka/tutup ada di script
+  bagian "MOBILE SIDEBAR DRAWER" di akhir body.
+-->
+<div class="mobile-topbar">
+  <button type="button" class="hamburger-btn" id="mobileMenuToggle" aria-label="Buka menu" aria-expanded="false" aria-controls="mainSidebar">
+    <span></span>
+  </button>
+  <div class="mt-brand">UY LAB</div>
+</div>
+
+<!-- Overlay gelap di belakang drawer sidebar (mobile), menutup drawer saat diklik -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="sidebar" id="mainSidebar">
+  <button type="button" class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Tutup menu">&times;</button>
   <div class="sidebar-header">
     <div class="brand"><span class="uy">UY</span> <span class="lab">LAB</span> <span class="brand-tag">By GOLAN</span></div>
     <!--
@@ -1611,6 +1747,21 @@
       </svg>
     </span>
     <span class="label label-sm">CARA BETTING TOGEL PNG</span>
+  </div>
+
+  <!--
+    Menu "ARSIP" — halaman arsip, isi bebas silakan diisi sesuai kebutuhan
+    (lihat <div id="pageArsip"> di bawah).
+  -->
+  <div class="nav-item" id="navArsip">
+    <span class="icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="4" width="18" height="5" rx="1.5" stroke="currentColor" stroke-width="2"/>
+        <path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9" stroke="currentColor" stroke-width="2"/>
+        <path d="M10 13h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="label label-sm">ARSIP</span>
   </div>
 
   <div class="sidebar-footer">© 2026 RIKI GOLAN — All Rights Reserved</div>
@@ -6168,6 +6319,37 @@ setInterval(() => {
   </script>
 </div>
 
+<!--
+  Halaman "ARSIP" — kontennya berasal dari file TERPISAH "arsip.html"
+  yang ditampilkan lewat iframe di dalam dashboard (pola sama seperti
+  menu "Cek Nawala"). Untuk mengubah isi halaman Arsip, cukup edit file
+  arsip.html — TIDAK perlu mengubah index.html ini. Script/logic halaman
+  Arsip sepenuhnya berada di dalam arsip.html itu sendiri (terpisah dari
+  script index.html), namun menu-nya tetap tergabung dalam "MENU DASBOARD"
+  di sidebar (lihat id="navArsip" serta initSidebarNav()).
+-->
+<div id="pageArsip" style="display:none;">
+  <div class="topbar">
+    <h1><span>ARSIP &nbsp;&nbsp; • &nbsp;&nbsp; ARSIP &nbsp;&nbsp; • &nbsp;&nbsp; ARSIP &nbsp;&nbsp; • &nbsp;&nbsp; ARSIP &nbsp;&nbsp; • &nbsp;&nbsp; ARSIP</span><span>ARSIP &nbsp;&nbsp; • &nbsp;&nbsp; ARSIP &nbsp;&nbsp; • &nbsp;&nbsp; ARSIP &nbsp;&nbsp; • &nbsp;&nbsp; ARSIP &nbsp;&nbsp; • &nbsp;&nbsp; ARSIP</span></h1>
+  </div>
+
+  <div class="panel" style="padding:16px;">
+    <!--
+      Tinggi kontainer iframe di bawah ini DIATUR LEWAT JAVASCRIPT (lihat fungsi
+      resizeArsipFrame di bawah), sama seperti pola Cek Nawala, supaya kontainer
+      selalu memanjang penuh sampai ke bagian bawah layar.
+    -->
+    <div id="arsipWrap" style="position:relative; width:100%; height:70vh; min-height:420px; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
+      <iframe
+        id="arsipFrame"
+        src="arsip.html"
+        title="Arsip"
+        style="width:100%; height:100%; border:0; display:block; background:transparent;">
+      </iframe>
+    </div>
+  </div>
+</div>
+
 <div id="dsImgModal" class="ds-modal">
     <span class="ds-close" onclick="dsCloseModal()">&times;</span>
     <img class="ds-modal-content" id="dsModalImg">
@@ -6794,6 +6976,34 @@ setInterval(() => {
   }
   // Jalankan sekali saat load, untuk kasus halaman Cek Nawala aktif dari awal
   setTimeout(resizeCekNawalaFrame, 0);
+})();
+</script>
+
+<script>
+(function(){
+  // Script TERPISAH khusus untuk mengatur tinggi iframe halaman "Arsip"
+  // (arsip.html), mengikuti pola yang sama seperti resizeCekNawalaFrame,
+  // supaya kontainer iframe selalu memenuhi sisa layar sampai ke bawah.
+  function resizeArsipFrame(){
+    var wrap = document.getElementById('arsipWrap');
+    var page = document.getElementById('pageArsip');
+    if (!wrap || !page || page.style.display === 'none') return;
+    var top = wrap.getBoundingClientRect().top;
+    var target = window.innerHeight - top - 20; // sisakan sedikit jarak di bawah
+    if (target < 420) target = 420;
+    wrap.style.height = target + 'px';
+  }
+  window.addEventListener('resize', resizeArsipFrame);
+  window.addEventListener('load', resizeArsipFrame);
+  // Dipanggil juga tiap kali menu "ARSIP" diklik di sidebar
+  var navArsipEl = document.getElementById('navArsip');
+  if (navArsipEl){
+    navArsipEl.addEventListener('click', function(){
+      setTimeout(resizeArsipFrame, 0);
+    });
+  }
+  // Jalankan sekali saat load, untuk kasus halaman Arsip aktif dari awal
+  setTimeout(resizeArsipFrame, 0);
 })();
 </script>
 
@@ -8137,6 +8347,48 @@ setInterval(() => {
 
 
   // ---------------------------------------------------------------------
+  // MOBILE SIDEBAR DRAWER — buka/tutup sidebar sebagai drawer di layar
+  // <=760px lewat tombol hamburger, overlay, tombol X, atau tombol Escape.
+  // Script ini TERPISAH dan tidak mengubah logika showPage/initSidebarNav
+  // di bawah; hanya menambahkan/menghapus class "sidebar-open" pada <body>
+  // yang dikendalikan penuh lewat CSS (lihat .mobile-topbar / .sidebar-overlay
+  // / drawer .sidebar di bagian <style>).
+  // ---------------------------------------------------------------------
+  (function initMobileSidebarDrawer(){
+    var toggleBtn = document.getElementById("mobileMenuToggle");
+    var closeBtn = document.getElementById("sidebarCloseBtn");
+    var overlay = document.getElementById("sidebarOverlay");
+
+    function openMobileSidebar(){
+      document.body.classList.add("sidebar-open");
+      if (toggleBtn) toggleBtn.setAttribute("aria-expanded", "true");
+    }
+    function closeMobileSidebar(){
+      document.body.classList.remove("sidebar-open");
+      if (toggleBtn) toggleBtn.setAttribute("aria-expanded", "false");
+    }
+    function toggleMobileSidebar(){
+      document.body.classList.contains("sidebar-open") ? closeMobileSidebar() : openMobileSidebar();
+    }
+
+    if (toggleBtn) toggleBtn.addEventListener("click", toggleMobileSidebar);
+    if (closeBtn) closeBtn.addEventListener("click", closeMobileSidebar);
+    if (overlay) overlay.addEventListener("click", closeMobileSidebar);
+    document.addEventListener("keydown", function(e){
+      if (e.key === "Escape") closeMobileSidebar();
+    });
+    // Kalau layar di-resize dari mobile ke desktop sambil drawer terbuka,
+    // pastikan class-nya dilepas supaya tidak "nyangkut" saat kembali ke mobile.
+    window.addEventListener("resize", function(){
+      if (window.innerWidth > 760) closeMobileSidebar();
+    });
+
+    // Diekspos secara global supaya showPage() di initSidebarNav bisa
+    // menutup drawer otomatis setelah user memilih menu di mobile.
+    window.closeMobileSidebar = closeMobileSidebar;
+  })();
+
+  // ---------------------------------------------------------------------
   // Sidebar navigation (Menu Dasboard)
   // ---------------------------------------------------------------------
   function initSidebarNav(){
@@ -8149,7 +8401,8 @@ setInterval(() => {
       hasilJadwal: document.getElementById("navHasilJadwal"),
       cekNawala: document.getElementById("navCekNawala"),
       dataScreenshot: document.getElementById("navDataScreenshot"),
-      caraBetting: document.getElementById("navCaraBetting")
+      caraBetting: document.getElementById("navCaraBetting"),
+      arsip: document.getElementById("navArsip")
     };
     var pages = {
       prediksi: document.getElementById("pagePrediksi"),
@@ -8160,7 +8413,8 @@ setInterval(() => {
       hasilJadwal: document.getElementById("pageHasilJadwal"),
       cekNawala: document.getElementById("pageCekNawala"),
       dataScreenshot: document.getElementById("pageDataScreenshot"),
-      caraBetting: document.getElementById("pageCaraBetting")
+      caraBetting: document.getElementById("pageCaraBetting"),
+      arsip: document.getElementById("pageArsip")
     };
 
     var ACTIVE_PAGE_KEY = 'dashboardActivePage';
@@ -8171,6 +8425,9 @@ setInterval(() => {
         navs[key].classList[key === page ? "add" : "remove"]("active");
       });
       localStorage.setItem(ACTIVE_PAGE_KEY, page);
+      // Di layar mobile, drawer sidebar otomatis tertutup setelah memilih
+      // menu, supaya langsung terlihat kontennya tanpa perlu tap X manual.
+      if (typeof window.closeMobileSidebar === "function") window.closeMobileSidebar();
     }
 
     navs.prediksi.addEventListener("click", function(){ showPage("prediksi"); });
@@ -8182,6 +8439,7 @@ setInterval(() => {
     navs.cekNawala.addEventListener("click", function(){ showPage("cekNawala"); });
     navs.dataScreenshot.addEventListener("click", function(){ showPage("dataScreenshot"); });
     navs.caraBetting.addEventListener("click", function(){ showPage("caraBetting"); });
+    navs.arsip.addEventListener("click", function(){ showPage("arsip"); });
 
     var savedPage = localStorage.getItem(ACTIVE_PAGE_KEY);
     showPage(pages[savedPage] ? savedPage : "prediksi");
