@@ -1064,7 +1064,11 @@
 }
 
 /* =====================================================================
-  
+   Menu "DATA SCREENSHOT" — di-scope lewat class ".ds-scope" (sama seperti
+   ".bola-scope" pada menu PERHITUNGAN BOLA PNG) supaya style di bawah ini
+   TIDAK bocor/bentrok ke menu lain. Palet warna & nuansa gelap+emas
+   sengaja dibuat senada dengan ".bola-scope" agar terlihat konsisten.
+   ===================================================================== */
 .ds-scope {
   --ds-bg-deep: #0a0d1a;
   --ds-bg-mid: #12162a;
@@ -1653,6 +1657,7 @@
         <path d="M12 3v4M12 17v4M4.2 9l3.9 1.5M15.9 10.5L19.8 9M6.5 17.5l2.6-3.2M14.9 14.3l2.6 3.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
       </svg>
     </span>
+    <span class="label label-sm">PERHITUNGAN BOLA PNG</span>
   </div>
   <div class="nav-item" id="navBolaOdds">
     <span class="icon">
@@ -5507,7 +5512,15 @@ function tampilkanErrorFirebase(pesan) {
   box._hideTimer = setTimeout(() => { box.style.display = 'none'; }, 6000);
 }
 
-// Dengarkan perubahan data secara real-time dari Firebase (mis. disimpan dari perangkat lain)
+// Dengarkan perubahan data Jadwal Pasaran & Shio dari Firebase secara
+// REAL-TIME (bukan polling berkala). Ini justru pilihan yang paling hemat
+// kuota untuk data ini: listener on('value') TIDAK menarik data terus-
+// menerus — ia hanya "diam" menunggu, dan baru benar-benar mengirim data
+// TEPAT SAAT ada perubahan Jam Tutup, Result, atau Shio yang disimpan
+// (dari perangkat manapun). Kalau tidak ada perubahan sama sekali, tidak
+// ada data yang ditransfer sama sekali. Ini lebih hemat dibanding polling
+// berkala (mis. tiap 24 jam), karena polling tetap menarik data walau
+// tidak ada perubahan apa-apa.
 if (hasilDB) {
   hasilDB.ref('resultJadwalPasaran/jadwal').on('value', (snapshot) => {
     const data = snapshot.val();
@@ -6435,7 +6448,15 @@ setInterval(() => {
 
         dsCleanupExpired();
 
-        const ref = dsDB.ref(DS_FB_PATH).orderByChild('timestamp');
+        // Batasi Ruang Lingkup Data (Query Limiting): hanya menyimak
+        // DS_QUERY_LIMIT baris PALING BARU (berdasarkan timestamp), bukan
+        // seluruh riwayat "dataScreenshot" sekaligus. Listener di sini
+        // bersifat real-time, jadi tanpa limitToLast() setiap kali menu ini
+        // dibuka semua baris (termasuk yang belum kena hapus otomatis 21
+        // hari) akan ikut ter-download ulang — padahal yang benar-benar
+        // dibutuhkan biasanya cuma baris terbaru.
+        const DS_QUERY_LIMIT = 300;
+        const ref = dsDB.ref(DS_FB_PATH).orderByChild('timestamp').limitToLast(DS_QUERY_LIMIT);
         ref.on('child_added', (snap) => dsUpsertRowFromSnapshot(snap.key, snap.val()));
         ref.on('child_changed', (snap) => dsUpsertRowFromSnapshot(snap.key, snap.val()));
         ref.on('child_removed', (snap) => dsRemoveRowByKey(snap.key));
@@ -6785,6 +6806,41 @@ setInterval(() => {
         window.open(finalUrl, '_blank', 'noopener');
     }
 
+    // Kompres gambar screenshot di browser SEBELUM disimpan ke Firebase.
+    // Ini penyebab boros kuota TERBESAR di dashboard ini: setiap screenshot
+    // yang ditempel disimpan utuh sebagai base64 langsung di dalam node
+    // Realtime Database (bisa 1-3MB per gambar dari clipboard), dan listener
+    // real-time di menu DATA SCREENSHOT membuat gambar itu ikut ter-download
+    // ULANG oleh SETIAP perangkat yang membuka menu ini. Dikompres jadi
+    // JPEG + dikecilkan lebar maksimalnya membuat ukurannya turun drastis
+    // (biasanya jadi puluhan-ratusan KB saja) tanpa mengurangi keterbacaan
+    // screenshot bukti transfer.
+    function dsCompressImage(dataUrl, maxWidth = 1000, quality = 0.6) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = function() {
+                let width = img.width;
+                let height = img.height;
+                if (width > maxWidth) {
+                    height = Math.round(height * (maxWidth / width));
+                    width = maxWidth;
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.onerror = function() {
+                // Kalau gagal dikompres, pakai data aslinya apa adanya
+                // daripada gagal total menyimpan screenshot.
+                resolve(dataUrl);
+            };
+            img.src = dataUrl;
+        });
+    }
+
     function dsHandlePaste(event, pasteArea) {
         const items = (event.clipboardData || event.originalEvent.clipboardData).items;
         for (let i = 0; i < items.length; i++) {
@@ -6792,7 +6848,9 @@ setInterval(() => {
                 const blob = items[i].getAsFile();
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    dsProcessImageInput(pasteArea, e.target.result);
+                    dsCompressImage(e.target.result).then((compressed) => {
+                        dsProcessImageInput(pasteArea, compressed);
+                    });
                 };
                 reader.readAsDataURL(blob);
                 event.preventDefault();
@@ -8460,6 +8518,11 @@ setInterval(() => {
 </script>
 
 <script>
+// ---------------------------------------------------------------------
+// Kalkulator Perhitungan Bola PNG (menu PERHITUNGAN BOLA PNG)
+// Dibungkus IIFE tersendiri agar variabel/fungsi di dalamnya tidak
+// bentrok dengan script menu Prediksi, Perhitungan Togel PNG, maupun
+// Perhitungan Togel IDN yang sudah ada di atas.
 // ---------------------------------------------------------------------
 (function(){
 function formatNumber(num) {
