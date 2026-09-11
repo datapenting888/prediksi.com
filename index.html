@@ -1064,11 +1064,7 @@
 }
 
 /* =====================================================================
-   Menu "DATA SCREENSHOT" — di-scope lewat class ".ds-scope" (sama seperti
-   ".bola-scope" pada menu PERHITUNGAN BOLA PNG) supaya style di bawah ini
-   TIDAK bocor/bentrok ke menu lain. Palet warna & nuansa gelap+emas
-   sengaja dibuat senada dengan ".bola-scope" agar terlihat konsisten.
-   ===================================================================== */
+  
 .ds-scope {
   --ds-bg-deep: #0a0d1a;
   --ds-bg-mid: #12162a;
@@ -1657,7 +1653,6 @@
         <path d="M12 3v4M12 17v4M4.2 9l3.9 1.5M15.9 10.5L19.8 9M6.5 17.5l2.6-3.2M14.9 14.3l2.6 3.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
       </svg>
     </span>
-    <span class="label label-sm">PERHITUNGAN BOLA PNG</span>
   </div>
   <div class="nav-item" id="navBolaOdds">
     <span class="icon">
@@ -8465,11 +8460,6 @@ setInterval(() => {
 </script>
 
 <script>
-// ---------------------------------------------------------------------
-// Kalkulator Perhitungan Bola PNG (menu PERHITUNGAN BOLA PNG)
-// Dibungkus IIFE tersendiri agar variabel/fungsi di dalamnya tidak
-// bentrok dengan script menu Prediksi, Perhitungan Togel PNG, maupun
-// Perhitungan Togel IDN yang sudah ada di atas.
 // ---------------------------------------------------------------------
 (function(){
 function formatNumber(num) {
