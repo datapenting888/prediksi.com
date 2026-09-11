@@ -99,6 +99,20 @@
   }
   .main-top h2{ margin:0 0 4px; font-family:'Georgia', serif; font-size:26px; color:var(--text); }
 
+  .refresh-btn{
+    display:flex; align-items:center; gap:7px;
+    background:transparent; border:1px solid var(--line); color:var(--gold-1);
+    font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+    padding:9px 16px; border-radius:8px; cursor:pointer; font-family:inherit; font-weight:600;
+    transition:border-color .15s, background .15s, opacity .15s;
+  }
+  .refresh-btn:hover{ border-color:var(--gold-2); background:rgba(243,201,105,0.07); }
+  .refresh-btn:active{ background:rgba(243,201,105,0.14); }
+  .refresh-btn:disabled{ opacity:.55; cursor:default; }
+  .refresh-btn svg{ width:14px; height:14px; flex-shrink:0; }
+  .refresh-btn.spinning svg{ animation:spin-refresh .7s linear infinite; }
+  @keyframes spin-refresh{ to{ transform:rotate(360deg); } }
+
   .stat-row{
     display:grid; grid-template-columns:repeat(3, 1fr);
     gap:14px; margin-bottom:24px;
@@ -142,7 +156,7 @@
   }
   .staff-panel .stf-row:hover{ background:rgba(243,201,105,0.05); }
   .staff-panel .stf-row:last-child{ border-bottom:none; }
-  .staff-panel .stf-body{ display:none; max-height:340px; overflow-y:auto; }
+  .staff-panel .stf-body{ display:none; }
   .staff-panel.open .stf-body{ display:block; }
   .staff-panel .stf-row span:first-child{
     flex:1; padding:8px 8px 8px 14px; border-right:1px solid rgba(255,255,255,0.16); word-break:break-word;
@@ -159,8 +173,8 @@
     color:var(--text-dim); font-weight:600;
   }
   .ref-col-head span{ box-sizing:border-box; padding:8px 20px; }
-  .ref-col-head span:nth-child(1){ width:16%; }
-  .ref-col-head span:nth-child(2){ width:32%; }
+  .ref-col-head span:nth-child(1){ width:6%; }
+  .ref-col-head span:nth-child(2){ width:16%; }
   .ref-col-head span:nth-child(3){ flex:1; }
 
   .date-group{ border-bottom:1px solid var(--line); }
@@ -259,6 +273,7 @@
       font-size:9.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-dim);
     }
     td.name::before{ display:none; }
+    .no-cell{ display:none; }
   }
 
   /* ===== PHONE (<=480px) ===== */
@@ -317,14 +332,21 @@
         <div>
           <h2 id="activeSiteTitle">—</h2>
         </div>
+        <button id="siteRefreshBtn" class="refresh-btn" title="Muat ulang data tab ini">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-2.64-6.36"></path>
+            <polyline points="21 3 21 9 15 9"></polyline>
+          </svg>
+          Refresh
+        </button>
       </div>
 
       <div class="stat-row" id="statRow"></div>
 
       <div class="ref-col-head" id="refColHead" style="display:none;">
+        <span style="width:6%;">No</span>
         <span style="width:16%;">Kategori</span>
-        <span style="width:32%;">Poin Kesalahan</span>
-        <span>Keterangan</span>
+        <span style="padding-left:104px;">Poin Kesalahan</span>
       </div>
     </div>
 
@@ -349,12 +371,43 @@
 
   const el = id => document.getElementById(id);
   let SHEET_TABS = [];              // daftar nama tab, urut sesuai spreadsheet
-  let SITE_DATA = {};               // cache: { tabName: { date: [records] } }
+  let SITE_DATA = {};               // cache in-memory (per sesi): { tabName: { date: [records] } }
   let activeSite = null;
   let loadingSet = new Set();
 
   function setLive(ok){
     el('liveDot').className = 'live-dot' + (ok ? '' : ' err');
+  }
+
+  /* =========================================================
+     CACHE LOKAL (localStorage) — supaya refresh terasa instan.
+     Data di spreadsheet jarang berubah, jadi: tampilkan dulu versi
+     tersimpan (kalau ada) tanpa nunggu network, lalu diam-diam tarik
+     data terbaru di background dan update tampilan kalau ada perubahan.
+     ========================================================= */
+  const CACHE_KEY = 'arsipDashboardCacheV2';
+  function loadCache(){
+    try{
+      const raw = localStorage.getItem(CACHE_KEY);
+      const parsed = raw ? JSON.parse(raw) : null;
+      return (parsed && typeof parsed === 'object') ? parsed : { tabs: null, activeSite: null, sites: {} };
+    }catch(e){ return { tabs: null, activeSite: null, sites: {} }; }
+  }
+  let CACHE = loadCache();
+  let cacheSaveTimer = null;
+  function saveCache(){
+    clearTimeout(cacheSaveTimer);
+    cacheSaveTimer = setTimeout(() => {
+      try{ localStorage.setItem(CACHE_KEY, JSON.stringify(CACHE)); }catch(e){ /* storage penuh/diblokir, abaikan */ }
+    }, 120);
+  }
+  function getCachedSite(siteName){
+    const c = CACHE.sites[siteName];
+    return c ? c.data : null;
+  }
+  function setCachedSite(siteName, data){
+    CACHE.sites[siteName] = { data, fetchedAt: Date.now() };
+    saveCache();
   }
 
   // ---- Ambil daftar semua tab/sheet dalam spreadsheet (ini yang jadi sidebar) ----
@@ -382,8 +435,8 @@
     return 'noresp';
   }
 
-  async function fetchSiteData(siteName){
-    if(SITE_DATA[siteName]) return SITE_DATA[siteName];
+  async function fetchSiteData(siteName, opts={}){
+    if(!opts.force && SITE_DATA[siteName]) return SITE_DATA[siteName];
     const range = `'${siteName.replace(/'/g,"''")}'!${DATA_RANGE}`;
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`;
     const res = await fetch(url);
@@ -421,6 +474,7 @@
     });
 
     SITE_DATA[siteName] = groups;
+    setCachedSite(siteName, groups);
     return groups;
   }
 
@@ -489,6 +543,8 @@
     return Array.from(map.entries()).map(([name, count]) => ({ name, count }));
   }
 
+  const isDesktopView = () => window.matchMedia('(min-width:821px)').matches;
+
   function renderStaffPanel(records){
     const staff = aggregateStaff(records);
     const rows = staff.map(s => `<div class="stf-row">
@@ -499,12 +555,14 @@
       <div class="stf-head"><span>Nama Staff</span><span>Total Kesalahan</span></div>
       <div class="stf-body">${rows || '<div class="empty" style="padding:24px;">Belum ada data.</div>'}</div>
     `;
+    // Desktop: langsung tampil terbuka saat pasaran dipilih. Mobile: tetap dropdown (tertutup).
+    el('staffPanel').classList.toggle('open', isDesktopView());
   }
 
   // ---- Untuk tab REFERENSI (mis. "poin-poin kesalahan lc new"): bukan log Nama/Link/Status,
   //      tapi daftar Kategori (D) > Poin Kesalahan (E) > Keterangan (F) ----
-  async function fetchReferenceData(siteName){
-    if(SITE_DATA[siteName]) return SITE_DATA[siteName];
+  async function fetchReferenceData(siteName, opts={}){
+    if(!opts.force && SITE_DATA[siteName]) return SITE_DATA[siteName];
     const range = `'${siteName.replace(/'/g,"''")}'!${DATA_RANGE}`;
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`;
     const res = await fetch(url);
@@ -545,6 +603,7 @@
     });
 
     SITE_DATA[siteName] = groups;
+    setCachedSite(siteName, groups);
     return groups;
   }
 
@@ -553,28 +612,31 @@
       return `<div class="empty">Belum ada data di tab <b>${siteName}</b>.</div>`;
     }
     let html = '';
+    let no = 0;
     groups.forEach(g => {
       if(!g.items.length) return; // lewati kategori kosong (mis. judul sheet di baris pertama)
+      no++;
       html += `<div class="date-group">
         <table>
           <colgroup>
+            <col class="no-col" style="width:6%;">
             <col style="width:16%;">
-            <col style="width:32%;">
             <col>
           </colgroup>
           ${hideThead ? '' : `<thead class="col-head"><tr>
+            <th class="no-cell" style="width:6%;">No</th>
             <th style="width:16%;">Kategori</th>
-            <th style="width:32%;">Poin Kesalahan</th>
-            <th>Keterangan</th>
+            <th style="padding-left:104px;">Poin Kesalahan</th>
           </tr></thead>`}
           <tbody>`;
       g.items.forEach((it, idx) => {
-        const noteHtml = it.note ? it.note.replace(/\n/g,'<br>') : '—';
         const catHtml = idx === 0 ? (g.title || '—') : '';
+        const noHtml = idx === 0 ? no : '';
+        const noAttr = idx === 0 ? ` data-no="${no}"` : '';
         html += `<tr>
-          <td class="name" style="white-space:normal; max-width:none; color:var(--gold-1);">${catHtml}</td>
-          <td style="white-space:normal;">${it.point}</td>
-          <td style="color:#b9b6ac; white-space:normal;">${noteHtml}</td>
+          <td class="no-cell" style="white-space:normal; color:var(--gold-1);">${noHtml}</td>
+          <td class="name"${noAttr} style="white-space:normal; max-width:none; color:var(--gold-1);">${catHtml}</td>
+          <td style="white-space:normal; padding-left:104px;">${it.point}</td>
         </tr>`;
       });
       html += `</tbody></table></div>`;
@@ -582,108 +644,188 @@
     return html || `<div class="empty">Belum ada data di tab <b>${siteName}</b>.</div>`;
   }
 
-  async function selectSite(siteName){
+  // ---- Render tabel log (Nama/Link/Status) ke dalam #resultPanel + stats + staff panel ----
+  function renderSiteResult(groups, siteName){
+    const allRecords = Object.values(groups).flat();
+
+    if(!allRecords.length){
+      el('statRow').innerHTML = '';
+      el('staffPanel').innerHTML = '';
+      el('resultPanel').innerHTML = `<div class="empty"></div>`;
+      return;
+    }
+
+    renderStats(allRecords);
+    renderStaffPanel(allRecords);
+    let html = '';
+    const dateEntries = Object.entries(groups).filter(([, records]) => records.length).reverse();
+    dateEntries.forEach(([date, records], idx) => {
+      const isLatest = idx === 0;
+      html += `<div class="date-group log-group${isLatest ? ' open' : ''}">
+        <div class="date-head">${date}</div>
+        <table>
+          <thead class="col-head"><tr>
+            <th style="width:30%;">Nama / ID</th>
+            <th style="width:26%;">Link</th>
+            <th>Status</th>
+          </tr></thead>
+          <tbody>`;
+      records.forEach(r => {
+        const meta = statusMeta(r.status);
+        const linkHtml = r.link ? `<a href="${r.link}" target="_blank" rel="noopener" title="${r.link}">${r.link}</a>` : '—';
+        html += `<tr>
+          <td class="name" data-label="Nama / ID"><span class="name-txt" title="${r.name}">${r.name}</span></td>
+          <td class="link" data-label="Link">${linkHtml}</td>
+          <td data-label="Status"><span class="status-pill ${meta.cls}"><span class="dot"></span>${r.note}</span></td>
+        </tr>`;
+      });
+      html += `</tbody></table></div>`;
+    });
+    el('resultPanel').innerHTML = html || `<div class="empty">Tidak ada data untuk ditampilkan.</div>`;
+  }
+
+  // opts.silent = true → jangan tampilkan spinner/blank state, kita sedang refresh diam-diam
+  //               di belakang layar sambil versi cache-nya sudah tampil di layar.
+  async function selectSite(siteName, opts={}){
     activeSite = siteName;
+    CACHE.activeSite = siteName;
+    saveCache();
     el('activeSiteTitle').textContent = siteName;
     updateTriggerLabel();
     closeCsDropdown();
     renderSiteList(el('siteSearch').value);
-    el('statRow').innerHTML = '';
-    el('staffPanel').innerHTML = '';
     const isReference = STAFF_PANEL_EXCLUDE.includes(siteName.trim().toLowerCase());
-    el('staffPanel').style.display = isReference ? 'none' : '';
     // Topbar kolom (Kategori / Poin Kesalahan / Keterangan) yang statis di atas —
     // khusus untuk tab "total kesalahan"
     const isStickyHeaderTab = ['total kesalahan', 'poin-poin kesalahan lc new'].includes(siteName.trim().toLowerCase());
     el('refColHead').style.display = isStickyHeaderTab ? 'flex' : 'none';
     el('resultPanel').classList.toggle('flat-top', isStickyHeaderTab);
-    el('resultPanel').innerHTML = `<div class="empty"><div class="spin"></div>Menarik data dari tab "${siteName}"...</div>`;
 
-    // ---- Tab referensi (bukan log Nama/Link/Status) ----
-    if(isReference){
-      try{
-        const groups = await fetchReferenceData(siteName);
-        el('resultPanel').innerHTML = renderReferenceList(groups, siteName, isStickyHeaderTab);
-      } catch(err){
-        console.error(err);
-        el('resultPanel').innerHTML = `<div class="empty">
-          Gagal menarik data dari tab <b>${siteName}</b>.<br>${err.message}
-        </div>`;
-      }
-      return;
-    }
+    const cached = getCachedSite(siteName);
+    const hasCache = !!cached;
 
-    try{
-      const groups = await fetchSiteData(siteName);
-      renderSiteList(el('siteSearch').value); // update count badge
-      updateTriggerLabel();
-      const allRecords = Object.values(groups).flat();
-
-      if(!allRecords.length){
-        el('statRow').innerHTML = '';
-        el('staffPanel').innerHTML = '';
-        el('resultPanel').innerHTML = `<div class="empty"></div>`;
-        return;
-      }
-
-      renderStats(allRecords);
-      renderStaffPanel(allRecords);
-      let html = '';
-      const dateEntries = Object.entries(groups).filter(([, records]) => records.length).reverse();
-      dateEntries.forEach(([date, records], idx) => {
-        const isLatest = idx === 0;
-        html += `<div class="date-group log-group${isLatest ? ' open' : ''}">
-          <div class="date-head">${date}</div>
-          <table>
-            <thead class="col-head"><tr>
-              <th style="width:30%;">Nama / ID</th>
-              <th style="width:26%;">Link</th>
-              <th>Status</th>
-            </tr></thead>
-            <tbody>`;
-        records.forEach(r => {
-          const meta = statusMeta(r.status);
-          const linkHtml = r.link ? `<a href="${r.link}" target="_blank" rel="noopener" title="${r.link}">${r.link}</a>` : '—';
-          html += `<tr>
-            <td class="name" data-label="Nama / ID"><span class="name-txt" title="${r.name}">${r.name}</span></td>
-            <td class="link" data-label="Link">${linkHtml}</td>
-            <td data-label="Status"><span class="status-pill ${meta.cls}"><span class="dot"></span>${r.note}</span></td>
-          </tr>`;
-        });
-        html += `</tbody></table></div>`;
-      });
-      el('resultPanel').innerHTML = html || `<div class="empty">Tidak ada data untuk ditampilkan.</div>`;
-    } catch(err){
-      console.error(err);
+    if(!hasCache || !opts.silent){
       el('statRow').innerHTML = '';
       el('staffPanel').innerHTML = '';
-      el('resultPanel').innerHTML = `<div class="empty">
-        Gagal menarik data dari tab <b>${siteName}</b>.<br>${err.message}<br><br>
-        <span style="font-size:12px;">Pastikan nama tab di spreadsheet persis sama, sheet dapat diakses publik
-        ("Anyone with the link can view"), dan API key tidak dibatasi domain.</span>
-      </div>`;
+      el('staffPanel').classList.remove('open');
+      el('staffPanel').style.display = isReference ? 'none' : '';
+    }
+
+    // 1) Langsung tampilkan versi tersimpan (kalau ada) — INI yang bikin terasa instan.
+    if(hasCache){
+      SITE_DATA[siteName] = cached;
+      if(isReference){
+        el('resultPanel').innerHTML = renderReferenceList(cached, siteName, isStickyHeaderTab);
+      } else {
+        renderSiteResult(cached, siteName);
+      }
+    } else if(!opts.silent){
+      el('resultPanel').innerHTML = `<div class="empty"><div class="spin"></div>Menarik data dari tab "${siteName}"...</div>`;
+    }
+
+    // 2) Selalu tarik data terbaru dari spreadsheet di belakang layar, lalu update
+    //    tampilan kalau memang ada perubahan. Kalau belum ada cache sama sekali,
+    //    ini yang jadi tampilan pertama (sama seperti sebelumnya).
+    try{
+      const groups = isReference
+        ? await fetchReferenceData(siteName, { force: true })
+        : await fetchSiteData(siteName, { force: true });
+
+      if(activeSite !== siteName) return; // user sudah pindah tab sebelum fetch ini selesai
+      setLive(true);
+      if(isReference){
+        el('resultPanel').innerHTML = renderReferenceList(groups, siteName, isStickyHeaderTab);
+      } else {
+        renderSiteList(el('siteSearch').value); // update count badge
+        updateTriggerLabel();
+        renderSiteResult(groups, siteName);
+      }
+    } catch(err){
+      console.error(err);
+      setLive(false);
+      if(!hasCache){
+        el('statRow').innerHTML = '';
+        el('staffPanel').innerHTML = '';
+        el('resultPanel').innerHTML = `<div class="empty">
+          Gagal menarik data dari tab <b>${siteName}</b>.<br>${err.message}<br><br>
+          <span style="font-size:12px;">Pastikan nama tab di spreadsheet persis sama, sheet dapat diakses publik
+          ("Anyone with the link can view"), dan API key tidak dibatasi domain.</span>
+        </div>`;
+      }
+      // Kalau ada cache, biarkan versi cache tetap tampil — cuma titik "Live" jadi merah
+      // menandakan gagal sinkron, tanpa mengganggu data yang sudah kelihatan.
     }
   }
 
   async function init(){
-    try{
-      SHEET_TABS = await fetchSheetTabs();
-      if(!SHEET_TABS.length) throw new Error('Tidak ada tab ditemukan di spreadsheet ini');
-      setLive(true);
+    // 1) Kalau ada cache tersimpan, langsung tampilkan — tanpa nunggu network sama sekali.
+    if(CACHE.tabs && CACHE.tabs.length){
+      SHEET_TABS = CACHE.tabs;
       renderSiteList();
-      await selectSite(SHEET_TABS[0]);
+      const startSite = (CACHE.activeSite && SHEET_TABS.includes(CACHE.activeSite)) ? CACHE.activeSite : SHEET_TABS[0];
+      selectSite(startSite, { silent: true }); // tidak di-await: render cache instan, fetch jalan di belakang
+    }
+
+    // 2) Selalu ambil daftar tab terbaru dari spreadsheet di belakang layar.
+    try{
+      const tabs = await fetchSheetTabs();
+      if(!tabs.length) throw new Error('Tidak ada tab ditemukan di spreadsheet ini');
+      SHEET_TABS = tabs;
+      CACHE.tabs = tabs;
+      saveCache();
+      setLive(true);
+      renderSiteList(el('siteSearch').value);
+      const site = (activeSite && tabs.includes(activeSite)) ? activeSite : tabs[0];
+      if(!CACHE.activeSite || site !== activeSite){
+        await selectSite(site);
+      }
     } catch(err){
       console.error(err);
       setLive(false);
-      el('csTriggerLabel').textContent = 'Gagal memuat daftar tab';
-      el('csOptions').innerHTML = `<div class="cs-option empty">Gagal memuat daftar tab</div>`;
-      el('resultPanel').innerHTML = `<div class="empty">
-        Tidak bisa terhubung ke spreadsheet.<br><br>
-        <span style="font-size:12px;">Pastikan spreadsheet di-set "Anyone with the link can view",
-        dan API key aktif untuk Google Sheets API di Google Cloud Console.</span>
-      </div>`;
+      if(!CACHE.tabs || !CACHE.tabs.length){
+        el('csTriggerLabel').textContent = 'Gagal memuat daftar tab';
+        el('csOptions').innerHTML = `<div class="cs-option empty">Gagal memuat daftar tab</div>`;
+        el('resultPanel').innerHTML = `<div class="empty">
+          Tidak bisa terhubung ke spreadsheet.<br><br>
+          <span style="font-size:12px;">Pastikan spreadsheet di-set "Anyone with the link can view",
+          dan API key aktif untuk Google Sheets API di Google Cloud Console.</span>
+        </div>`;
+      }
+      // Kalau sudah ada cache tabs, biarkan sidebar dari cache tetap tampil apa adanya.
     }
   }
+
+  // Tombol "REFRESH" di atas judul situs — paksa muat ulang data tab yang sedang dibuka saja.
+  el('siteRefreshBtn').addEventListener('click', async (e) => {
+    e.stopPropagation();
+    if(!activeSite) return;
+    const btn = el('siteRefreshBtn');
+    btn.classList.add('spinning');
+    btn.disabled = true;
+    try{
+      const isReference = STAFF_PANEL_EXCLUDE.includes(activeSite.trim().toLowerCase());
+      const isStickyHeaderTab = ['total kesalahan', 'poin-poin kesalahan lc new'].includes(activeSite.trim().toLowerCase());
+      const groups = isReference
+        ? await fetchReferenceData(activeSite, { force: true })
+        : await fetchSiteData(activeSite, { force: true });
+      setLive(true);
+      if(isReference){
+        el('resultPanel').innerHTML = renderReferenceList(groups, activeSite, isStickyHeaderTab);
+      } else {
+        renderSiteList(el('siteSearch').value);
+        updateTriggerLabel();
+        renderSiteResult(groups, activeSite);
+      }
+    } catch(err){
+      console.error(err);
+      setLive(false);
+    } finally {
+      btn.classList.remove('spinning');
+      btn.disabled = false;
+    }
+  });
+
+
 
   el('siteSearch').addEventListener('input', e => renderSiteList(e.target.value));
   el('siteSearch').addEventListener('click', e => e.stopPropagation());
