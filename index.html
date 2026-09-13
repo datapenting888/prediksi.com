@@ -1397,39 +1397,7 @@
     border-color: var(--ds-border);
 }
 
-.ds-scope .ds-paste-area {
-    border: 2px dashed var(--ds-border);
-    background: rgba(255,255,255,0.02);
-    padding: 0 10px;
-    border-radius: 8px;
-    height: 38px;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 0.2s ease, background 0.2s ease;
-}
-.ds-scope .ds-paste-area:focus {
-    border-color: var(--ds-gold);
-    background: rgba(217,180,90,0.06);
-}
-.ds-scope .ds-paste-area span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-}
-.ds-scope .ds-preview-img {
-    max-width: 70px;
-    max-height: 32px;
-    cursor: pointer;
-    border-radius: 4px;
-    border: 1px solid var(--ds-border);
-}
-
-.ds-scope .ds-link-cell {
+.ds-scope .ds-screenshot-cell {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1520,35 +1488,6 @@
     transform: translateX(-50%) translateY(0);
 }
 .ds-toast-notif b { color: #f6e7a8; }
-
-.ds-modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    padding-top: 60px;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.85);
-}
-.ds-modal-content {
-    margin: auto;
-    display: block;
-    max-width: 80%;
-    max-height: 80vh;
-    border-radius: 8px;
-}
-.ds-close {
-    position: absolute;
-    top: 30px;
-    right: 45px;
-    color: #f1f1f1;
-    font-size: 40px;
-    font-weight: bold;
-    cursor: pointer;
-}
 </style>
 
 </head>
@@ -1697,12 +1636,17 @@
   </div>
 
   <!--
-    Menu "DATA SCREENSHOT" — galeri untuk menyimpan & melihat screenshot
-    (bukti taruhan/hasil, dll) langsung di dalam dashboard (lihat
-    <div id="pageDataScreenshot"> di bawah). Data disimpan real-time di
-    Firebase Realtime Database (path "dataScreenshot"), sehingga tersinkron
-    otomatis antar perangkat/browser, dan otomatis terhapus sendiri setelah
-    3 minggu.
+    Menu "DATA SCREENSHOT" — galeri untuk menyimpan & melihat data rekening
+    & tautan screenshot (bukti taruhan/hasil, dll) langsung di dalam
+    dashboard (lihat <div id="pageDataScreenshot"> di bawah). Data teks
+    (tanggal/rekening/jenis/tautan) disimpan real-time di Firebase Realtime
+    Database (path "dataScreenshot"), sehingga tersinkron otomatis antar
+    perangkat/browser, dan otomatis terhapus sendiri setelah 3 minggu.
+    Gambar screenshot TIDAK PERNAH ditempel/disimpan langsung di aplikasi
+    ini (jadi tidak ikut membebani Firebase) — alurnya cuma klik ikon di
+    kolom SCREENSHOT untuk buka imgbb.com, upload manual di sana, lalu
+    tempel link hasil upload-nya. NOMOR REKENING & JENIS bersifat opsional,
+    boleh diisi belakangan setelah baris tersimpan.
   -->
   <div class="nav-item" id="navDataScreenshot">
     <span class="icon">
@@ -1741,6 +1685,42 @@
       </svg>
     </span>
     <span class="label label-sm">ARSIP</span>
+  </div>
+
+  <!--
+    Menu "DATA PENTING" — kontennya berasal dari file TERPISAH
+    "harian-dashboard.html" yang ditampilkan lewat iframe di dalam
+    dashboard (pola sama seperti menu "ARSIP"). Untuk mengubah isi
+    halaman ini, cukup edit file harian-dashboard.html — TIDAK perlu
+    mengubah index.html ini. Lihat <div id="pageDataPenting"> di bawah.
+  -->
+  <div class="nav-item" id="navDataPenting">
+    <span class="icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 13h6M9 17h6M9 9h1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="label label-sm">DATA PENTING</span>
+  </div>
+
+  <!--
+    Menu "GENERATE PASSWORD" — kontennya berasal dari file TERPISAH
+    "generate-password.html" yang ditampilkan lewat iframe di dalam
+    dashboard (pola sama seperti menu "ARSIP" / "DATA PENTING"). Untuk
+    mengubah isi halaman ini, cukup edit file generate-password.html —
+    TIDAK perlu mengubah index.html ini. Lihat <div id="pageGeneratePassword">
+    di bawah.
+  -->
+  <div class="nav-item" id="navGeneratePassword">
+    <span class="icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="8" cy="15" r="4" stroke="currentColor" stroke-width="2"/>
+        <path d="M11 12l9-9M17 3l3 3M14 6l2.5 2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <span class="label label-sm">GENERATE PASSWORD</span>
   </div>
 
   <div class="sidebar-footer">© 2026 RIKI GOLAN — All Rights Reserved</div>
@@ -4235,12 +4215,36 @@
   /* ===== JADWAL PASARAN ===== */
   .hasil-scope .jadwal-wrap { padding:2px; }
   .hasil-scope .jadwal-scroll {
-    overflow-x:visible;
+    overflow-x:auto;
     border-radius:2px;
+    padding-bottom:8px;
+    scrollbar-width:auto;
+    scrollbar-color: var(--gold) var(--panel-2);
+    /* Performa scroll horizontal: dorong ke layer GPU sendiri supaya
+       drag/scroll mulus, tidak "lemot", terutama saat baris tabel banyak. */
+    -webkit-overflow-scrolling:touch;
+    will-change:scroll-position;
+    transform:translateZ(0);
+    overscroll-behavior-x:contain;
+    contain:layout paint;
+  }
+  .hasil-scope .jadwal-scroll::-webkit-scrollbar {
+    height:13px;
+  }
+  .hasil-scope .jadwal-scroll::-webkit-scrollbar-track {
+    background:var(--panel-2);
+    border-radius:7px;
+  }
+  .hasil-scope .jadwal-scroll::-webkit-scrollbar-thumb {
+    background:var(--gold);
+    border-radius:7px;
+  }
+  .hasil-scope .jadwal-scroll::-webkit-scrollbar-thumb:hover {
+    background:var(--gold-bright);
   }
   .hasil-scope .jadwal-table {
     width:100%;
-    min-width:0;
+    min-width:900px;
     table-layout:auto;
     border-collapse:collapse;
   }
@@ -4295,6 +4299,21 @@
     height:16px;
     accent-color:var(--gold);
     cursor:pointer;
+  }
+  .hasil-scope .jadwal-website {
+    min-width:140px;
+    color:var(--gold-bright);
+    text-decoration:underline;
+    text-decoration-style:dotted;
+    cursor:pointer;
+  }
+  .hasil-scope .jadwal-website:empty::before {
+    content:"+ tambah link";
+    color:var(--ink-faint);
+    text-decoration:none;
+    font-style:italic;
+    opacity:.6;
+    cursor:text;
   }
 
   /* ===== HITUNGAN TOTO SINGAPORE ===== */
@@ -4792,6 +4811,7 @@
         <th>Result</th>
         <th>Jadwal</th>
         <th>Hasil</th>
+        <th>Link Website</th>
       </tr>
     </thead>
     <tbody id="jadwalBody"></tbody>
@@ -4926,6 +4946,43 @@ function simpanShioData(){
 }
 
 restoreShioTable();
+
+// ===== Rumus Saldo Awal: field-field ini ikut disimpan permanen ke Firebase
+// saat tombol "Simpan Data" diklik (logika hitung di kalkulatornya sendiri
+// TIDAK diubah, ini cuma menambah penyimpanan) =====
+const SALDO_FIELD_IDS = ['extra_input_1','extra_input_2','saldo_bank','dana_pendingan'];
+const SALDO_STORAGE_KEY = 'rumusSaldoAwalData';
+
+function collectSaldoData(){
+  const data = {};
+  SALDO_FIELD_IDS.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) data[id] = el.value;
+  });
+  return data;
+}
+
+function applySaldoData(saved){
+  if(!saved || typeof saved !== 'object') return;
+  SALDO_FIELD_IDS.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el && saved[id] !== undefined) el.value = saved[id];
+  });
+  if (typeof hitungSaldo === 'function') hitungSaldo();
+}
+
+function simpanSaldoDataLocal(){
+  localStorage.setItem(SALDO_STORAGE_KEY, JSON.stringify(collectSaldoData()));
+}
+
+function restoreSaldoFromLocal(){
+  try {
+    applySaldoData(JSON.parse(localStorage.getItem(SALDO_STORAGE_KEY)));
+  } catch(e) {}
+}
+// Ditunda sampai DOMContentLoaded karena fungsi hitungSaldo() didefinisikan
+// di <script> lain yang letaknya lebih bawah di halaman ini.
+document.addEventListener('DOMContentLoaded', restoreSaldoFromLocal);
 
 // Build a lookup { "01": "Kuda", ... } straight from the (editable) SHIO table
 function getShioLookup(){
@@ -5224,6 +5281,7 @@ dataJadwal.forEach((row, idx) => {
   const jadwal = saved.jadwal !== undefined ? saved.jadwal : row[3];
   // Checkbox otomatis terhapus (tidak dipulihkan) jika sudah pergantian hari
   const checked = jadwalDayChanged ? false : !!saved.checked;
+  const link = saved.link !== undefined ? saved.link : '';
 
   const tr = document.createElement('tr');
   tr.innerHTML = `
@@ -5233,6 +5291,7 @@ dataJadwal.forEach((row, idx) => {
     <td class="jadwal-editable" contenteditable="true">${result}</td>
     <td class="jadwal-editable" contenteditable="true">${jadwal}</td>
     <td class="jadwal-hasil${checked ? ' jadwal-result' : ''}">${checked ? 'RESULT' : 'BELUM RESULT'}</td>
+    <td class="jadwal-editable jadwal-website" contenteditable="true">${link}</td>
   `;
   jadwalBody.appendChild(tr);
 });
@@ -5251,6 +5310,7 @@ function applyJadwalData(saved) {
     if (editable[0] && data.tutup !== undefined) editable[0].textContent = data.tutup;
     if (editable[1] && data.result !== undefined) editable[1].textContent = data.result;
     if (editable[2] && data.jadwal !== undefined) editable[2].textContent = data.jadwal;
+    if (editable[3] && data.link !== undefined) editable[3].textContent = data.link;
     if (checkbox && data.checked !== undefined) checkbox.checked = data.checked;
     if (hasilCell) {
       if (data.checked) {
@@ -5275,6 +5335,7 @@ function simpanJadwalData() {
       tutup: editable[0] ? editable[0].textContent.trim() : '',
       result: editable[1] ? editable[1].textContent.trim() : '',
       jadwal: editable[2] ? editable[2].textContent.trim() : '',
+      link: editable[3] ? editable[3].textContent.trim() : '',
       checked: checkbox ? checkbox.checked : false
     });
   });
@@ -5438,6 +5499,31 @@ jadwalBody.addEventListener('change', (e) => {
   }
 });
 
+// Kolom "Link Website": klik sekali langsung membuka link di tab baru,
+// klik dua kali untuk masuk mode edit (mengganti isi kotak).
+jadwalBody.addEventListener('click', (e) => {
+  const cell = e.target.closest('.jadwal-website');
+  if (!cell) return;
+  const raw = cell.textContent.trim();
+  if (!raw) return; // kotak masih kosong -> biarkan langsung bisa diketik
+  e.preventDefault();
+  let href = raw;
+  if (!/^https?:\/\//i.test(href)) href = 'https://' + href;
+  window.open(href, '_blank', 'noopener,noreferrer');
+});
+
+jadwalBody.addEventListener('dblclick', (e) => {
+  const cell = e.target.closest('.jadwal-website');
+  if (!cell) return;
+  cell.focus();
+  const range = document.createRange();
+  range.selectNodeContents(cell);
+  range.collapse(false);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+});
+
 // Real-time: setiap perubahan pada kolom Jam Tutup, Result, atau Jadwal langsung disimpan
 let jadwalEditableSyncTimer = null;
 jadwalBody.addEventListener('input', (e) => {
@@ -5474,6 +5560,7 @@ function kirimDataKeFirebase() {
       tutup: editable[0] ? editable[0].textContent.trim() : '',
       result: editable[1] ? editable[1].textContent.trim() : '',
       jadwal: editable[2] ? editable[2].textContent.trim() : '',
+      link: editable[3] ? editable[3].textContent.trim() : '',
       checked: checkbox ? checkbox.checked : false
     });
   });
@@ -5484,10 +5571,12 @@ function kirimDataKeFirebase() {
     if (!nameCell || !numsCell) return;
     shioData.push({ name: nameCell.textContent.trim(), nums: numsCell.textContent.trim() });
   });
-  console.log('[Firebase] Mengirim jadwalData:', jadwalData, 'shioData:', shioData);
+  const saldoData = (typeof collectSaldoData === 'function') ? collectSaldoData() : {};
+  console.log('[Firebase] Mengirim jadwalData:', jadwalData, 'shioData:', shioData, 'saldoData:', saldoData);
   return Promise.all([
     hasilDB.ref('resultJadwalPasaran/jadwal').set(jadwalData),
-    hasilDB.ref('resultJadwalPasaran/shio').set(shioData)
+    hasilDB.ref('resultJadwalPasaran/shio').set(shioData),
+    hasilDB.ref('resultJadwalPasaran/saldoAwal').set(saldoData)
   ]).then(() => {
     console.log('[Firebase] set() SUKSES tersimpan ke server.');
   });
@@ -5512,15 +5601,7 @@ function tampilkanErrorFirebase(pesan) {
   box._hideTimer = setTimeout(() => { box.style.display = 'none'; }, 6000);
 }
 
-// Dengarkan perubahan data Jadwal Pasaran & Shio dari Firebase secara
-// REAL-TIME (bukan polling berkala). Ini justru pilihan yang paling hemat
-// kuota untuk data ini: listener on('value') TIDAK menarik data terus-
-// menerus — ia hanya "diam" menunggu, dan baru benar-benar mengirim data
-// TEPAT SAAT ada perubahan Jam Tutup, Result, atau Shio yang disimpan
-// (dari perangkat manapun). Kalau tidak ada perubahan sama sekali, tidak
-// ada data yang ditransfer sama sekali. Ini lebih hemat dibanding polling
-// berkala (mis. tiap 24 jam), karena polling tetap menarik data walau
-// tidak ada perubahan apa-apa.
+// Dengarkan perubahan data secara real-time dari Firebase (mis. disimpan dari perangkat lain)
 if (hasilDB) {
   hasilDB.ref('resultJadwalPasaran/jadwal').on('value', (snapshot) => {
     const data = snapshot.val();
@@ -5542,6 +5623,14 @@ if (hasilDB) {
       localStorage.setItem(SHIO_STORAGE_KEY, JSON.stringify(data));
     }
   });
+  hasilDB.ref('resultJadwalPasaran/saldoAwal').on('value', (snapshot) => {
+    const data = snapshot.val();
+    const sedangDiedit = document.activeElement && SALDO_FIELD_IDS.includes(document.activeElement.id);
+    if (data && !sedangDiedit) {
+      applySaldoData(data);
+      localStorage.setItem(SALDO_STORAGE_KEY, JSON.stringify(data));
+    }
+  });
 }
 
 // Tombol "Simpan Data" manual di bawah Rumus Saldo Awal (memberi konfirmasi visual)
@@ -5550,6 +5639,7 @@ if (simpanDataBtn) {
   simpanDataBtn.addEventListener('click', () => {
     simpanJadwalData();
     if (typeof simpanShioData === 'function') simpanShioData();
+    if (typeof simpanSaldoDataLocal === 'function') simpanSaldoDataLocal();
 
     const originalText = simpanDataBtn.textContent;
     simpanDataBtn.textContent = 'Menyimpan…';
@@ -5783,12 +5873,19 @@ setInterval(() => {
 
 <!--
   Halaman "DATA SCREENSHOT" — tabel data rekening & bukti screenshot
-  transaksi. Setiap baris tersimpan REAL-TIME di Firebase Realtime Database
-  (path "dataScreenshot", pakai firebaseConfig yang sama dengan menu
-  "Result & Jadwal Pasaran"), sehingga otomatis tersinkron ke semua
-  perangkat/browser yang membuka menu ini, dan otomatis terhapus sendiri
-  setelah 3 minggu. Style-nya dibuat senada dengan menu "PERHITUNGAN BOLA
-  PNG" (nuansa gelap + aksen emas), lihat class ".ds-scope" di bawah.
+  transaksi. Data TEKS setiap baris (tanggal/rekening/jenis/tautan)
+  tersimpan REAL-TIME di Firebase Realtime Database (path "dataScreenshot",
+  pakai firebaseConfig yang sama dengan menu "Result & Jadwal Pasaran"),
+  sehingga otomatis tersinkron ke semua perangkat/browser yang membuka menu
+  ini, dan otomatis terhapus sendiri setelah 3 minggu. Tidak ada proses
+  paste/upload gambar ke aplikasi ini sama sekali — alurnya: klik ikon di
+  kolom SCREENSHOT → buka imgbb.com di tab baru → upload manual di sana →
+  tempel tautan hasil upload kembali di kolom SCREENSHOT yang sama. Baris
+  baru BARU tersimpan ke Firebase begitu tautan ditempel; NOMOR REKENING
+  dan JENIS bersifat opsional saat itu (boleh dikosongkan / diisi "-") dan
+  tetap bisa diisi atau diubah kapan saja sesudahnya langsung pada baris
+  yang sudah tersimpan. Style-nya dibuat senada dengan menu "PERHITUNGAN
+  BOLA PNG" (nuansa gelap + aksen emas), lihat class ".ds-scope" di bawah.
 -->
 <div id="pageDataScreenshot" style="display:none;">
   <div class="topbar">
@@ -5809,10 +5906,10 @@ setInterval(() => {
                     <div id="dsInfoPopup" class="info-popup">
                         <b>Informasi Penggunaan:</b>
                         <ul>
-                            <li>Input nomor rekening dan gambar maka akan tersimpan secara otomatis.</li>
+                            <li>Klik ikon di kolom SCREENSHOT untuk buka imgbb.com, upload screenshot di sana, lalu salin linknya dan tempel kembali di kolom yang sama — data baru tersimpan otomatis setelah tautan ditempel.</li>
+                            <li>NOMOR REKENING dan JENIS tidak wajib diisi. Boleh dikosongkan dulu, dan bisa diisi/diubah belakangan langsung pada baris yang sudah tersimpan.</li>
                             <li>Data yang sudah di input akan terhapus secara otomatis jika sudah 3 x 24 (selama 3 minggu).</li>
-                            <li>Untuk melakukan pengecekan data/gambar yang sudah di simpan (Tanggal Semalam), atur dulu tanggal atau dapat gunakan menu cari.</li>
-                            <li>Klik tautan, langsung tekan ctrl+v pada keyboard maka dapat di klik unggah, kemudian salin linknya dan tempel pada kolom tautannya.</li>
+                            <li>Untuk melakukan pengecekan data yang sudah di simpan (Tanggal Semalam), atur dulu tanggal atau dapat gunakan menu cari.</li>
                         </ul>
                     </div>
                 </div>
@@ -5837,8 +5934,7 @@ setInterval(() => {
                       <th style="width: 14%;">TANGGAL</th>
                       <th style="width: 22%;">NOMOR REKENING</th>
                       <th style="width: 16%;">JENIS</th>
-                      <th style="width: 20%;">SCREENSHOT</th>
-                      <th style="width: 28%;">TAUTAN</th>
+                      <th style="width: 48%;">SCREENSHOT</th>
                   </tr>
               </thead>
               <tbody id="dsTableBody">
@@ -6337,9 +6433,62 @@ setInterval(() => {
   </div>
 </div>
 
-<div id="dsImgModal" class="ds-modal">
-    <span class="ds-close" onclick="dsCloseModal()">&times;</span>
-    <img class="ds-modal-content" id="dsModalImg">
+<!--
+  Halaman "DATA PENTING" — kontennya berasal dari file TERPISAH
+  "harian-dashboard.html" yang ditampilkan lewat iframe di dalam
+  dashboard (pola sama seperti menu "ARSIP" / "CEK NAWALA"). Untuk
+  mengubah isi halaman ini, cukup edit file harian-dashboard.html —
+  TIDAK perlu mengubah index.html ini.
+-->
+<div id="pageDataPenting" style="display:none;">
+  <div class="topbar">
+    <h1><span>DATA PENTING &nbsp;&nbsp; • &nbsp;&nbsp; DATA PENTING &nbsp;&nbsp; • &nbsp;&nbsp; DATA PENTING &nbsp;&nbsp; • &nbsp;&nbsp; DATA PENTING &nbsp;&nbsp; • &nbsp;&nbsp; DATA PENTING</span><span>DATA PENTING &nbsp;&nbsp; • &nbsp;&nbsp; DATA PENTING &nbsp;&nbsp; • &nbsp;&nbsp; DATA PENTING &nbsp;&nbsp; • &nbsp;&nbsp; DATA PENTING &nbsp;&nbsp; • &nbsp;&nbsp; DATA PENTING</span></h1>
+  </div>
+
+  <div class="panel" style="padding:16px;">
+    <!--
+      Tinggi kontainer iframe di bawah ini DIATUR LEWAT JAVASCRIPT (lihat fungsi
+      resizeDataPentingFrame di bawah), sama seperti pola Arsip, supaya kontainer
+      selalu memanjang penuh sampai ke bagian bawah layar.
+    -->
+    <div id="dataPentingWrap" style="position:relative; width:100%; height:70vh; min-height:420px; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
+      <iframe
+        id="dataPentingFrame"
+        src="harian-dashboard.html"
+        title="Data Penting"
+        style="width:100%; height:100%; border:0; display:block; background:transparent;">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<!--
+  Halaman "GENERATE PASSWORD" — kontennya berasal dari file TERPISAH
+  "generate-password.html" yang ditampilkan lewat iframe di dalam
+  dashboard (pola sama seperti menu "ARSIP" / "DATA PENTING"). Untuk
+  mengubah isi/tampilan generator password, cukup edit file
+  generate-password.html — TIDAK perlu mengubah index.html ini.
+-->
+<div id="pageGeneratePassword" style="display:none;">
+  <div class="topbar">
+    <h1><span>GENERATE PASSWORD &nbsp;&nbsp; • &nbsp;&nbsp; GENERATE PASSWORD &nbsp;&nbsp; • &nbsp;&nbsp; GENERATE PASSWORD &nbsp;&nbsp; • &nbsp;&nbsp; GENERATE PASSWORD</span><span>GENERATE PASSWORD &nbsp;&nbsp; • &nbsp;&nbsp; GENERATE PASSWORD &nbsp;&nbsp; • &nbsp;&nbsp; GENERATE PASSWORD &nbsp;&nbsp; • &nbsp;&nbsp; GENERATE PASSWORD</span></h1>
+  </div>
+
+  <div class="panel" style="padding:16px;">
+    <!--
+      Tinggi kontainer iframe di bawah ini DIATUR LEWAT JAVASCRIPT (lihat fungsi
+      resizeGeneratePasswordFrame di bawah), sama seperti pola Arsip/Data Penting,
+      supaya kontainer selalu memanjang penuh sampai ke bagian bawah layar.
+    -->
+    <div id="generatePasswordWrap" style="position:relative; width:100%; height:70vh; min-height:420px; border-radius:10px; overflow:hidden; border:1px solid var(--border-soft); background:#0a0d1a;">
+      <iframe
+        id="generatePasswordFrame"
+        src="generate-password.html"
+        title="Generate Password"
+        style="width:100%; height:100%; border:0; display:block; background:transparent;">
+      </iframe>
+    </div>
+  </div>
 </div>
 
 <div id="dsToastNotif" class="ds-toast-notif"></div>
@@ -6347,10 +6496,10 @@ setInterval(() => {
 <script>
 (function(){
     // -----------------------------------------------------------------
-    // Halaman "DATA SCREENSHOT": tabel data rekening & bukti screenshot.
+    // Halaman "DATA SCREENSHOT": tabel data rekening & tautan screenshot.
     // Semua fungsi diberi prefix "ds" / diekspos lewat window.dsXxx
-    // (dibutuhkan karena dipanggil dari atribut onclick/oninput di HTML)
-    // supaya tidak bentrok dengan script menu lain di dashboard ini.
+    // (dibutuhkan karena dipanggil dari atribut onclick/onblur/onchange di
+    // HTML) supaya tidak bentrok dengan script menu lain di dashboard ini.
     //
     // Penyimpanan data: Firebase Realtime Database, path "dataScreenshot",
     // memakai instance Firebase yang SAMA dengan menu "Result & Jadwal
@@ -6359,6 +6508,16 @@ setInterval(() => {
     // Data disinkron real-time lewat listener child_added/child_changed/
     // child_removed, dan baris yang timestamp-nya sudah lebih dari 21 hari
     // (3 minggu) otomatis dihapus dari Firebase saat menu ini dibuka.
+    //
+    // PENTING (alur baru): tidak ada lagi paste/upload gambar ke aplikasi
+    // ini sama sekali. Kolom SCREENSHOT cuma berisi tombol untuk buka
+    // imgbb.com secara manual, lalu kolom itu berubah jadi input untuk
+    // menempel tautan hasil upload. TAUTAN inilah yang memicu baris baru
+    // tersimpan ke Firebase — NOMOR REKENING & JENIS bersifat opsional,
+    // boleh dikosongkan saat itu dan tetap bisa diisi/diubah kapan pun
+    // sesudahnya langsung pada baris yang sudah tersimpan (setiap
+    // perubahan pada baris yang sudah tersimpan langsung disinkronkan ke
+    // Firebase, lihat dsHandleRekBlur / dsHandleJenisChange).
     // -----------------------------------------------------------------
     const dsBankList = ["DANA", "OVO", "GOPAY", "LINKAJA", "BCA", "BRI", "BNI", "MANDIRI", "JAGO", "MAYBANK", "BSI", "CIMB", "DANAMON", "SEABANK"];
     const DS_FB_PATH = 'dataScreenshot';
@@ -6429,11 +6588,14 @@ setInterval(() => {
     // blok script menu "Result & Jadwal Pasaran", jadi TIDAK dipanggil lagi
     // di sini supaya tidak error "Firebase App named '[DEFAULT]' already
     // exists").
+    let dsInitRetryCount = 0;
+    const DS_INIT_MAX_RETRY = 10;
+
     function dsInitFirebase() {
         if (typeof firebase === 'undefined') {
             console.error('[Firebase] SDK belum dimuat untuk DATA SCREENSHOT.');
-            dsShowToast('⚠ Firebase belum termuat. Cek koneksi internet Anda, lalu muat ulang halaman.', 8000);
             dsEnsureDraftRow();
+            dsScheduleInitRetry('SDK Firebase belum termuat (cek koneksi internet / ad-blocker)');
             return;
         }
 
@@ -6441,27 +6603,37 @@ setInterval(() => {
             dsDB = firebase.database();
         } catch (e) {
             console.error('[Firebase] Gagal menghubungkan DATA SCREENSHOT ke Firebase:', e);
-            dsShowToast('⚠ Gagal terhubung ke Firebase: ' + (e && e.message ? e.message : String(e)), 8000);
+            dsDB = null;
             dsEnsureDraftRow();
+            dsScheduleInitRetry(e && e.message ? e.message : String(e));
             return;
         }
 
+        dsInitRetryCount = 0;
         dsCleanupExpired();
 
-        // Batasi Ruang Lingkup Data (Query Limiting): hanya menyimak
-        // DS_QUERY_LIMIT baris PALING BARU (berdasarkan timestamp), bukan
-        // seluruh riwayat "dataScreenshot" sekaligus. Listener di sini
-        // bersifat real-time, jadi tanpa limitToLast() setiap kali menu ini
-        // dibuka semua baris (termasuk yang belum kena hapus otomatis 21
-        // hari) akan ikut ter-download ulang — padahal yang benar-benar
-        // dibutuhkan biasanya cuma baris terbaru.
-        const DS_QUERY_LIMIT = 300;
-        const ref = dsDB.ref(DS_FB_PATH).orderByChild('timestamp').limitToLast(DS_QUERY_LIMIT);
+        const ref = dsDB.ref(DS_FB_PATH).orderByChild('timestamp');
         ref.on('child_added', (snap) => dsUpsertRowFromSnapshot(snap.key, snap.val()));
         ref.on('child_changed', (snap) => dsUpsertRowFromSnapshot(snap.key, snap.val()));
         ref.on('child_removed', (snap) => dsRemoveRowByKey(snap.key));
 
         dsEnsureDraftRow();
+    }
+
+    // Jika koneksi Firebase gagal saat menu ini pertama dibuka (mis.
+    // internet lambat/putus sesaat), JANGAN menyerah — coba lagi otomatis
+    // tiap beberapa detik sampai berhasil, tanpa perlu user reload manual.
+    function dsScheduleInitRetry(reason) {
+        if (dsDB) return; // sudah tersambung lewat jalur lain, tidak perlu retry
+        dsInitRetryCount++;
+        if (dsInitRetryCount === 1) {
+            dsShowToast('⚠ Firebase belum terhubung (' + reason + '). Mencoba menyambung ulang otomatis...', 6000);
+        }
+        if (dsInitRetryCount > DS_INIT_MAX_RETRY) {
+            dsShowToast('⚠ Masih gagal terhubung ke Firebase setelah beberapa kali percobaan. Cek koneksi internet Anda, lalu muat ulang halaman.', 10000);
+            return;
+        }
+        setTimeout(dsInitFirebase, 3000);
     }
 
     // Hapus dari Firebase baris-baris yang timestamp-nya sudah lebih dari
@@ -6478,15 +6650,17 @@ setInterval(() => {
         });
     }
 
-    // Pastikan selalu ada satu baris "draft" (kosong, belum terkunci) di
+    // Pastikan selalu ada satu baris "draft" (kosong, belum tersimpan) di
     // baris paling bawah tabel untuk input data baru. Baris draft TIDAK
-    // punya data-fb-key karena belum tersimpan ke Firebase.
+    // punya data-fb-key karena belum tersimpan ke Firebase — baris ini
+    // baru benar-benar tersimpan begitu tautan screenshot-nya ditempel
+    // (lihat dsLockLinkInput / dsSaveNewRow).
     function dsEnsureDraftRow() {
         const tbody = document.getElementById('dsTableBody');
         if (!tbody) return;
         const hasDraft = Array.from(tbody.children).some(r => !r.dataset.fbKey);
         if (!hasDraft) {
-            dsAddRow(dsGetFormattedDate(), "NO REKENING", "-", "", false, null, "");
+            dsAddRow(dsGetFormattedDate(), "NO REKENING", "-", false, null, "");
         }
     }
 
@@ -6497,13 +6671,16 @@ setInterval(() => {
     }
 
     // Buat/perbarui baris tabel sesuai data terbaru dari Firebase untuk
-    // key tertentu (dipanggil dari listener child_added & child_changed).
+    // key tertentu (dipanggil dari listener child_added & child_changed —
+    // termasuk saat NOMOR REKENING/JENIS pada baris ini diedit belakangan,
+    // lihat dsHandleRekBlur/dsHandleJenisChange, sehingga baris ikut
+    // ter-refresh real-time di semua perangkat/browser lain juga).
     function dsUpsertRowFromSnapshot(key, data) {
         if (!data) return;
         const tbody = document.getElementById('dsTableBody');
         if (!tbody) return;
         const existing = tbody.querySelector(`tr[data-fb-key="${CSS.escape(key)}"]`);
-        const built = dsAddRow(data.date, data.rek, data.jenis, data.imgUrl, true, data.timestamp, data.link || "", key, false);
+        const built = dsAddRow(data.date, data.rek, data.jenis, true, data.timestamp, data.link || "", key, false);
         if (existing) {
             existing.replaceWith(built);
         } else {
@@ -6548,12 +6725,7 @@ setInterval(() => {
             popup.classList.remove('show');
         }
 
-        const modal = document.getElementById('dsImgModal');
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-
-        // Klik pada kolom TAUTAN yang sudah terkunci (readonly): langsung
+        // Klik pada kolom SCREENSHOT yang sudah terkunci (readonly): langsung
         // seleksi seluruh teksnya supaya Ctrl+C bisa langsung dipakai, dan
         // sekaligus salin otomatis ke clipboard sebagai kemudahan tambahan.
         const linkInput = event.target.closest && event.target.closest('.ds-row-link[readonly]');
@@ -6593,6 +6765,37 @@ setInterval(() => {
         }
     }
 
+    // Dipanggil saat kolom NOMOR REKENING kehilangan fokus, di baris draft
+    // MAUPUN baris yang sudah tersimpan. Kalau barisnya sudah tersimpan
+    // (punya fbKey), perubahan langsung disinkronkan ke Firebase — inilah
+    // yang memungkinkan NOMOR REKENING diisi/diubah belakangan kapan saja.
+    function dsHandleRekBlur(input) {
+        dsRestorePlaceholder(input);
+        const row = input.closest('tr');
+        if (!row) return;
+        const key = row.dataset.fbKey;
+        if (key && dsDB) {
+            dsDB.ref(`${DS_FB_PATH}/${key}`).update({ rek: input.value }).catch((err) => {
+                console.error('[Firebase] Gagal memperbarui nomor rekening:', err);
+                dsShowToast('⚠ Gagal menyimpan perubahan nomor rekening: ' + (err && err.message ? err.message : String(err)), 6000);
+            });
+        }
+    }
+
+    // Sama seperti dsHandleRekBlur, tapi untuk kolom JENIS (select) —
+    // dipicu tiap kali pilihannya berubah.
+    function dsHandleJenisChange(select) {
+        const row = select.closest('tr');
+        if (!row) return;
+        const key = row.dataset.fbKey;
+        if (key && dsDB) {
+            dsDB.ref(`${DS_FB_PATH}/${key}`).update({ jenis: select.value }).catch((err) => {
+                console.error('[Firebase] Gagal memperbarui jenis:', err);
+                dsShowToast('⚠ Gagal menyimpan perubahan jenis: ' + (err && err.message ? err.message : String(err)), 6000);
+            });
+        }
+    }
+
     function dsFilterTable() {
         const input = document.getElementById('dsSearchInput');
         const filter = input.value.toUpperCase();
@@ -6613,8 +6816,11 @@ setInterval(() => {
             const jenisSelect = rows[i].querySelector('.ds-row-jenis');
             const dateEl = rows[i].querySelector('.ds-row-date');
 
-            const isLastActiveRow = !rows[i].querySelector('.ds-row-rek').disabled;
-            if (isLastActiveRow) {
+            // Baris draft (belum tersimpan ke Firebase, tidak punya
+            // data-fb-key) selalu ditampilkan apa pun filternya, supaya
+            // selalu ada tempat untuk entri baru.
+            const isDraftRow = !rows[i].dataset.fbKey;
+            if (isDraftRow) {
                 rows[i].style.display = "";
                 continue;
             }
@@ -6644,10 +6850,15 @@ setInterval(() => {
 
     const dsOpenLinkIconSvg = `<svg viewBox="0 0 24 24"><path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7zM5 5h5V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-5h-2v5H5V5z"/></svg>`;
 
-    function dsBuildLinkCellHtml(isLocked, linkVal) {
-        if (!isLocked) {
-            return `<span class="link-placeholder">-</span>`;
-        }
+    // Membangun isi kolom "SCREENSHOT". State-nya cuma dua, berlaku sama
+    // baik untuk baris draft (belum tersimpan) maupun baris yang sudah
+    // tersimpan:
+    // 1) Sudah ada tautan tersimpan → tampilkan tautannya (readonly) +
+    //    tombol buka tautan.
+    // 2) Belum ada tautan → tampilkan tombol untuk buka imgbb.com; setelah
+    //    diklik, tombol ini berubah jadi input untuk menempel tautan hasil
+    //    upload (lihat dsHandleOpenUploadSite / dsBuildEditableLinkInputHtml).
+    function dsBuildScreenshotCellHtml(linkVal) {
         if (linkVal) {
             return `
                 <input type="text" class="ds-row-link locked" value="${dsEscapeHtml(linkVal)}" readonly title="Tautan tersimpan (tidak dapat diubah)">
@@ -6656,7 +6867,7 @@ setInterval(() => {
                 </button>`;
         }
         return `
-            <button type="button" class="ds-open-link-btn ds-copy-open-btn" onclick="dsHandleCopyAndOpen(this)" title="Salin screenshot & buka imgbb.com">
+            <button type="button" class="ds-open-link-btn ds-copy-open-btn" onclick="dsHandleOpenUploadSite(this)" title="Buka imgbb.com untuk upload screenshot">
                 ${dsOpenLinkIconSvg}
             </button>`;
     }
@@ -6674,7 +6885,12 @@ setInterval(() => {
     // langsung ditambahkan ke tbody (dipakai saat merender ulang baris
     // dari data Firebase, karena posisinya perlu disisipkan manual sebelum
     // baris draft, bukan selalu di paling bawah).
-    function dsAddRow(dateVal = null, rekVal = "NO REKENING", jenisVal = "-", imgDataUrl = "", isLocked = false, timestamp = null, linkVal = "", fbKey = null, append = true) {
+    //
+    // NOMOR REKENING & JENIS SENGAJA SELALU BISA DIEDIT (tidak ada atribut
+    // disabled) baik pada baris draft maupun baris yang sudah tersimpan —
+    // keduanya opsional dan boleh diisi/diubah kapan saja. Hanya TANGGAL
+    // yang dikunci begitu baris tersimpan.
+    function dsAddRow(dateVal = null, rekVal = "NO REKENING", jenisVal = "-", isLocked = false, timestamp = null, linkVal = "", fbKey = null, append = true) {
         const newRow = document.createElement('tr');
         if (timestamp) {
             newRow.dataset.timestamp = timestamp;
@@ -6694,24 +6910,16 @@ setInterval(() => {
 
         newRow.innerHTML = `
             <td><input type="text" class="ds-row-date" value="${dateStr}" ${isLocked ? 'disabled' : 'readonly'}></td>
-            <td><input type="text" class="ds-row-rek${isSamar}" value="${rekVal}" onfocus="dsClearPlaceholder(this)" onblur="dsRestorePlaceholder(this)" oninput="dsHandleRekInput(this)" ${isLocked ? 'disabled' : ''}></td>
+            <td><input type="text" class="ds-row-rek${isSamar}" value="${rekVal}" onfocus="dsClearPlaceholder(this)" onblur="dsHandleRekBlur(this)" title="Opsional — boleh dikosongkan atau diisi belakangan"></td>
             <td>
-                <select class="ds-row-jenis" ${isLocked ? 'disabled' : ''}>
+                <select class="ds-row-jenis" onchange="dsHandleJenisChange(this)">
                     <option value="-" ${jenisVal === '-' ? 'selected' : ''}>-</option>
                     ${optionsHtml}
                 </select>
             </td>
             <td>
-                <div class="ds-paste-area" tabindex="0" onpaste="dsHandlePaste(event, this)" title="Klik lalu tekan Ctrl+V untuk paste gambar" ${isLocked ? 'style="border:none; background:transparent;"' : ''}>
-                    ${isLocked && imgDataUrl ?
-                        `<img src="${imgDataUrl}" class="ds-preview-img" title="Klik untuk memperbesar gambar" onclick="dsOpenModal('${imgDataUrl}')">` :
-                        `<span style="font-size:11px; color:var(--ds-text-muted);">Paste ( Ctrl+V )</span>`
-                    }
-                </div>
-            </td>
-            <td>
-                <div class="ds-link-cell">
-                    ${dsBuildLinkCellHtml(isLocked, linkVal)}
+                <div class="ds-screenshot-cell">
+                    ${dsBuildScreenshotCellHtml(linkVal)}
                 </div>
             </td>
         `;
@@ -6733,71 +6941,127 @@ setInterval(() => {
         }, duration);
     }
 
-    async function dsCopyScreenshotAndOpenUploadSite(row) {
-        const imgElem = row.querySelector('.ds-preview-img');
-        if (!imgElem) {
-            alert("Belum ada screenshot pada baris ini. Silakan tempel gambar terlebih dahulu.");
-            return false;
-        }
-
-        try {
-            const response = await fetch(imgElem.src);
-            const blob = await response.blob();
-            if (navigator.clipboard && window.ClipboardItem) {
-                await navigator.clipboard.write([
-                    new ClipboardItem({ [blob.type]: blob })
-                ]);
-            }
-        } catch (err) {
-            console.warn("Gagal menyalin gambar ke clipboard:", err);
-        }
-
+    // Buka imgbb.com di tab baru & beri instruksi lanjutan. Tidak ada lagi
+    // proses menyalin gambar ke clipboard di sini — screenshot tidak
+    // pernah ditempel/disimpan di aplikasi ini, jadi pengguna upload
+    // filenya sendiri secara manual langsung di imgbb.com.
+    function dsOpenUploadSite() {
         window.open('https://imgbb.com/', '_blank', 'noopener');
-        dsShowToast("<b>Langkah selanjutnya:</b> di tab imgbb.com, klik UNGGAH lalu klik SALIN pada tautan yang muncul. Setelah tersalin, tutup tab tersebut lalu kembali ke sini dan tempel tautannya di kolom TAUTAN pada baris ini.", 60000);
-        return true;
+        dsShowToast("<b>Langkah selanjutnya:</b> di tab imgbb.com, klik UNGGAH lalu klik SALIN pada tautan yang muncul. Setelah tersalin, tutup tab tersebut lalu kembali ke sini dan tempel tautannya di kolom SCREENSHOT pada baris ini.", 60000);
     }
 
-    async function dsHandleCopyAndOpen(btn) {
+    // Dipanggil saat tombol (ikon) di kolom SCREENSHOT diklik, sebelum ada
+    // tautan sama sekali. Membuka imgbb.com sekaligus mengubah kolom itu
+    // jadi input untuk menempel tautan hasil upload.
+    function dsHandleOpenUploadSite(btn) {
         const row = btn.closest('tr');
-        const success = await dsCopyScreenshotAndOpenUploadSite(row);
-        if (!success) {
-            return;
-        }
+        dsOpenUploadSite();
 
-        const linkCell = row.querySelector('.ds-link-cell');
-        linkCell.innerHTML = dsBuildEditableLinkInputHtml();
+        const screenshotCell = row.querySelector('.ds-screenshot-cell');
+        screenshotCell.innerHTML = dsBuildEditableLinkInputHtml();
 
-        const newInput = linkCell.querySelector('.ds-row-link');
+        const newInput = screenshotCell.querySelector('.ds-row-link');
         if (newInput) {
             newInput.focus();
         }
     }
 
+    // Dipanggil saat input tautan kehilangan fokus (atau Enter ditekan).
+    // Kalau barisnya SUDAH tersimpan sebelumnya (punya fbKey), cukup
+    // perbarui field "link"-nya saja. Kalau baris ini masih "draft" (belum
+    // pernah tersimpan), tautan inilah yang MEMICU baris baru benar-benar
+    // tersimpan ke Firebase — lihat dsSaveNewRow().
     function dsLockLinkInput(input) {
         const val = input.value.trim();
         if (!val) {
             return;
         }
+
+        const row = input.closest('tr');
+        if (!row) return;
+
         input.readOnly = true;
         input.classList.add('locked');
 
-        const row = input.closest('tr');
-        const key = row ? row.dataset.fbKey : null;
-        if (key && dsDB) {
-            dsDB.ref(`${DS_FB_PATH}/${key}`).update({ link: val }).catch((err) => {
-                console.error('[Firebase] Gagal menyimpan tautan:', err);
-                dsShowToast('⚠ Gagal menyimpan tautan ke Firebase: ' + (err && err.message ? err.message : String(err)));
-            });
+        const existingKey = row.dataset.fbKey;
+        if (existingKey) {
+            if (dsDB) {
+                dsDB.ref(`${DS_FB_PATH}/${existingKey}`).update({ link: val }).catch((err) => {
+                    console.error('[Firebase] Gagal menyimpan tautan:', err);
+                    dsShowToast('⚠ Gagal menyimpan tautan ke Firebase: ' + (err && err.message ? err.message : String(err)));
+                });
+            }
+            return;
         }
+
+        dsSaveNewRow(row, val);
     }
 
-    async function dsOpenSavedLink(btn) {
+    // Menyimpan baris draft ke Firebase untuk PERTAMA KALINYA, dipicu
+    // begitu tautan screenshot-nya ditempel. NOMOR REKENING & JENIS
+    // diikutsertakan apa adanya (boleh masih "NO REKENING" / "-" — tidak
+    // wajib diisi lebih dulu) dan tetap bisa diisi/diubah belakangan
+    // langsung pada baris yang sudah tersimpan ini (lihat dsHandleRekBlur
+    // / dsHandleJenisChange).
+    function dsSaveNewRow(row, linkVal) {
+        if (!dsDB) {
+            dsShowToast('⚠ Firebase belum terhubung. Data BELUM tersimpan — coba lagi sebentar setelah koneksi pulih (jangan tutup/reload halaman dulu).', 8000);
+            return;
+        }
+        if (row.dataset.dsSaving === "1") {
+            return;
+        }
+
+        const rekInput = row.querySelector('.ds-row-rek');
+        const jenisSelect = row.querySelector('.ds-row-jenis');
+        const dateInput = row.querySelector('.ds-row-date');
+
+        row.dataset.dsSaving = "1";
+
+        const dataToSave = {
+            date: dateInput.value,
+            rek: rekInput.value,
+            jenis: jenisSelect.value,
+            link: linkVal,
+            timestamp: Date.now()
+        };
+
+        dsDB.ref(DS_FB_PATH).push(dataToSave).then(() => {
+            // Baris "terkunci" (locked) untuk entri ini akan otomatis
+            // muncul di atas baris draft lewat listener child_added
+            // (real-time). Baris draft ini sendiri BARU direset ke
+            // kondisi kosong SETELAH Firebase benar-benar mengonfirmasi
+            // data tersimpan — supaya tidak ada data yang hilang kalau
+            // penyimpanan gagal di tengah jalan.
+            delete row.dataset.dsSaving;
+            dsResetDraftRow(row);
+        }).catch((err) => {
+            console.error('[Firebase] Gagal menyimpan data:', err);
+            delete row.dataset.dsSaving;
+            dsShowToast('⚠ Gagal menyimpan ke Firebase: ' + (err && err.message ? err.message : String(err)) + ' — silakan tempel ulang tautannya.', 8000);
+        });
+    }
+
+    function dsResetDraftRow(row) {
+        const rekInput = row.querySelector('.ds-row-rek');
+        const jenisSelect = row.querySelector('.ds-row-jenis');
+        const dateInput = row.querySelector('.ds-row-date');
+        const screenshotCell = row.querySelector('.ds-screenshot-cell');
+
+        rekInput.value = "NO REKENING";
+        rekInput.classList.add('samar');
+        jenisSelect.value = "-";
+        dateInput.value = dsGetFormattedDate();
+        screenshotCell.innerHTML = dsBuildScreenshotCellHtml("");
+    }
+
+    function dsOpenSavedLink(btn) {
         const row = btn.closest('tr');
         const linkInput = row.querySelector('.ds-row-link');
         const url = linkInput.value.trim();
 
         if (!url) {
-            await dsCopyScreenshotAndOpenUploadSite(row);
+            dsOpenUploadSite();
             linkInput.focus();
             return;
         }
@@ -6806,180 +7070,18 @@ setInterval(() => {
         window.open(finalUrl, '_blank', 'noopener');
     }
 
-    // Kompres gambar screenshot di browser SEBELUM disimpan ke Firebase.
-    // Ini penyebab boros kuota TERBESAR di dashboard ini: setiap screenshot
-    // yang ditempel disimpan utuh sebagai base64 langsung di dalam node
-    // Realtime Database (bisa 1-3MB per gambar dari clipboard), dan listener
-    // real-time di menu DATA SCREENSHOT membuat gambar itu ikut ter-download
-    // ULANG oleh SETIAP perangkat yang membuka menu ini. Dikompres jadi
-    // JPEG + dikecilkan lebar maksimalnya membuat ukurannya turun drastis
-    // (biasanya jadi puluhan-ratusan KB saja) tanpa mengurangi keterbacaan
-    // screenshot bukti transfer.
-    function dsCompressImage(dataUrl, maxWidth = 1000, quality = 0.6) {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.onload = function() {
-                let width = img.width;
-                let height = img.height;
-                if (width > maxWidth) {
-                    height = Math.round(height * (maxWidth / width));
-                    width = maxWidth;
-                }
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                resolve(canvas.toDataURL('image/jpeg', quality));
-            };
-            img.onerror = function() {
-                // Kalau gagal dikompres, pakai data aslinya apa adanya
-                // daripada gagal total menyimpan screenshot.
-                resolve(dataUrl);
-            };
-            img.src = dataUrl;
-        });
-    }
-
-    function dsHandlePaste(event, pasteArea) {
-        const items = (event.clipboardData || event.originalEvent.clipboardData).items;
-        for (let i = 0; i < items.length; i++) {
-            if (items[i].type.indexOf("image") !== -1) {
-                const blob = items[i].getAsFile();
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    dsCompressImage(e.target.result).then((compressed) => {
-                        dsProcessImageInput(pasteArea, compressed);
-                    });
-                };
-                reader.readAsDataURL(blob);
-                event.preventDefault();
-                break;
-            }
-        }
-    }
-
-    function dsProcessImageInput(pasteArea, dataUrl) {
-        const row = pasteArea.closest('tr');
-
-        // Tidak ada lagi keharusan mengisi nomor rekening terlebih dahulu.
-        // Screenshot boleh ditempel duluan atau belakangan — gambar yang
-        // baru ditempel langsung ditampilkan sebagai pratinjau di baris
-        // draft ini sambil menunggu nomor rekening diisi (atau langsung
-        // tersimpan bila nomor rekening sudah terisi lebih dulu).
-        row.dataset.dsPendingImg = dataUrl;
-        pasteArea.innerHTML = `<img src="${dataUrl}" class="ds-preview-img" title="Klik untuk memperbesar gambar" onclick="dsOpenModal('${dataUrl}')">`;
-
-        dsTrySaveDraftRow(row);
-    }
-
-    // Dipanggil setiap kali kolom NOMOR REKENING pada baris draft diketik.
-    // Jika screenshot sudah ditempel lebih dulu (menunggu di
-    // row.dataset.dsPendingImg), pengisian nomor rekening ini akan langsung
-    // memicu penyimpanan — tanpa peduli mana yang diisi lebih dulu.
-    function dsHandleRekInput(input) {
-        const row = input.closest('tr');
-        if (row) {
-            dsTrySaveDraftRow(row);
-        }
-    }
-
-    // Menyimpan baris draft ke Firebase HANYA jika kedua data wajib sudah
-    // lengkap: nomor rekening terisi DAN screenshot sudah ditempel. Jika
-    // salah satu masih kosong, fungsi ini berhenti diam-diam dan menunggu
-    // input berikutnya (dipanggil ulang dari dsProcessImageInput / dsHandleRekInput).
-    function dsTrySaveDraftRow(row) {
-        const rekInput = row.querySelector('.ds-row-rek');
-        const jenisSelect = row.querySelector('.ds-row-jenis');
-        const dateInput = row.querySelector('.ds-row-date');
-        const dataUrl = row.dataset.dsPendingImg;
-
-        const rekFilled = rekInput.value.trim() !== "" && rekInput.value !== "NO REKENING";
-        if (!rekFilled || !dataUrl) {
-            return;
-        }
-
-        if (!dsDB) {
-            alert("Firebase belum terhubung, data tidak dapat disimpan. Cek koneksi internet Anda lalu muat ulang halaman.");
-            return;
-        }
-
-        const dataToSave = {
-            date: dateInput.value,
-            rek: rekInput.value,
-            jenis: jenisSelect.value,
-            imgUrl: dataUrl,
-            link: "",
-            timestamp: Date.now()
-        };
-
-        dsDB.ref(DS_FB_PATH).push(dataToSave).catch((err) => {
-            console.error('[Firebase] Gagal menyimpan screenshot:', err);
-            dsShowToast('⚠ Gagal menyimpan ke Firebase: ' + (err && err.message ? err.message : String(err)));
-        });
-
-        delete row.dataset.dsPendingImg;
-
-        // Baris "terkunci" (locked) untuk entri ini akan otomatis muncul di
-        // atas baris draft lewat listener child_added (real-time). Baris
-        // draft ini sendiri di-reset ke kondisi kosong supaya siap dipakai
-        // untuk input entri berikutnya, tanpa membuat baris draft ganda.
-        dsResetDraftRow(row);
-    }
-
-    function dsResetDraftRow(row) {
-        const rekInput = row.querySelector('.ds-row-rek');
-        const jenisSelect = row.querySelector('.ds-row-jenis');
-        const dateInput = row.querySelector('.ds-row-date');
-        const pasteArea = row.querySelector('.ds-paste-area');
-        const linkCell = row.querySelector('.ds-link-cell');
-
-        rekInput.value = "NO REKENING";
-        rekInput.classList.add('samar');
-        jenisSelect.value = "-";
-        dateInput.value = dsGetFormattedDate();
-        pasteArea.innerHTML = '<span style="font-size:11px; color:var(--ds-text-muted);">Paste ( Ctrl+V )</span>';
-        linkCell.innerHTML = dsBuildLinkCellHtml(false, "");
-
-        rekInput.focus();
-        rekInput.select();
-    }
-
-    function dsOpenModal(src) {
-        const modal = document.getElementById('dsImgModal');
-        const modalImg = document.getElementById('dsModalImg');
-        modal.style.display = 'block';
-        modalImg.src = src;
-    }
-
-    function dsCloseModal() {
-        const modal = document.getElementById('dsImgModal');
-        modal.style.display = 'none';
-    }
-
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            const modal = document.getElementById('dsImgModal');
-            if (modal && modal.style.display === 'block') {
-                dsCloseModal();
-            }
-        }
-    });
-
-    // Fungsi-fungsi berikut dipanggil lewat atribut onclick/oninput/onblur/
-    // onfocus/onpaste/onkeyup/onchange di HTML, jadi perlu diekspos ke scope
-    // global (window) supaya tetap bisa dipanggil dari luar IIFE ini.
+    // Fungsi-fungsi berikut dipanggil lewat atribut onclick/onblur/
+    // onfocus/onchange di HTML, jadi perlu diekspos ke scope global
+    // (window) supaya tetap bisa dipanggil dari luar IIFE ini.
     window.dsToggleInfo = dsToggleInfo;
     window.dsFilterTable = dsFilterTable;
     window.dsClearPlaceholder = dsClearPlaceholder;
     window.dsRestorePlaceholder = dsRestorePlaceholder;
+    window.dsHandleRekBlur = dsHandleRekBlur;
+    window.dsHandleJenisChange = dsHandleJenisChange;
     window.dsLockLinkInput = dsLockLinkInput;
     window.dsOpenSavedLink = dsOpenSavedLink;
-    window.dsHandleCopyAndOpen = dsHandleCopyAndOpen;
-    window.dsHandlePaste = dsHandlePaste;
-    window.dsHandleRekInput = dsHandleRekInput;
-    window.dsOpenModal = dsOpenModal;
-    window.dsCloseModal = dsCloseModal;
+    window.dsHandleOpenUploadSite = dsHandleOpenUploadSite;
 })();
 </script>
 
@@ -7036,6 +7138,63 @@ setInterval(() => {
   }
   // Jalankan sekali saat load, untuk kasus halaman Arsip aktif dari awal
   setTimeout(resizeArsipFrame, 0);
+})();
+</script>
+
+<script>
+(function(){
+  // Script TERPISAH khusus untuk mengatur tinggi iframe halaman "Data Penting"
+  // (harian-dashboard.html), mengikuti pola yang sama seperti resizeArsipFrame,
+  // supaya kontainer iframe selalu memenuhi sisa layar sampai ke bawah.
+  function resizeDataPentingFrame(){
+    var wrap = document.getElementById('dataPentingWrap');
+    var page = document.getElementById('pageDataPenting');
+    if (!wrap || !page || page.style.display === 'none') return;
+    var top = wrap.getBoundingClientRect().top;
+    var target = window.innerHeight - top - 20; // sisakan sedikit jarak di bawah
+    if (target < 420) target = 420;
+    wrap.style.height = target + 'px';
+  }
+  window.addEventListener('resize', resizeDataPentingFrame);
+  window.addEventListener('load', resizeDataPentingFrame);
+  // Dipanggil juga tiap kali menu "DATA PENTING" diklik di sidebar
+  var navDataPentingEl = document.getElementById('navDataPenting');
+  if (navDataPentingEl){
+    navDataPentingEl.addEventListener('click', function(){
+      setTimeout(resizeDataPentingFrame, 0);
+    });
+  }
+  // Jalankan sekali saat load, untuk kasus halaman Data Penting aktif dari awal
+  setTimeout(resizeDataPentingFrame, 0);
+})();
+</script>
+
+<script>
+(function(){
+  // Script TERPISAH khusus untuk mengatur tinggi iframe halaman
+  // "Generate Password" (generate-password.html), mengikuti pola yang
+  // sama seperti resizeArsipFrame / resizeDataPentingFrame, supaya
+  // kontainer iframe selalu memenuhi sisa layar sampai ke bawah.
+  function resizeGeneratePasswordFrame(){
+    var wrap = document.getElementById('generatePasswordWrap');
+    var page = document.getElementById('pageGeneratePassword');
+    if (!wrap || !page || page.style.display === 'none') return;
+    var top = wrap.getBoundingClientRect().top;
+    var target = window.innerHeight - top - 20; // sisakan sedikit jarak di bawah
+    if (target < 420) target = 420;
+    wrap.style.height = target + 'px';
+  }
+  window.addEventListener('resize', resizeGeneratePasswordFrame);
+  window.addEventListener('load', resizeGeneratePasswordFrame);
+  // Dipanggil juga tiap kali menu "GENERATE PASSWORD" diklik di sidebar
+  var navGeneratePasswordEl = document.getElementById('navGeneratePassword');
+  if (navGeneratePasswordEl){
+    navGeneratePasswordEl.addEventListener('click', function(){
+      setTimeout(resizeGeneratePasswordFrame, 0);
+    });
+  }
+  // Jalankan sekali saat load, untuk kasus halaman Generate Password aktif dari awal
+  setTimeout(resizeGeneratePasswordFrame, 0);
 })();
 </script>
 
@@ -8434,7 +8593,9 @@ setInterval(() => {
       cekNawala: document.getElementById("navCekNawala"),
       dataScreenshot: document.getElementById("navDataScreenshot"),
       caraBetting: document.getElementById("navCaraBetting"),
-      arsip: document.getElementById("navArsip")
+      arsip: document.getElementById("navArsip"),
+      dataPenting: document.getElementById("navDataPenting"),
+      generatePassword: document.getElementById("navGeneratePassword")
     };
     var pages = {
       prediksi: document.getElementById("pagePrediksi"),
@@ -8446,7 +8607,9 @@ setInterval(() => {
       cekNawala: document.getElementById("pageCekNawala"),
       dataScreenshot: document.getElementById("pageDataScreenshot"),
       caraBetting: document.getElementById("pageCaraBetting"),
-      arsip: document.getElementById("pageArsip")
+      arsip: document.getElementById("pageArsip"),
+      dataPenting: document.getElementById("pageDataPenting"),
+      generatePassword: document.getElementById("pageGeneratePassword")
     };
 
     var ACTIVE_PAGE_KEY = 'dashboardActivePage';
@@ -8472,6 +8635,8 @@ setInterval(() => {
     navs.dataScreenshot.addEventListener("click", function(){ showPage("dataScreenshot"); });
     navs.caraBetting.addEventListener("click", function(){ showPage("caraBetting"); });
     navs.arsip.addEventListener("click", function(){ showPage("arsip"); });
+    navs.dataPenting.addEventListener("click", function(){ showPage("dataPenting"); });
+    navs.generatePassword.addEventListener("click", function(){ showPage("generatePassword"); });
 
     var savedPage = localStorage.getItem(ACTIVE_PAGE_KEY);
     showPage(pages[savedPage] ? savedPage : "prediksi");
